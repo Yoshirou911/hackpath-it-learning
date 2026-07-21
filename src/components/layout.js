@@ -9,6 +9,8 @@ const navItems = [
   { path: '/study/ap', label: '応用情報', icon: '🎯' },
   { path: '/security', label: 'セキュリティ', icon: '🔒' },
   { path: '/quiz', label: '問題演習', icon: '🧠' },
+  { path: '/glossary', label: '用語集', icon: '📖' },
+  { path: '/history', label: '履歴', icon: '📊' },
 ]
 
 export function renderLayout(content, activePath) {

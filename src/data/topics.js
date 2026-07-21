@@ -8,7 +8,7 @@ export const roadmapTopics = [
     status: 'available',
     path: '/study/itp',
     color: '#00ff88',
-    lessons: 4,
+    lessons: 10,
     description: 'ストラテジ・マネジメント・テクノロジの3分野をカバー',
   },
   {
@@ -20,7 +20,7 @@ export const roadmapTopics = [
     status: 'available',
     path: '/study/fe',
     color: '#00ccff',
-    lessons: 4,
+    lessons: 10,
     description: 'アルゴリズム、ネットワーク、DB、OSの基礎',
   },
   {
@@ -32,7 +32,7 @@ export const roadmapTopics = [
     status: 'available',
     path: '/study/ap',
     color: '#6c47ff',
-    lessons: 3,
+    lessons: 10,
     description: 'システム開発、プロジェクト管理、セキュリティ概要',
   },
   {
@@ -44,7 +44,7 @@ export const roadmapTopics = [
     status: 'available',
     path: '/security',
     color: '#ff4466',
-    lessons: 4,
+    lessons: 10,
     description: 'ネットワーク基礎、攻撃手法、CTF入門、ペンテスト',
   },
   {

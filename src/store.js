@@ -16,6 +16,7 @@ const DEFAULT_STATE = {
   },
   flashcards: {},
   lastVisited: '/',
+  history: [],
 }
 
 function loadState() {
@@ -61,6 +62,7 @@ export function recordQuizAnswer(questionId, isCorrect) {
   } else {
     addXP(2)
   }
+  addHistoryEntry('quiz', { questionId, isCorrect })
   saveState(state)
   return state
 }
@@ -93,13 +95,14 @@ export function getTopicProgress(topicId, totalLessons) {
   return { ...topic, pct }
 }
 
-export function completeLesson(topicId, totalLessons) {
+export function completeLesson(topicId, totalLessons, lessonId) {
   const topic = state.topics[topicId] || { completed: 0, total: totalLessons }
   if (topic.completed < totalLessons) {
     topic.completed += 1
     topic.total = totalLessons
     state.topics[topicId] = topic
     addXP(15)
+    addHistoryEntry('lesson', { topicId, lessonId })
     saveState(state)
   }
   return state
@@ -110,4 +113,23 @@ export function getOverallProgress() {
   const completed = topics.reduce((s, t) => s + (t.completed || 0), 0)
   const total = topics.reduce((s, t) => s + (t.total || 0), 0)
   return total > 0 ? Math.round((completed / total) * 100) : 0
+}
+
+export function addHistoryEntry(type, data) {
+  const entry = {
+    id: Date.now(),
+    type,
+    data,
+    timestamp: new Date().toISOString(),
+  }
+  state.history.unshift(entry)
+  if (state.history.length > 100) {
+    state.history = state.history.slice(0, 100)
+  }
+  saveState(state)
+  return entry
+}
+
+export function getHistory(limit = 50) {
+  return state.history.slice(0, limit)
 }
