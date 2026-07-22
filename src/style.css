@@ -8,6 +8,7 @@
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
+  --card-bg: #ffffff;
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -41,6 +42,7 @@
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
+    --card-bg: #1f2028;
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
@@ -938,4 +940,104 @@ code {
   opacity: 0.8;
   margin: 0;
   word-break: break-word;
+}
+
+/* Rank progression system */
+.eyebrow, .sidebar-rank-label { margin: 0 0 6px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.rank-surface-bronze { --rank-color: #d99058; --rank-rgb: 217, 144, 88; --rank-deep: #6f351f; }
+.rank-surface-silver { --rank-color: #c8d4e4; --rank-rgb: 200, 212, 228; --rank-deep: #52677f; }
+.rank-surface-gold { --rank-color: #ffd166; --rank-rgb: 255, 209, 102; --rank-deep: #8b6115; }
+.rank-badge { display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 8px 12px; border: 1px solid rgba(var(--rank-rgb), .45); border-radius: 999px; color: var(--rank-color); background: linear-gradient(135deg, rgba(var(--rank-rgb), .14), rgba(var(--rank-rgb), .04)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.rank-badge-compact { padding: 6px 10px; }
+.rank-badge-copy { display: grid; line-height: 1.05; }
+.rank-badge-copy strong { color: var(--text-h); font-size: 12px; letter-spacing: .08em; }
+.rank-badge-copy small { margin-top: 3px; color: var(--rank-color); font-size: 10px; }
+.rank-gem { width: 15px; height: 17px; flex: 0 0 auto; background: linear-gradient(145deg, #fff8, var(--rank-color) 42%, var(--rank-deep)); clip-path: polygon(50% 0,92% 25%,78% 82%,50% 100%,22% 82%,8% 25%); filter: drop-shadow(0 0 6px rgba(var(--rank-rgb),.5)); }
+.rank-badge.is-complete { box-shadow: 0 0 18px rgba(var(--rank-rgb),.16), inset 0 1px 0 #fff2; }
+.rank-emblem { position: relative; width: 158px; height: 176px; display: grid; place-items: center; color: var(--rank-color); }
+.rank-emblem::before, .rank-emblem-core { position: absolute; inset: 4px 10px 12px; content: ''; clip-path: polygon(50% 0,94% 18%,86% 72%,50% 100%,14% 72%,6% 18%); }
+.rank-emblem::before { background: linear-gradient(145deg,#fff9,var(--rank-color) 28%,var(--rank-deep) 76%); filter: drop-shadow(0 12px 22px rgba(var(--rank-rgb),.35)); }
+.rank-emblem-core { inset: 12px 19px 22px; background: linear-gradient(150deg,#0d1728,#050912); border: 1px solid rgba(var(--rank-rgb),.55); }
+.rank-emblem-mark { position: relative; z-index: 1; font-size: 46px; font-weight: 900; line-height: 1; text-shadow: 0 0 24px rgba(var(--rank-rgb),.55); }
+.rank-emblem-name { position: absolute; z-index: 1; bottom: 34px; font-size: 10px; font-weight: 900; letter-spacing: .18em; }
+.sidebar-rank { display: grid; gap: 6px; margin-bottom: 14px; }
+.sidebar-rank-label { color: var(--text); opacity: .58; }
+.command-header { display: grid; gap: 6px; margin-bottom: 22px; }
+.command-header h1 { margin: 0; font-size: clamp(28px,5vw,46px); }
+.command-header p:last-child { margin: 0; color: var(--text); }
+.rank-command-card { position: relative; overflow: hidden; display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 24px; align-items: center; padding: clamp(22px,4vw,40px); border: 1px solid rgba(var(--rank-rgb),.3); border-radius: 20px; background: linear-gradient(135deg,rgba(var(--rank-rgb),.13),transparent 48%), repeating-linear-gradient(90deg,transparent 0 48px,rgba(255,255,255,.018) 49px 50px), #09111f; }
+.rank-command-card::after { position: absolute; right: -100px; bottom: -170px; width: 410px; height: 410px; content: ''; border: 1px solid rgba(var(--rank-rgb),.18); border-radius: 50%; box-shadow: 0 0 80px rgba(var(--rank-rgb),.12); }
+.rank-command-emblem { position: relative; z-index: 1; display: grid; place-items: center; }
+.rank-command-copy { position: relative; z-index: 1; }
+.rank-command-number { margin: 0; color: var(--rank-color); font-size: 12px; font-weight: 800; letter-spacing: .16em; }
+.rank-command-copy h2 { margin: 8px 0; font-size: clamp(28px,5vw,48px); }
+.rank-command-copy > p { max-width: 620px; color: var(--text); }
+.rank-xp-row { display: flex; justify-content: space-between; gap: 12px; margin: 22px 0 8px; font-size: 12px; font-weight: 700; }
+.rank-meter, .rank-progress { height: 7px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); }
+.rank-meter span, .rank-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,var(--rank-deep),var(--rank-color)); box-shadow: 0 0 12px rgba(var(--rank-rgb),.4); }
+.rank-ladder { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 18px 0 28px; }
+.rank-ladder-step { display: flex; gap: 12px; align-items: center; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--card-bg); opacity: .58; }
+.rank-ladder-step.is-active { border-color: rgba(var(--rank-rgb),.5); opacity: 1; box-shadow: inset 0 -2px 0 var(--rank-color); }
+.rank-step-index { color: var(--rank-color); font-size: 11px; font-weight: 900; }
+.rank-ladder-step strong, .rank-ladder-step small { display: block; }
+.rank-ladder-step small { margin-top: 3px; color: var(--text); }
+.rank-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 32px; }
+.rank-stats-grid .stat-card { min-width: 0; }
+.rank-section-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
+.rank-section-header h2 { margin: 0; }
+.ranked-topic-card { display: flex; flex-direction: column; border-top: 2px solid var(--rank-color); }
+.topic-card-topline { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.rank-progress { margin: 14px 0 8px; }
+.course-rank-header, .roadmap-rank-header { display: flex; justify-content: space-between; gap: 24px; align-items: center; margin-bottom: 22px; }
+.course-rank-summary { display: flex; align-items: center; gap: 16px; min-width: 250px; padding: 14px; border: 1px solid rgba(var(--rank-rgb),.35); border-radius: 14px; background: rgba(var(--rank-rgb),.07); }
+.course-rank-summary-copy { display: grid; gap: 4px; }
+.course-progress-number { color: var(--rank-color); font-size: 22px; font-weight: 900; }
+.rank-stage-list { display: grid; gap: 18px; }
+.rank-stage { overflow: hidden; border: 1px solid rgba(var(--rank-rgb),.27); border-radius: 18px; background: linear-gradient(135deg,rgba(var(--rank-rgb),.07),var(--card-bg) 40%); }
+.rank-stage.is-locked { opacity: .6; }
+.rank-stage-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; border-bottom: 1px solid var(--border); }
+.rank-stage-copy { display: flex; align-items: center; gap: 16px; }
+.rank-stage-copy h2 { margin: 0 0 5px; }
+.rank-stage-copy p { margin: 0; color: var(--text); }
+.rank-stage-status { color: var(--rank-color); font-size: 12px; font-weight: 800; }
+.rank-stage-lessons { display: grid; }
+.rank-lesson-row { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 14px; min-height: 68px; padding: 10px 20px; color: var(--text-h); border-bottom: 1px solid var(--border); transition: background .18s,padding-left .18s; }
+.rank-lesson-row:last-child { border-bottom: 0; }
+.rank-lesson-row:not(.is-locked):hover { padding-left: 24px; background: rgba(var(--rank-rgb),.08); }
+.rank-lesson-number { color: var(--rank-color); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+.rank-lesson-state { color: var(--text); }
+.rank-lock-label { color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+.rank-locked-view { max-width: 620px; margin: 8vh auto; padding: 40px; text-align: center; border: 1px solid rgba(var(--rank-rgb),.35); border-radius: 20px; background: linear-gradient(145deg,rgba(var(--rank-rgb),.1),var(--card-bg)); }
+.lesson-rank-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.lesson-rank-title { display: grid; gap: 4px; }
+.rank-lesson-content { border-top: 2px solid var(--rank-color); }
+.rank-lesson-nav { border-top-color: rgba(var(--rank-rgb),.3); }
+.rank-protocol-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 32px; }
+.rank-protocol-card { position: relative; overflow: hidden; min-height: 176px; padding: 20px; border: 1px solid rgba(var(--rank-rgb),.3); border-radius: 16px; background: linear-gradient(145deg,rgba(var(--rank-rgb),.12),var(--card-bg) 54%); }
+.rank-protocol-number { color: var(--rank-color); font-size: 11px; font-weight: 900; letter-spacing: .14em; }
+.rank-protocol-card h3 { margin: 28px 0 7px; font-size: 22px; }
+.rank-protocol-card p { margin: 0; color: var(--text); font-size: 13px; }
+.rank-protocol-line { position: absolute; right: -20px; bottom: -24px; width: 100px; height: 100px; border: 1px solid rgba(var(--rank-rgb),.32); border-radius: 50%; }
+.ranked-course-group { margin-top: 32px; }
+.ranked-roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 16px; }
+.ranked-roadmap-card { display: flex; flex-direction: column; min-height: 230px; padding: 20px; border: 1px solid var(--border); border-top: 2px solid var(--rank-color); border-radius: 15px; background: var(--card-bg); }
+.ranked-roadmap-card.is-locked { opacity: .62; }
+.ranked-roadmap-top, .rank-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ranked-roadmap-card h3 { margin: 20px 0 8px; }
+.ranked-roadmap-card > p { margin: 0; color: var(--text); flex: 1; }
+.rank-card-footer { margin-top: 20px; }
+.rank-arrow-link { color: var(--rank-color); font-weight: 800; }
+.rank-lock-symbol { color: var(--text); }
+
+@media (max-width: 760px) {
+  .rank-command-card { grid-template-columns: 1fr; text-align: center; }
+  .rank-command-copy > p { margin-inline: auto; }
+  .rank-emblem { width: 128px; height: 144px; }
+  .rank-ladder, .rank-protocol-grid { grid-template-columns: 1fr; }
+  .rank-stats-grid { grid-template-columns: repeat(2,1fr); }
+  .course-rank-header, .roadmap-rank-header, .rank-stage-header { align-items: flex-start; flex-direction: column; }
+  .course-rank-summary { width: 100%; min-width: 0; }
+  .rank-stage-copy { align-items: flex-start; }
+  .rank-lesson-row { grid-template-columns: 38px minmax(0,1fr); }
+  .rank-lesson-state, .rank-lock-label { grid-column: 2; }
 }

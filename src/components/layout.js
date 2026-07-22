@@ -1,5 +1,7 @@
 import { navigate, getCurrentPath } from '../router.js'
 import { getState } from '../store.js'
+import { getAccountRank } from '../data/ranks.js'
+import { renderRankBadge } from './rank.js'
 
 const navItems = [
   { path: '/', label: 'ダッシュボード', icon: '⚡' },
@@ -20,6 +22,7 @@ const navItems = [
 export function renderLayout(content, activePath) {
   const state = getState()
   const xpInLevel = state.xp % 100
+  const accountRank = getAccountRank(state.xp).current
   const currentPath = activePath || getCurrentPath()
 
   return `
@@ -43,6 +46,10 @@ export function renderLayout(content, activePath) {
         </nav>
 
         <div class="sidebar-footer">
+          <div class="sidebar-rank">
+            <span class="sidebar-rank-label">OPERATOR RANK</span>
+            ${renderRankBadge(accountRank, { compact: true })}
+          </div>
           <div class="level-badge">
             <span class="level-label">LV.${state.level}</span>
             <div class="xp-bar">
