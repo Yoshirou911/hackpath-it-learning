@@ -1,6 +1,6 @@
 # HackPath 開発進捗
 
-最終更新: 2026-07-22
+最終更新: 2026-07-23
 
 ## プロジェクト概要
 
@@ -17,6 +17,7 @@ Vite + Vanilla JavaScript + CSSで構成し、進捗はlocalStorageへ保存し�
 - ダッシュボード、ロードマップ、学習、クイズ、用語集、履歴
 - レスポンシブデザイン、OS設定に連動するダークモード
 - `HackPathを開く.cmd`によるワンクリック起動
+- 公開環境でのCSP・クリックジャッキング防止・MIMEスニッフィング防止などのセキュリティヘッダー
 
 ### 資格コース
 
@@ -67,3 +68,11 @@ Vite + Vanilla JavaScript + CSSで構成し、進捗はlocalStorageへ保存し�
 - データ整合性確認: 12トピック、8モジュール、52レッスン、142問、135用語
 
 詳細な構造と引き継ぎ方法は[AI_HANDOFF.md](./AI_HANDOFF.md)を参照してください。
+
+## 2026-07-23の変更
+
+- Sites公開用Workerを追加
+- 外部Google Fontsへの接続を削除し、外部依存を縮小
+- Content Security Policyを追加
+- iframe埋め込み、MIMEスニッフィング、不要な端末権限を制限
+- HTTPSの継続利用をブラウザへ指示
