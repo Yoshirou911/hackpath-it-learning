@@ -1,4 +1,6 @@
-export const questions = [
+import { skillQuestions } from './skillCourses.js'
+
+const certificationQuestions = [
   {
     id: 1,
     topic: 'itp',
@@ -1785,6 +1787,8 @@ export const questions = [
     explanation: 'フィーチャーフラッシュは機能のオン/オフを動的に制御し、段階的なリリースやA/Bテストを可能にする仕組みです。',
   },
 ]
+
+export const questions = [...certificationQuestions, ...skillQuestions]
 
 export function getQuestionsByTopic(topic) {
   if (!topic || topic === 'all') return questions

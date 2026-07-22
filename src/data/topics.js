@@ -1,4 +1,6 @@
-export const roadmapTopics = [
+import { skillCourseTopics } from './skillCourses.js'
+
+const certificationTopics = [
   {
     id: 'itp',
     title: 'ITパスポート',
@@ -60,6 +62,13 @@ export const roadmapTopics = [
     description: '準備中 — ゲームエンジン比較、ロジック解説',
   },
 ]
+
+// categoryはロードマップ表示と将来のコース検索に使用する。
+certificationTopics.forEach((topic) => {
+  topic.category ??= topic.id === 'gamedev' ? 'skill' : 'certification'
+})
+
+export const roadmapTopics = [...certificationTopics, ...skillCourseTopics]
 
 export function getTopicById(id) {
   return roadmapTopics.find((t) => t.id === id)

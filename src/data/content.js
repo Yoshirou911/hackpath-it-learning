@@ -1,4 +1,6 @@
-export const studyModules = {
+import { skillCourseModules } from './skillCourses.js'
+
+const certificationModules = {
   itp: {
     id: 'itp',
     title: 'ITパスポート',
@@ -606,6 +608,8 @@ export const studyModules = {
     ],
   },
 }
+
+export const studyModules = { ...certificationModules, ...skillCourseModules }
 
 export function getStudyModule(topicId) {
   return studyModules[topicId]

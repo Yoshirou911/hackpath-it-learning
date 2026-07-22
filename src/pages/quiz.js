@@ -1,5 +1,7 @@
 import { questions, getQuestionsByTopic } from '../data/questions.js'
 import { recordQuizAnswer, getQuizStats, getState } from '../store.js'
+import { roadmapTopics } from '../data/topics.js'
+import { navigate } from '../router.js'
 
 let currentQuestionIndex = 0
 let currentQuestions = []
@@ -18,9 +20,9 @@ export function renderQuiz(path, params) {
 
   const topicOptions = [
     { value: '', label: 'すべての問題' },
-    { value: 'itp', label: 'ITパスポート' },
-    { value: 'fe', label: '基本情報' },
-    { value: 'sec', label: 'セキュリティ' },
+    ...roadmapTopics
+      .filter((topic) => getQuestionsByTopic(topic.id).length > 0)
+      .map((topic) => ({ value: topic.id, label: topic.title })),
   ]
 
   return `

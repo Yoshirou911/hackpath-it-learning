@@ -1,4 +1,5 @@
 import { getHistory } from '../store.js'
+import { getTopicById } from '../data/topics.js'
 
 export function renderHistory() {
   const history = getHistory(50)
@@ -35,14 +36,9 @@ function renderHistoryEntry(entry) {
 
   if (entry.type === 'lesson') {
     icon = '📚'
-    const topicNames = {
-      itp: 'ITパスポート',
-      fe: '基本情報',
-      ap: '応用情報',
-      sec: 'セキュリティ',
-    }
+    const topic = getTopicById(entry.data.topicId)
     title = 'レッスン完了'
-    description = `${topicNames[entry.data.topicId] || entry.data.topicId} - レッスン ${entry.data.lessonId}`
+    description = `${topic?.title || entry.data.topicId} - レッスン ${entry.data.lessonId}`
   } else if (entry.type === 'quiz') {
     icon = entry.data.isCorrect ? '✅' : '❌'
     title = entry.data.isCorrect ? 'クイズ正解' : 'クイズ不正解'

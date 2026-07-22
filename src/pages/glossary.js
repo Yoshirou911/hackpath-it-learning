@@ -1,5 +1,6 @@
 import { glossary, getGlossaryByTopic } from '../data/glossary.js'
 import { roadmapTopics } from '../data/topics.js'
+import { navigate } from '../router.js'
 
 let currentTopic = 'itp'
 let currentIndex = 0
@@ -13,7 +14,7 @@ export function renderGlossary(path, params) {
   isFlipped = false
   shuffledTerms = shuffleArray([...getGlossaryByTopic(currentTopic)])
 
-  const topicOptions = roadmapTopics.filter(t => ['itp', 'fe', 'ap', 'sec'].includes(t.id))
+  const topicOptions = roadmapTopics.filter((topic) => getGlossaryByTopic(topic.id).length > 0)
 
   return `
     <div class="page-header">

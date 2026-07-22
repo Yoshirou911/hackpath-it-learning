@@ -1,4 +1,6 @@
-export const glossary = {
+import { skillGlossary } from './skillCourses.js'
+
+const certificationGlossary = {
   itp: [
     { id: 'itp-1', term: 'IoT', reading: 'アイオーティ', definition: 'Internet of Things。センサーや機器がインターネットに接続され、データ収集・遠隔制御を行う仕組み。' },
     { id: 'itp-2', term: 'クラウドコンピューティング', reading: '', definition: 'インターネット経由でサーバー・ストレージ等のIT資源をオンデマンド利用するモデル。' },
@@ -119,6 +121,8 @@ export const glossary = {
     { id: 'sec-28', term: '3-2-1ルール', reading: '', definition: '3つのコピー、2つの異なる媒体、1つのオフサイトに保存するバックアップ戦略。' },
   ],
 }
+
+export const glossary = { ...certificationGlossary, ...skillGlossary }
 
 export function getGlossaryByTopic(topicId) {
   return glossary[topicId] || []

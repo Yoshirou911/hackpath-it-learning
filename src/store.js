@@ -13,6 +13,10 @@ const DEFAULT_STATE = {
     fe: { completed: 0, total: 0 },
     ap: { completed: 0, total: 0 },
     sec: { completed: 0, total: 0 },
+    network: { completed: 0, total: 0, completedLessonIds: [] },
+    linux: { completed: 0, total: 0, completedLessonIds: [] },
+    database: { completed: 0, total: 0, completedLessonIds: [] },
+    web: { completed: 0, total: 0, completedLessonIds: [] },
   },
   flashcards: {},
   lastVisited: '/',
@@ -96,8 +100,10 @@ export function getTopicProgress(topicId, totalLessons) {
 }
 
 export function completeLesson(topicId, totalLessons, lessonId) {
-  const topic = state.topics[topicId] || { completed: 0, total: totalLessons }
-  if (topic.completed < totalLessons) {
+  const topic = state.topics[topicId] || { completed: 0, total: totalLessons, completedLessonIds: [] }
+  topic.completedLessonIds ??= []
+  if (!topic.completedLessonIds.includes(lessonId) && topic.completed < totalLessons) {
+    topic.completedLessonIds.push(lessonId)
     topic.completed += 1
     topic.total = totalLessons
     state.topics[topicId] = topic

@@ -70,13 +70,14 @@ export function renderDashboard() {
       <div class="quick-actions">
         <a href="#/roadmap" class="btn btn-primary" data-nav="/roadmap">🗺️ ロードマップを見る</a>
         <a href="#/quiz" class="btn btn-secondary" data-nav="/quiz">🧠 問題演習を始める</a>
-        <a href="#/study/itp" class="btn btn-ghost" data-nav="/study/itp">📘 ITパスポートから学ぶ</a>
+        <a href="#/study/network" class="btn btn-ghost" data-nav="/study/network">🌐 ネットワークから学ぶ</a>
       </div>
     </section>
 
     <section class="section">
       <div class="section-header">
-        <h2>学習モジュール</h2>
+        <h2>学習コース</h2>
+        <span class="progress-label">資格対策と実務スキルを横断して学べます</span>
       </div>
       <div class="topic-grid">
         ${topicCards}

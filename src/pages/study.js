@@ -23,7 +23,9 @@ export function renderStudy(path, params) {
     const progress = getTopicProgress(topicId, module.lessons.length)
     
     const lessonList = module.lessons.map((lesson, index) => {
-      const isCompleted = index < progress.completed
+      const trackedLessons = progress.completedLessonIds || []
+      const legacyCompleted = Math.max(0, progress.completed - trackedLessons.length)
+      const isCompleted = trackedLessons.includes(lesson.id) || index < legacyCompleted
       return `
         <div class="glass-card" style="margin-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 12px;">
