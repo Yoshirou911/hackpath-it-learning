@@ -30,6 +30,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `worker/index.js`: 公開環境の静的配信とセキュリティヘッダー
 - `vite.config.js` / `wrangler.jsonc`: Sites向けCloudflare Worker・静的アセット設定
 - `public/_headers`: 静的アセットへ適用する公開環境のセキュリティヘッダー
+- `index.html`: 公開基盤の配信方法に左右されないブラウザ強制CSP
 
 ## コース追加手順
 
