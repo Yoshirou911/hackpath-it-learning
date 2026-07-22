@@ -1,5 +1,5 @@
 import { navigate, getCurrentPath } from '../router.js'
-import { getState } from '../store.js'
+import { clearLocalSession, getCloudAccount, getState } from '../store.js'
 import { getAccountRank } from '../data/ranks.js'
 import { renderRankBadge } from './rank.js'
 
@@ -23,6 +23,7 @@ export function renderLayout(content, activePath) {
   const state = getState()
   const xpInLevel = state.xp % 100
   const accountRank = getAccountRank(state.xp).current
+  const cloudAccount = getCloudAccount()
   const currentPath = activePath || getCurrentPath()
 
   return `
@@ -64,6 +65,7 @@ export function renderLayout(content, activePath) {
         <header class="topbar">
           <button class="menu-toggle" aria-label="メニュー">☰</button>
           <div class="topbar-title"></div>
+          ${renderCloudAccount(cloudAccount)}
         </header>
         <main class="page-content">
           ${content}
@@ -73,6 +75,33 @@ export function renderLayout(content, activePath) {
   `
 }
 
+function renderCloudAccount(account) {
+  if (account.status === 'checking') {
+    return `<div class="cloud-account is-checking"><span class="cloud-dot"></span><span>同期を確認中</span></div>`
+  }
+  if (account.status === 'anonymous') {
+    return `
+      <a class="cloud-account cloud-signin" href="${account.signInUrl}">
+        <span class="cloud-dot"></span><span>ChatGPTでログインして進捗保存</span>
+      </a>
+    `
+  }
+  const displayName = escapeHtml(account.user?.displayName || account.user?.email || 'ユーザー')
+  return `
+    <div class="cloud-account ${account.status === 'synced' ? 'is-synced' : 'is-offline'}">
+      <span class="cloud-dot"></span>
+      <span class="cloud-account-copy"><strong>${displayName}</strong><small>${account.status === 'synced' ? 'クラウド保存 ON' : '端末へ保存中'}</small></span>
+      <a href="/signout-with-chatgpt?return_to=%2F%23%2F" data-cloud-signout>ログアウト</a>
+    </div>
+  `
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[character])
+}
+
 export function bindLayoutEvents(container) {
   const toggle = container.querySelector('.menu-toggle')
   const sidebar = container.querySelector('.sidebar')
@@ -80,6 +109,8 @@ export function bindLayoutEvents(container) {
   toggle?.addEventListener('click', () => {
     sidebar?.classList.toggle('open')
   })
+
+  container.querySelector('[data-cloud-signout]')?.addEventListener('click', clearLocalSession)
 
   container.querySelectorAll('.nav-link').forEach((link) => {
     link.addEventListener('click', (e) => {

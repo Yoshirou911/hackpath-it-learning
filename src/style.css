@@ -443,6 +443,38 @@ code {
   z-index: 50;
 }
 
+.cloud-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  background: var(--card-bg);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.cloud-signin { color: var(--text-h); border-color: var(--accent-border); }
+.cloud-signin:hover { background: var(--accent-bg); }
+.cloud-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #7a8190; }
+.cloud-account.is-synced .cloud-dot { background: #00d98b; box-shadow: 0 0 8px rgba(0,217,139,.55); }
+.cloud-account.is-offline .cloud-dot { background: #ffb84d; }
+.cloud-account-copy { display: grid; max-width: 180px; line-height: 1.15; }
+.cloud-account-copy strong { overflow: hidden; color: var(--text-h); text-overflow: ellipsis; white-space: nowrap; }
+.cloud-account-copy small { margin-top: 2px; }
+.cloud-account > a { color: var(--text); font-size: 11px; }
+
+@media (max-width: 600px) {
+  .cloud-account { max-width: calc(100vw - 82px); }
+  .cloud-signin span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cloud-account-copy { max-width: 105px; }
+  .cloud-account > a { display: none; }
+}
+
 .menu-toggle {
   display: none;
   background: none;
@@ -1052,3 +1084,8 @@ code {
   .rank-lesson-state { grid-column: 2; }
   .rank-lesson-row > .btn, .rank-lesson-row > .rank-lock-label { grid-column: 3; justify-self: start; }
 }
+
+.sync-bootstrap { min-height: 100svh; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--text); background: var(--bg); }
+.sync-bootstrap span { width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: sync-spin .8s linear infinite; }
+.sync-bootstrap p { margin: 0; font-size: 13px; letter-spacing: .08em; }
+@keyframes sync-spin { to { transform: rotate(360deg); } }

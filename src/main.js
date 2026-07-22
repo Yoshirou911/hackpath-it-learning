@@ -7,7 +7,7 @@ import { renderStudy, bindStudyEvents } from './pages/study.js'
 import { renderQuiz, bindQuizEvents } from './pages/quiz.js'
 import { renderGlossary, bindGlossaryEvents } from './pages/glossary.js'
 import { renderHistory, bindHistoryEvents } from './pages/history.js'
-import { setLastVisited } from './store.js'
+import { initCloudProgress, setLastVisited } from './store.js'
 
 // Register routes
 registerRoute('/', renderDashboard)
@@ -24,7 +24,12 @@ registerRoute('/glossary', renderGlossary)
 registerRoute('/glossary/:topicFilter', renderGlossary)
 registerRoute('/history', renderHistory)
 
-// Initialize router
+const app = document.querySelector('#app')
+app.innerHTML = '<div class="sync-bootstrap"><span aria-hidden="true"></span><p>進捗データを準備しています</p></div>'
+
+await initCloudProgress()
+
+// Initialize router after the signed-in user's progress is ready.
 initRouter((handler, path, params) => {
   const app = document.querySelector('#app')
   const content = handler(path, params)

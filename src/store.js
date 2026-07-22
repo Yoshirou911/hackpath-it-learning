@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'hackpath-progress'
+const STORAGE_OWNER_KEY = 'hackpath-progress-owner'
 
 const DEFAULT_STATE = {
   xp: 0,
@@ -27,17 +28,143 @@ function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return structuredClone(DEFAULT_STATE)
-    return { ...structuredClone(DEFAULT_STATE), ...JSON.parse(raw) }
+    return normalizeState(JSON.parse(raw))
   } catch {
     return structuredClone(DEFAULT_STATE)
   }
 }
 
-function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+function normalizeState(value) {
+  const defaults = structuredClone(DEFAULT_STATE)
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return defaults
+  const xp = Number.isFinite(Number(value.xp)) ? Math.max(0, Math.floor(Number(value.xp))) : 0
+  const rawQuiz = value.quiz && typeof value.quiz === 'object' ? value.quiz : {}
+  const answered = rawQuiz.answered && typeof rawQuiz.answered === 'object' ? rawQuiz.answered : {}
+  const rawTopics = value.topics && typeof value.topics === 'object' ? value.topics : {}
+  const topics = { ...defaults.topics }
+  Object.entries(rawTopics).forEach(([id, topic]) => {
+    if (!topic || typeof topic !== 'object') return
+    topics[id] = { ...(topics[id] || {}), ...topic }
+    topics[id].completedLessonIds ??= []
+  })
+  return {
+    ...defaults,
+    ...value,
+    xp,
+    level: Math.floor(xp / 100) + 1,
+    quiz: {
+      answered,
+      correct: Object.values(answered).filter(Boolean).length,
+      total: Object.keys(answered).length,
+    },
+    topics,
+    flashcards: value.flashcards && typeof value.flashcards === 'object' ? value.flashcards : {},
+    history: Array.isArray(value.history) ? value.history.slice(0, 100) : [],
+  }
 }
 
 let state = loadState()
+let cloudAccount = {
+  status: 'checking',
+  user: null,
+  signInUrl: '/signin-with-chatgpt?return_to=%2F%23%2F',
+}
+let cloudReady = false
+let cloudSaveTimer = null
+let cloudSavePending = false
+let cloudSaveInFlight = false
+let cloudEventsBound = false
+
+function saveState(nextState, options = {}) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState))
+  if (!options.localOnly) queueCloudSave()
+}
+
+export function getCloudAccount() {
+  return cloudAccount
+}
+
+export async function initCloudProgress() {
+  try {
+    const meResponse = await fetch('/api/me', { headers: { Accept: 'application/json' } })
+    const me = await meResponse.json()
+    if (!me.authenticated) {
+      cloudAccount = {
+        status: 'anonymous',
+        user: null,
+        signInUrl: me.signInUrl || cloudAccount.signInUrl,
+      }
+      return cloudAccount
+    }
+
+    cloudAccount = { status: 'syncing', user: me.user, signInUrl: null }
+    const ownerKey = String(me.user?.email || '').toLowerCase()
+    const savedOwnerKey = localStorage.getItem(STORAGE_OWNER_KEY)
+    if (savedOwnerKey && savedOwnerKey !== ownerKey) {
+      state = structuredClone(DEFAULT_STATE)
+      saveState(state, { localOnly: true })
+    }
+    const progressResponse = await fetch('/api/progress', { headers: { Accept: 'application/json' } })
+    if (!progressResponse.ok) throw new Error('Progress download failed')
+    const remote = await progressResponse.json()
+    if (remote.progress) {
+      state = normalizeState(remote.progress)
+      saveState(state, { localOnly: true })
+    } else {
+      await uploadProgress(state)
+    }
+    localStorage.setItem(STORAGE_OWNER_KEY, ownerKey)
+    cloudReady = true
+    cloudAccount = { ...cloudAccount, status: 'synced' }
+    bindCloudFlushEvents()
+    return cloudAccount
+  } catch {
+    cloudReady = false
+    cloudAccount = { ...cloudAccount, status: 'offline' }
+    return cloudAccount
+  }
+}
+
+function queueCloudSave() {
+  if (!cloudReady) return
+  cloudSavePending = true
+  window.clearTimeout(cloudSaveTimer)
+  cloudSaveTimer = window.setTimeout(flushCloudProgress, 500)
+}
+
+async function flushCloudProgress() {
+  if (!cloudReady || cloudSaveInFlight || !cloudSavePending) return
+  cloudSavePending = false
+  cloudSaveInFlight = true
+  try {
+    await uploadProgress(state)
+    cloudAccount = { ...cloudAccount, status: 'synced' }
+  } catch {
+    cloudAccount = { ...cloudAccount, status: 'offline' }
+  } finally {
+    cloudSaveInFlight = false
+    if (cloudSavePending) queueCloudSave()
+  }
+}
+
+async function uploadProgress(progress) {
+  const response = await fetch('/api/progress', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ progress }),
+    keepalive: true,
+  })
+  if (!response.ok) throw new Error('Progress upload failed')
+  return response.json()
+}
+
+function bindCloudFlushEvents() {
+  if (cloudEventsBound) return
+  cloudEventsBound = true
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushCloudProgress()
+  })
+}
 
 export function getState() {
   return state
@@ -46,6 +173,13 @@ export function getState() {
 export function resetProgress() {
   state = structuredClone(DEFAULT_STATE)
   saveState(state)
+}
+
+export function clearLocalSession() {
+  cloudReady = false
+  state = structuredClone(DEFAULT_STATE)
+  localStorage.removeItem(STORAGE_OWNER_KEY)
+  saveState(state, { localOnly: true })
 }
 
 export function addXP(amount) {

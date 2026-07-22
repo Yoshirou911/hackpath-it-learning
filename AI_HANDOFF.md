@@ -12,8 +12,9 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - Vanilla JavaScript（ES Modules）
 - CSS
 - hashベースのクライアントルーティング
-- localStorageキー: `hackpath-progress`
-- バックエンド、認証、外部APIは未導入
+- Cloudflare Worker + D1（ユーザー別のクラウド進捗保存）
+- SitesのSign in with ChatGPT（SIWC）認証
+- localStorageキー: `hackpath-progress`（オフライン用キャッシュ）、`hackpath-progress-owner`（キャッシュ所有者）
 
 ## 重要ファイル
 
@@ -24,12 +25,14 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
 - `src/data/ranks.js`: ランク定義、XPランク判定、レッスンの3段階配分
 - `src/components/rank.js`: ランクバッジとエンブレムの共通描画
-- `src/store.js`: XP、回答、進捗、履歴の永続化
+- `src/store.js`: XP、回答、進捗、履歴のlocalStorage保存・クラウド同期・旧データ移行
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
 - `PROGRESS.md`: 現在の実装数と次タスク
 - `HackPathを開く.cmd`: Windows用ワンクリック起動ランチャー（固定ポート5190）
-- `worker/index.js`: 公開環境の静的配信とセキュリティヘッダー
+- `worker/index.js`: 公開環境の静的配信、認証済みユーザーAPI、D1進捗保存、セキュリティヘッダー
+- `db/schema.ts`: D1の`user_progress`テーブル定義
+- `drizzle/`: Sites公開時に適用するD1マイグレーション
 - `vite.config.js` / `wrangler.jsonc`: Sites向けCloudflare Worker・静的アセット設定
 - `public/_headers`: 静的アセットへ適用する公開環境のセキュリティヘッダー
 - `index.html`: 公開基盤の配信方法に左右されないブラウザ強制CSP
@@ -70,6 +73,10 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 
 既存ユーザーのlocalStorageを壊さないことが重要です。保存形式を変更するときは、新旧形式を読める移行処理を用意してください。現在はレッスン完了の重複を防ぐため`completedLessonIds`を段階的に追加しています。過去データにはこの配列がない場合があるため、`??=`による補完を残しています。
 
+ログイン済みユーザーの進捗は、SIWCからWorkerへ渡されるメールアドレスをキーにD1へ保存します。`GET /api/me`でログイン状態、`GET /api/progress`で本人の進捗を取得し、`PUT /api/progress`で本人の進捗だけを更新します。未ログイン時は従来どおりlocalStorageだけで利用できます。所有者情報がない旧localStorageは最初にログインしたアカウントへ一度だけ移行し、所有者が異なるキャッシュは別ユーザーへ送信しません。ログアウト時は端末キャッシュを消去します。
+
+D1の保存形式は既存の状態オブジェクトを`state_json`へ格納する方式です。Worker側でも件数・文字数・XP範囲を検証しています。スキーマ変更時は`db/schema.ts`を編集し、`npm.cmd run db:generate`後に生成SQLを必ず確認してください。
+
 ## ランクシステム
 
 - ブロンズは基礎、シルバーは応用、ゴールドは上級に対応する。
@@ -85,7 +92,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - レッスンHTMLは信頼済みのローカルデータを直接描画している。ユーザー入力を同じ方法で描画しないこと。
 - `getTopicProgress`は参照時にlocalStorageも更新するため、将来は読み取りと保存を分離する余地がある。
 - 成績は全コース合算。分野別集計と苦手問題モードは未実装。
-- 自動テストは未導入。最低限ビルドとデータ整合性を確認すること。
+- `npm.cmd test`でアカウント切り替え時の分離と旧localStorage移行を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
 - 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。
