@@ -999,7 +999,7 @@ code {
 .topic-card-topline { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
 .rank-progress { margin: 14px 0 8px; }
 .course-rank-header, .roadmap-rank-header { display: flex; justify-content: space-between; gap: 24px; align-items: center; margin-bottom: 22px; }
-.course-rank-summary { display: flex; align-items: center; gap: 16px; min-width: 250px; padding: 14px; border: 1px solid rgba(var(--rank-rgb),.35); border-radius: 14px; background: rgba(var(--rank-rgb),.07); }
+.course-rank-summary { display: flex; align-items: center; gap: 16px; min-width: 250px; padding: 14px; border: 1px solid rgba(var(--rank-rgb),.35); border-radius: 14px; background: rgba(var(--rank-rgb),.07); box-sizing: border-box; }
 .course-rank-summary-copy { display: grid; gap: 4px; }
 .course-progress-number { color: var(--rank-color); font-size: 22px; font-weight: 900; }
 .rank-stage-list { display: grid; gap: 18px; }
