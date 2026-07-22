@@ -947,6 +947,9 @@ code {
 .rank-surface-bronze { --rank-color: #d99058; --rank-rgb: 217, 144, 88; --rank-deep: #6f351f; }
 .rank-surface-silver { --rank-color: #c8d4e4; --rank-rgb: 200, 212, 228; --rank-deep: #52677f; }
 .rank-surface-gold { --rank-color: #ffd166; --rank-rgb: 255, 209, 102; --rank-deep: #8b6115; }
+.rank-surface-platinum { --rank-color: #9bf6ff; --rank-rgb: 155, 246, 255; --rank-deep: #367f8c; }
+.rank-surface-diamond { --rank-color: #6ee7ff; --rank-rgb: 110, 231, 255; --rank-deep: #1b6fa4; }
+.rank-surface-master { --rank-color: #d8a4ff; --rank-rgb: 216, 164, 255; --rank-deep: #7138a5; }
 .rank-badge { display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 8px 12px; border: 1px solid rgba(var(--rank-rgb), .45); border-radius: 999px; color: var(--rank-color); background: linear-gradient(135deg, rgba(var(--rank-rgb), .14), rgba(var(--rank-rgb), .04)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
 .rank-badge-compact { padding: 6px 10px; }
 .rank-badge-copy { display: grid; line-height: 1.05; }
@@ -978,6 +981,10 @@ code {
 .rank-ladder { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 18px 0 28px; }
 .rank-ladder-step { display: flex; gap: 12px; align-items: center; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--card-bg); opacity: .58; }
 .rank-ladder-step.is-active { border-color: rgba(var(--rank-rgb),.5); opacity: 1; box-shadow: inset 0 -2px 0 var(--rank-color); }
+.rank-ladder-step.rank-surface-platinum,
+.rank-ladder-step.rank-surface-diamond,
+.rank-ladder-step.rank-surface-master { background: linear-gradient(135deg,rgba(var(--rank-rgb),.09),var(--card-bg) 58%); }
+.rank-ladder-step.rank-surface-master.is-active { box-shadow: inset 0 -2px 0 var(--rank-color), 0 0 24px rgba(var(--rank-rgb),.13); }
 .rank-step-index { color: var(--rank-color); font-size: 11px; font-weight: 900; }
 .rank-ladder-step strong, .rank-ladder-step small { display: block; }
 .rank-ladder-step small { margin-top: 3px; color: var(--text); }

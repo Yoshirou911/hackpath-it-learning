@@ -28,15 +28,46 @@ export const learningRanks = [
   },
 ]
 
+export const accountRanks = [
+  ...learningRanks,
+  {
+    id: 'platinum',
+    name: 'PLATINUM',
+    label: 'プラチナ',
+    stage: '熟練',
+    tagline: '専門性を磨き上げる',
+    xpMin: 3000,
+    color: '#9bf6ff',
+  },
+  {
+    id: 'diamond',
+    name: 'DIAMOND',
+    label: 'ダイヤモンド',
+    stage: '達人',
+    tagline: '複数分野を極める',
+    xpMin: 6000,
+    color: '#6ee7ff',
+  },
+  {
+    id: 'master',
+    name: 'MASTER',
+    label: 'マスター',
+    stage: '伝説',
+    tagline: '知識で道を切り拓く',
+    xpMin: 10000,
+    color: '#d8a4ff',
+  },
+]
+
 export function getAccountRank(xp = 0) {
   const safeXP = Number.isFinite(Number(xp)) ? Number(xp) : 0
   let currentIndex = 0
-  learningRanks.forEach((rank, index) => {
+  accountRanks.forEach((rank, index) => {
     if (safeXP >= rank.xpMin) currentIndex = index
   })
 
-  const current = learningRanks[currentIndex]
-  const next = learningRanks[currentIndex + 1] || null
+  const current = accountRanks[currentIndex]
+  const next = accountRanks[currentIndex + 1] || null
   const progress = next
     ? Math.round(((safeXP - current.xpMin) / (next.xpMin - current.xpMin)) * 100)
     : 100

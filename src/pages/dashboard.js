@@ -1,7 +1,7 @@
 import { getState, getQuizStats, getOverallProgress, getTopicProgress } from '../store.js'
 import { roadmapTopics } from '../data/topics.js'
 import { questions } from '../data/questions.js'
-import { getAccountRank, getCourseRank, learningRanks } from '../data/ranks.js'
+import { accountRanks, getAccountRank, getCourseRank } from '../data/ranks.js'
 import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
 
 export function renderDashboard() {
@@ -50,12 +50,12 @@ export function renderDashboard() {
         <div class="rank-xp-row"><strong>${state.xp} XP</strong><span>${accountRank.next ? `次の${accountRank.next.label}まで ${accountRank.remainingXP} XP` : '最高ランク到達'}</span></div>
         <div class="rank-meter"><span style="width: ${accountRank.progress}%"></span></div>
       </div>
-      <div class="rank-command-number">0${learningRanks.indexOf(accountRank.current) + 1}</div>
+      <div class="rank-command-number">0${accountRanks.indexOf(accountRank.current) + 1}</div>
     </section>
 
     <div class="rank-ladder" aria-label="学習ランク一覧">
-      ${learningRanks.map((rank, index) => `
-        <div class="rank-ladder-step rank-${rank.id} ${index <= learningRanks.indexOf(accountRank.current) ? 'is-active' : ''}">
+      ${accountRanks.map((rank, index) => `
+        <div class="rank-ladder-step rank-surface-${rank.id} ${index <= accountRanks.indexOf(accountRank.current) ? 'is-active' : ''}">
           <span class="rank-step-index">0${index + 1}</span>
           <span class="rank-gem" aria-hidden="true"></span>
           <div><strong>${rank.name}</strong><small>${rank.stage} · ${rank.tagline}</small></div>
@@ -73,7 +73,7 @@ export function renderDashboard() {
     <section class="section">
       <div class="section-header rank-section-header">
         <div><span class="eyebrow">MISSION SELECT</span><h2>学習コース</h2></div>
-        <a href="#/roadmap" class="btn btn-secondary" data-nav="/roadmap">全ランクを見る →</a>
+        <a href="#/roadmap" class="btn btn-secondary" data-nav="/roadmap">学習ステージを見る →</a>
       </div>
       <div class="topic-grid">${topicCards}</div>
     </section>
