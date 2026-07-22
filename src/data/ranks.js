@@ -14,7 +14,7 @@ export const learningRanks = [
     label: 'シルバー',
     stage: '応用',
     tagline: '知識を組み合わせる',
-    xpMin: 500,
+    xpMin: 300,
     color: '#b8c4d6',
   },
   {
@@ -23,7 +23,7 @@ export const learningRanks = [
     label: 'ゴールド',
     stage: '上級',
     tagline: '実践で使いこなす',
-    xpMin: 1500,
+    xpMin: 700,
     color: '#ffd166',
   },
 ]
@@ -36,7 +36,7 @@ export const accountRanks = [
     label: 'プラチナ',
     stage: '熟練',
     tagline: '専門性を磨き上げる',
-    xpMin: 3000,
+    xpMin: 1100,
     color: '#9bf6ff',
   },
   {
@@ -45,7 +45,7 @@ export const accountRanks = [
     label: 'ダイヤモンド',
     stage: '達人',
     tagline: '複数分野を極める',
-    xpMin: 6000,
+    xpMin: 1600,
     color: '#6ee7ff',
   },
   {
@@ -54,7 +54,7 @@ export const accountRanks = [
     label: 'マスター',
     stage: '伝説',
     tagline: '知識で道を切り拓く',
-    xpMin: 10000,
+    xpMin: 2100,
     color: '#d8a4ff',
   },
 ]

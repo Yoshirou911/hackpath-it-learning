@@ -56,7 +56,17 @@ export function addXP(amount) {
 }
 
 export function recordQuizAnswer(questionId, isCorrect) {
-  if (state.quiz.answered[questionId] !== undefined) return state
+  const previousAnswer = state.quiz.answered[questionId]
+  if (previousAnswer === true || (previousAnswer === false && !isCorrect)) return state
+
+  if (previousAnswer === false && isCorrect) {
+    state.quiz.answered[questionId] = true
+    state.quiz.correct += 1
+    addXP(8)
+    addHistoryEntry('quiz', { questionId, isCorrect, corrected: true })
+    saveState(state)
+    return state
+  }
 
   state.quiz.answered[questionId] = isCorrect
   state.quiz.total += 1

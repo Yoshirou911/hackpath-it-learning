@@ -966,7 +966,7 @@ code {
 .sidebar-rank { display: grid; gap: 6px; margin-bottom: 14px; }
 .sidebar-rank-label { color: var(--text); opacity: .58; }
 .command-header { display: grid; gap: 6px; margin-bottom: 22px; }
-.command-header h1 { margin: 0; font-size: clamp(28px,5vw,46px); }
+.command-header h1 { margin: 0; max-width: 12em; font-size: clamp(28px,5vw,46px); line-height: 1.12; text-wrap: balance; }
 .command-header p:last-child { margin: 0; color: var(--text); }
 .rank-command-card { position: relative; overflow: hidden; display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 24px; align-items: center; padding: clamp(22px,4vw,40px); border: 1px solid rgba(var(--rank-rgb),.3); border-radius: 20px; background: linear-gradient(135deg,rgba(var(--rank-rgb),.13),transparent 48%), repeating-linear-gradient(90deg,transparent 0 48px,rgba(255,255,255,.018) 49px 50px), #09111f; }
 .rank-command-card::after { position: absolute; right: -100px; bottom: -170px; width: 410px; height: 410px; content: ''; border: 1px solid rgba(var(--rank-rgb),.18); border-radius: 50%; box-shadow: 0 0 80px rgba(var(--rank-rgb),.12); }
@@ -989,7 +989,10 @@ code {
 .rank-ladder-step strong, .rank-ladder-step small { display: block; }
 .rank-ladder-step small { margin-top: 3px; color: var(--text); }
 .rank-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 32px; }
-.rank-stats-grid .stat-card { min-width: 0; }
+.rank-stats-grid .stat-card { min-width: 0; gap: 12px; padding-inline: 16px; }
+.rank-stats-grid .stat-card > div { min-width: 0; }
+.rank-stats-grid .stat-icon { flex: 0 0 auto; font-size: 27px; }
+.rank-stats-grid .stat-label { display: block; line-height: 1.35; }
 .rank-section-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
 .rank-section-header h2 { margin: 0; }
 .ranked-topic-card { display: flex; flex-direction: column; border-top: 2px solid var(--rank-color); }
@@ -1008,7 +1011,7 @@ code {
 .rank-stage-copy p { margin: 0; color: var(--text); }
 .rank-stage-status { color: var(--rank-color); font-size: 12px; font-weight: 800; }
 .rank-stage-lessons { display: grid; }
-.rank-lesson-row { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 14px; min-height: 68px; padding: 10px 20px; color: var(--text-h); border-bottom: 1px solid var(--border); transition: background .18s,padding-left .18s; }
+.rank-lesson-row { display: grid; grid-template-columns: 44px 24px minmax(0,1fr) auto; align-items: center; gap: 14px; min-height: 68px; padding: 10px 20px; color: var(--text-h); border-bottom: 1px solid var(--border); transition: background .18s,padding-left .18s; }
 .rank-lesson-row:last-child { border-bottom: 0; }
 .rank-lesson-row:not(.is-locked):hover { padding-left: 24px; background: rgba(var(--rank-rgb),.08); }
 .rank-lesson-number { color: var(--rank-color); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
@@ -1045,6 +1048,7 @@ code {
   .course-rank-header, .roadmap-rank-header, .rank-stage-header { align-items: flex-start; flex-direction: column; }
   .course-rank-summary { width: 100%; min-width: 0; }
   .rank-stage-copy { align-items: flex-start; }
-  .rank-lesson-row { grid-template-columns: 38px minmax(0,1fr); }
-  .rank-lesson-state, .rank-lock-label { grid-column: 2; }
+  .rank-lesson-row { grid-template-columns: 28px 20px minmax(0,1fr); align-items: start; }
+  .rank-lesson-state { grid-column: 2; }
+  .rank-lesson-row > .btn, .rank-lesson-row > .rank-lock-label { grid-column: 3; justify-self: start; }
 }

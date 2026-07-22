@@ -8,7 +8,7 @@ let currentQuestions = []
 let selectedChoice = null
 let answered = false
 
-export function renderQuiz(path, params) {
+export function renderQuiz(path, params = []) {
   const topicFilter = params[0]
   currentQuestions = topicFilter ? getQuestionsByTopic(topicFilter) : [...questions]
   currentQuestionIndex = 0
@@ -134,7 +134,8 @@ function renderQuestionCard() {
 
 export function bindQuizEvents(container) {
   const topicFilter = container.querySelector('#topic-filter')
-  if (topicFilter) {
+  if (topicFilter && !topicFilter.dataset.eventsBound) {
+    topicFilter.dataset.eventsBound = 'true'
     topicFilter.addEventListener('change', (e) => {
       const value = e.target.value
       navigate(value ? `/quiz/${value}` : '/quiz')

@@ -7,7 +7,7 @@ let currentIndex = 0
 let isFlipped = false
 let shuffledTerms = []
 
-export function renderGlossary(path, params) {
+export function renderGlossary(path, params = []) {
   const topicFilter = params[0] || 'itp'
   currentTopic = topicFilter
   currentIndex = 0
@@ -132,7 +132,8 @@ function shuffleArray(array) {
 
 export function bindGlossaryEvents(container) {
   const topicFilter = container.querySelector('#topic-filter')
-  if (topicFilter) {
+  if (topicFilter && !topicFilter.dataset.eventsBound) {
+    topicFilter.dataset.eventsBound = 'true'
     topicFilter.addEventListener('change', (e) => {
       const value = e.target.value
       navigate(value ? `/glossary/${value}` : '/glossary')
