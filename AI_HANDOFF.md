@@ -29,6 +29,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `HackPathを開く.cmd`: Windows用ワンクリック起動ランチャー（固定ポート5190）
 - `worker/index.js`: 公開環境の静的配信とセキュリティヘッダー
 - `vite.config.js` / `wrangler.jsonc`: Sites向けCloudflare Worker・静的アセット設定
+- `public/_headers`: 静的アセットへ適用する公開環境のセキュリティヘッダー
 
 ## コース追加手順
 
