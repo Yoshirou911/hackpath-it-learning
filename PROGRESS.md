@@ -76,3 +76,5 @@ Vite + Vanilla JavaScript + CSSで構成し、進捗はlocalStorageへ保存し�
 - Content Security Policyを追加
 - iframe埋め込み、MIMEスニッフィング、不要な端末権限を制限
 - HTTPSの継続利用をブラウザへ指示
+- Cloudflare Vite Pluginで静的アセットをSites互換形式へ出力
+- npm依存関係を更新し、監査結果0件を確認

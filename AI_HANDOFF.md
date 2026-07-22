@@ -27,7 +27,8 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/pages/`: 各画面
 - `PROGRESS.md`: 現在の実装数と次タスク
 - `HackPathを開く.cmd`: Windows用ワンクリック起動ランチャー（固定ポート5190）
-- `public/server/index.js`: 公開環境の静的配信とセキュリティヘッダー
+- `worker/index.js`: 公開環境の静的配信とセキュリティヘッダー
+- `vite.config.js` / `wrangler.jsonc`: Sites向けCloudflare Worker・静的アセット設定
 
 ## コース追加手順
 
