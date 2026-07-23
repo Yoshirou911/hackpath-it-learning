@@ -27,6 +27,35 @@ const certificationModules = {
         content: `
           <h3>プロジェクトマネジメントの基礎</h3>
           <p>マネジメント系では、プロジェクト管理、サービスマネジメント、システム監査などが出題されます。</p>
+          
+          <div class="diagram-container">
+            <h4>PDCAサイクル</h4>
+            <svg viewBox="0 0 200 200" class="diagram">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L9,3 z" fill="#00ff88" />
+                </marker>
+              </defs>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#00ff88" stroke-width="2" />
+              <circle cx="100" cy="20" r="30" fill="rgba(0,255,136,0.2)" stroke="#00ff88" stroke-width="2" />
+              <text x="100" y="25" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Plan</text>
+              
+              <circle cx="170" cy="100" r="30" fill="rgba(0,255,136,0.2)" stroke="#00ff88" stroke-width="2" />
+              <text x="170" y="105" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Do</text>
+              
+              <circle cx="100" cy="180" r="30" fill="rgba(0,255,136,0.2)" stroke="#00ff88" stroke-width="2" />
+              <text x="100" y="185" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Check</text>
+              
+              <circle cx="30" cy="100" r="30" fill="rgba(0,255,136,0.2)" stroke="#00ff88" stroke-width="2" />
+              <text x="30" y="105" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">Act</text>
+              
+              <path d="M 120 30 Q 160 50 165 70" fill="none" stroke="#00ff88" stroke-width="2" marker-end="url(#arrow)" />
+              <path d="M 170 130 Q 150 170 120 175" fill="none" stroke="#00ff88" stroke-width="2" marker-end="url(#arrow)" />
+              <path d="M 80 180 Q 40 160 35 130" fill="none" stroke="#00ff88" stroke-width="2" marker-end="url(#arrow)" />
+              <path d="M 30 70 Q 50 30 80 25" fill="none" stroke="#00ff88" stroke-width="2" marker-end="url(#arrow)" />
+            </svg>
+          </div>
+
           <ul>
             <li><strong>PDCAサイクル</strong> — Plan → Do → Check → Act の改善サイクル</li>
             <li><strong>アジャイル開発</strong> — 短いスプリントで反復的に開発</li>

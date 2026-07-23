@@ -974,6 +974,29 @@ code {
   word-break: break-word;
 }
 
+/* Diagram Styles */
+.diagram-container {
+  margin: 24px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.diagram-container h4 {
+  margin: 0 0 16px 0;
+  color: var(--text-h);
+  font-size: 16px;
+}
+
+.diagram {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
 /* Rank progression system */
 .eyebrow, .sidebar-rank-label { margin: 0 0 6px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
 .rank-surface-bronze { --rank-color: #d99058; --rank-rgb: 217, 144, 88; --rank-deep: #6f351f; }
