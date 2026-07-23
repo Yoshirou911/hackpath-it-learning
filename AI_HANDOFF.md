@@ -34,6 +34,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `db/schema.ts`: D1の`user_progress`テーブル定義
 - `drizzle/`: Sites公開時に適用するD1マイグレーション
 - `vite.config.js` / `wrangler.jsonc`: Sites向けCloudflare Worker・静的アセット設定
+- `scripts/prepare-sites-build.mjs`: ViteのWorker出力をSites用`dist/server/index.js`へ配置
 - `public/_headers`: 静的アセットへ適用する公開環境のセキュリティヘッダー
 - `index.html`: 公開基盤の配信方法に左右されないブラウザ強制CSP
 

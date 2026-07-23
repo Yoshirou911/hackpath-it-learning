@@ -106,3 +106,4 @@ Vite + Vanilla JavaScript + CSSで構成し、未ログイン時はlocalStorage�
 - Worker側で進捗データのサイズ・件数・値を検証し、同一オリジンの更新だけを許可
 - アカウント分離と旧データ移行の自動テストを追加
 - `npm.cmd run build`、`npm.cmd test`、本番依存関係の監査（0件）に成功
+- Sites公開アーカイブへ最新Worker APIを確実に含めるビルド後処理を追加
