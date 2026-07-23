@@ -14,8 +14,14 @@ const navItems = [
   { path: '/study/linux', label: 'Linux', icon: '🐧' },
   { path: '/study/database', label: 'DB・SQL', icon: '🗄️' },
   { path: '/study/web', label: 'Web開発', icon: '🕸️' },
+  { path: '/study/programming', label: 'プログラミング', icon: '⌨️' },
+  { path: '/study/cloud', label: 'クラウド', icon: '☁️' },
+  { path: '/study/ai', label: 'AI・ML', icon: '🤖' },
+  { path: '/study/git', label: 'Git・ツール', icon: '🔧' },
+  { path: '/study/sysdesign', label: 'システム設計', icon: '🏗️' },
   { path: '/quiz', label: '問題演習', icon: '🧠' },
   { path: '/glossary', label: '用語集', icon: '📖' },
+  { path: '/editor', label: 'ノート追加', icon: '📝' },
   { path: '/history', label: '履歴', icon: '📊' },
 ]
 

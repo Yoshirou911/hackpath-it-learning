@@ -2,15 +2,15 @@
 // 資格系データと分離し、コース単位で追加・差し替えしやすくしている。
 
 export const skillCourseTopics = [
-  topic('network', 'ネットワーク基礎', '通信の流れを図解で理解する', '🌐', '#20c997', 'TCP/IP、IPアドレス、DNS、HTTPと障害調査の基本'),
-  topic('linux', 'Linux・OS', 'コマンド操作とOSの仕組み', '🐧', '#f5b700', 'ファイル操作、権限、プロセス、ログの読み方'),
-  topic('database', 'データベース・SQL', 'データを正しく設計して扱う', '🗄️', '#4dabf7', 'SQL、テーブル設計、正規化、トランザクション'),
-  topic('web', 'Web開発・API', 'Webアプリが動く仕組みを学ぶ', '🕸️', '#ff6b9d', 'HTML/CSS/JavaScript、HTTP、REST API、ブラウザ'),
-  topic('programming', 'プログラミング', 'プログラミング基礎', '⌨️', '#a78bfa', 10, '変数・ループ・関数・OOP・アルゴリズム'),
-  topic('cloud', 'クラウド・DevOps', 'クラウド・DevOps基礎', '☁️', '#38bdf8', 10, 'AWS・Docker・K8s・CI/CD・IaC'),
-  topic('ai', 'AI・機械学習', 'AI・機械学習基礎', '🤖', '#fb923c', 10, 'ML・DL・NLP・生成AI・倫理'),
-  topic('git', 'Git・開発ツール', 'Git・開発ツール基礎', '🔧', '#34d399', 10, 'Git・GitHub・PR・テスト・デバッグ'),
-  topic('sysdesign', 'システム設計', 'システム設計基礎', '🏗️', '#f472b6', 10, 'スケール・可用性・キャッシュ・API・マイクロサービス'),
+  topic('network', 'ネットワーク基礎', '通信の流れを図解で理解する', '🌐', '#20c997', 'TCP/IP、IPアドレス、DNS、HTTPと障害調査の基本', 3),
+  topic('linux', 'Linux・OS', 'コマンド操作とOSの仕組み', '🐧', '#f5b700', 'ファイル操作、権限、プロセス、ログの読み方', 3),
+  topic('database', 'データベース・SQL', 'データを正しく設計して扱う', '🗄️', '#4dabf7', 'SQL、テーブル設計、正規化、トランザクション', 3),
+  topic('web', 'Web開発・API', 'Webアプリが動く仕組みを学ぶ', '🕸️', '#ff6b9d', 'HTML/CSS/JavaScript、HTTP、REST API、ブラウザ', 3),
+  topic('programming', 'プログラミング', 'プログラミング基礎', '⌨️', '#a78bfa', '変数・ループ・関数・OOP・アルゴリズム', 10),
+  topic('cloud', 'クラウド・DevOps', 'クラウド・DevOps基礎', '☁️', '#38bdf8', 'AWS・Docker・K8s・CI/CD・IaC', 10),
+  topic('ai', 'AI・機械学習', 'AI・機械学習基礎', '🤖', '#fb923c', 'ML・DL・NLP・生成AI・倫理', 10),
+  topic('git', 'Git・開発ツール', 'Git・開発ツール基礎', '🔧', '#34d399', 'Git・GitHub・PR・テスト・デバッグ', 10),
+  topic('sysdesign', 'システム設計', 'システム設計基礎', '🏗️', '#f472b6', 'スケール・可用性・キャッシュ・API・マイクロサービス', 10),
 ]
 
 export const skillCourseModules = {
@@ -151,6 +151,363 @@ export const skillCourseModules = {
       <ul><li><strong>GET</strong> — 取得</li><li><strong>POST</strong> — 作成</li><li><strong>PATCH</strong> — 更新</li><li><strong>DELETE</strong> — 削除</li></ul>
       <p>RESTではURLをリソースとして設計し、JSONでデータを交換します。通信失敗に加えて4xx・5xxも処理します。</p>`),
   ]),
+  programming: module('programming', 'プログラミング', '⌨️', '#a78bfa', [
+    lesson('programming-l1', '変数とデータ型', `
+      <h3>データを入れる箱</h3>
+      <p>変数はデータを保存する「箱」のようなものです。JavaScriptでは<code>let</code>や<code>const</code>で宣言します。</p>
+      
+      <div class="diagram-container">
+        <h4>主要なデータ型</h4>
+        <svg viewBox="0 0 300 180" class="diagram">
+          <rect x="20" y="20" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="60" y="45" text-anchor="middle" fill="#ffffff" font-size="11">String</text>
+          
+          <rect x="110" y="20" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="150" y="45" text-anchor="middle" fill="#ffffff" font-size="11">Number</text>
+          
+          <rect x="200" y="20" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="240" y="45" text-anchor="middle" fill="#ffffff" font-size="11">Boolean</text>
+          
+          <rect x="20" y="80" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="60" y="105" text-anchor="middle" fill="#ffffff" font-size="11">Array</text>
+          
+          <rect x="110" y="80" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="150" y="105" text-anchor="middle" fill="#ffffff" font-size="11">Object</text>
+          
+          <rect x="200" y="80" width="80" height="40" rx="5" fill="rgba(167, 139, 250, 0.2)" stroke="#a78bfa" stroke-width="2" />
+          <text x="240" y="105" text-anchor="middle" fill="#ffffff" font-size="11">null/undefined</text>
+          
+          <text x="150" y="150" text-anchor="middle" fill="#ffffff" font-size="10">let name = "太郎";</text>
+          <text x="150" y="165" text-anchor="middle" fill="#ffffff" font-size="10">const age = 25;</text>
+        </svg>
+      </div>
+
+      <ul><li><strong>String</strong> — 文字列</li><li><strong>Number</strong> — 数値</li><li><strong>Boolean</strong> — true/false</li><li><strong>Array</strong> — 配列</li><li><strong>Object</strong> — オブジェクト</li></ul>
+      <p class="note"><code>const</code>は再代入不可、<code>let</code>は再代入可能です。</p>`),
+    lesson('programming-l2', '条件分岐とループ', `
+      <h3>プログラムの流れを制御する</h3>
+      <p><code>if</code>で条件分岐、<code>for</code>や<code>while</code>で繰り返し処理を行います。</p>
+      <pre><code>if (score >= 80) {
+  console.log("合格");
+} else {
+  console.log("不合格");
+}
+
+for (let i = 0; i < 5; i++) {
+  console.log(i);
+}</code></pre>
+      <p><code>break</code>でループを抜け、<code>continue</code>で次の反復にスキップできます。</p>`),
+    lesson('programming-l3', '関数とスコープ', `
+      <h3>処理をまとめて再利用する</h3>
+      <p>関数は処理のまとまりです。引数を受け取り、戻り値を返します。</p>
+      <pre><code>function add(a, b) {
+  return a + b;
+}
+
+const result = add(3, 5); // 8</code></pre>
+      <p>スコープは変数の有効範囲です。関数内で宣言された変数は外からアクセスできません。</p>`),
+    lesson('programming-l4', '配列とオブジェクト', `
+      <h3>複数のデータをまとめる</h3>
+      <p>配列は順序付きのデータ、オブジェクトはキーと値のペアです。</p>
+      <pre><code>const fruits = ["りんご", "バナナ", "オレンジ"];
+const user = { name: "太郎", age: 25, city: "東京" };</code></pre>
+      <p>配列は<code>map</code>、<code>filter</code>、<code>reduce</code>などのメソッドで操作できます。</p>`),
+    lesson('programming-l5', '非同期処理', `
+      <h3>時間がかかる処理を扱う</h3>
+      <p>Promiseやasync/awaitで非同期処理を扱います。</p>
+      <pre><code>async function fetchData() {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+}</code></pre>
+      <p>非同期処理はAPI呼び出しやファイル読み込みで必須です。</p>`),
+    lesson('programming-l6', 'エラーハンドリング', `
+      <h3>予期せぬエラーに対処する</h3>
+      <p><code>try/catch</code>でエラーを捕捉します。</p>
+      <pre><code>try {
+  const data = JSON.parse(jsonString);
+} catch (error) {
+  console.error("パースエラー:", error);
+}</code></pre>
+      <p>エラーが発生してもアプリケーションがクラッシュしないようにします。</p>`),
+    lesson('programming-l7', 'クラスとオブジェクト指向', `
+      <h3>データと処理をまとめる</h3>
+      <p>クラスはオブジェクトの設計図です。カプセル化、継承、ポリモーフィズムが特徴です。</p>
+      <pre><code>class User {
+  constructor(name) {
+    this.name = name;
+  }
+  greet() {
+    console.log("こんにちは、" + this.name + "さん");
+  }
+}</code></pre>
+      <p>オブジェクト指向は大規模な開発でコードの再利用性を高めます。</p>`),
+    lesson('programming-l8', 'アルゴリズムとデータ構造', `
+      <h3>効率的な処理を設計する</h3>
+      <p>計算量（O記法）でアルゴリズムの効率を評価します。</p>
+      <ul><li><strong>O(1)</strong> — 定数時間</li><li><strong>O(log n)</strong> — 対数時間</li><li><strong>O(n)</strong> — 線形時間</li><li><strong>O(n²)</strong> — 二次時間</li></ul>
+      <p>適切なデータ構造（配列、連想リスト、木など）を選ぶことが重要です。</p>`),
+    lesson('programming-l9', 'モジュール化と依存管理', `
+      <h3>コードを分割して管理する</h3>
+      <p>モジュールはコードを分割した単位です。import/exportで連携します。</p>
+      <pre><code>export function add(a, b) { return a + b; }
+
+import { add } from './utils.js';</code></pre>
+      <p>npmやyarnでパッケージ管理を行います。</p>`),
+    lesson('programming-l10', 'テストとデバッグ', `
+      <h3>品質を保証する</h3>
+      <p>単体テスト、統合テストで品質を保証します。</p>
+      <pre><code>test('add関数のテスト', () => {
+  expect(add(2, 3)).toBe(5);
+});</code></pre>
+      <p>デバッガーやconsole.logで問題を特定します。</p>`),
+  ]),
+  cloud: module('cloud', 'クラウド・DevOps', '☁️', '#38bdf8', [
+    lesson('cloud-l1', 'クラウドサービスモデル', `
+      <h3>IaaS・PaaS・SaaSの違い</h3>
+      <p>クラウドは提供範囲によって3つのモデルに分類されます。</p>
+      
+      <div class="diagram-container">
+        <h4>クラウドサービスモデル</h4>
+        <svg viewBox="0 0 300 200" class="diagram">
+          <rect x="20" y="20" width="260" height="40" rx="5" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2" />
+          <text x="150" y="45" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">SaaS (アプリケーション)</text>
+          
+          <rect x="40" y="70" width="220" height="40" rx="5" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2" />
+          <text x="150" y="95" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">PaaS (プラットフォーム)</text>
+          
+          <rect x="60" y="120" width="180" height="40" rx="5" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2" />
+          <text x="150" y="145" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">IaaS (インフラ)</text>
+          
+          <text x="150" y="180" text-anchor="middle" fill="#ffffff" font-size="9">ユーザーが管理する範囲が増える</text>
+        </svg>
+      </div>
+
+      <ul><li><strong>IaaS</strong> — サーバー、ストレージ（AWS EC2）</li><li><strong>PaaS</strong> — 実行環境、DB（Heroku）</li><li><strong>SaaS</strong> — 完成品のアプリ（Gmail）</li></ul>
+      <p class="note">管理範囲が小さいほど運用負担が減ります。</p>`),
+    lesson('cloud-l2', 'AWS主要サービス', `
+      <h3>代表的なAWSサービス</h3>
+      <ul><li><strong>EC2</strong> — 仮想サーバー</li><li><strong>S3</strong> — オブジェクトストレージ</li><li><strong>RDS</strong> — マネージドDB</li><li><strong>Lambda</strong> — サーバーレス関数</li><li><strong>CloudFront</strong> — CDN</li></ul>
+      <p>適切なサービスを選ぶことでコストと運用負担を最適化できます。</p>`),
+    lesson('cloud-l3', 'コンテナとDocker', `
+      <h3>環境を統一する</h3>
+      <p>コンテナはアプリと依存関係をパッケージ化します。Dockerは代表的なコンテナ技術です。</p>
+      <pre><code>FROM node:18
+COPY . /app
+RUN npm install
+CMD ["npm", "start"]</code></pre>
+      <p>「開発環境で動くのに本番で動かない」問題を解決します。</p>`),
+    lesson('cloud-l4', 'Kubernetes', `
+      <h3>コンテナを orchestrate する</h3>
+      <p>Kubernetesはコンテナのデプロイ、スケーリング、管理を自動化します。</p>
+      <ul><li><strong>Pod</strong> — 最小デプロイ単位</li><li><strong>Service</strong> — ネットワーク暴露</li><li><strong>Deployment</strong> — デプロイ管理</li><li><strong>Ingress</strong> — HTTPルーティング</li></ul>
+      <p>大規模なコンテナ運用で必須の技術です。</p>`),
+    lesson('cloud-l5', 'CI/CD', `
+      <h3>自動化されたデプロイパイプライン</h3>
+      <p>継続的インテグレーション（CI）と継続的デリバリー（CD）で品質と速度を両立します。</p>
+      <ul><li><strong>GitHub Actions</strong> — GitHub連携</li><li><strong>GitLab CI</strong> — GitLab連携</li><li><strong>Jenkins</strong> — オンプレミス対応</li></ul>
+      <p>自動テスト→自動デプロイの流れを構築します。</p>`),
+    lesson('cloud-l6', 'IaC', `
+      <h3>インフラをコードで管理する</h3>
+      <p>TerraformやAWS CDKでインフラをコードとして定義します。</p>
+      <pre><code>resource "aws_instance" "web" {
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+}</code></pre>
+      <p>バージョン管理、再現性、レビューが可能になります。</p>`),
+    lesson('cloud-l7', '監視とロギング', `
+      <h3>システムの状態を可視化する</h3>
+      <p>メトリクス、ログ、トレースの3つを収集します。</p>
+      <ul><li><strong>Prometheus</strong> — メトリクス収集</li><li><strong>Grafana</strong> — 可視化</li><li><strong>ELK Stack</strong> — ログ分析</li></ul>
+      <p>異常検知とパフォーマンス最適化に不可欠です。</p>`),
+    lesson('cloud-l8', 'セキュリティ', `
+      <h3>クラウドのセキュリティ</h3>
+      <p>共有責任モデルを理解します。</p>
+      <ul><li><strong>IAM</strong> — アクセス管理</li><li><strong>VPC</strong> — ネットワーク分離</li><li><strong>Security Group</strong> — ファイアウォール</li><li><strong>KMS</strong> — 暗号化キー管理</li></ul>
+      <p class="note">最小権限の原則を守ることが重要です。</p>`),
+    lesson('cloud-l9', 'コスト最適化', `
+      <h3>クラウドコストを抑える</h3>
+      <p>リザーブドインスタンス、スポットインスタンス、自動スケーリングでコストを最適化します。</p>
+      <ul><li><strong>Right Sizing</strong> — 適切なサイズ選択</li><li><strong>Auto Scaling</strong> — 需要に応じたスケール</li><li><strong>ライフサイクル管理</strong> — 不要リソースの削除</li></ul>
+      <p>コストモニタリングとアラートを設定します。</p>`),
+    lesson('cloud-l10', 'マイクロサービス', `
+      <h3>アプリを小さなサービスに分割</h3>
+      <p>マイクロサービスアーキテクチャでスケーラビリティと開発速度を向上します。</p>
+      <ul><li><strong>API Gateway</strong> — �一入り口</li><li><strong>Service Mesh</strong> — サービス間通信</li><li><strong>イベント駆動</strong> — 非同期連携</li></ul>
+      <p>運用複雑度が増えるため、適切な規模で導入します。</p>`),
+  ]),
+  ai: module('ai', 'AI・機械学習', '🤖', '#fb923c', [
+    lesson('ai-l1', 'AIと機械学習の基礎', `
+      <h3>AIの種類</h3>
+      <p>AIは狭義のAI（特定タスク）と汎用AI（多様タスク）に分類されます。</p>
+      <ul><li><strong>機械学習</strong> — データから学習</li><li><strong>ディープラーニング</strong> — 多層ニューラルネット</li><li><strong>生成AI</strong> — 新しいコンテンツ生成</li></ul>
+      <p class="note">現在のAIは主に狭義のAIです。</p>`),
+    lesson('ai-l2', '教師あり学習', `
+      <h3>ラベル付きデータで学習</h3>
+      <p>入力と正解のペアから学習します。</p>
+      <ul><li><strong>回帰</strong> — 数値を予測</li><li><strong>分類</strong> — カテゴリを予測</li></ul>
+      <p>画像認識、スパム検出などで使われます。</p>`),
+    lesson('ai-l3', '教師なし学習', `
+      <h3>ラベルなしデータで学習</h3>
+      <p>データの構造を発見します。</p>
+      <ul><li><strong>クラスタリング</strong> — グループ化</li><li><strong>次元削減</strong> — 特徴抽出</li></ul>
+      <p>顧客セグメンテーションなどで使われます。</p>`),
+    lesson('ai-l4', 'ディープラーニング', `
+      <h3>多層ニューラルネットワーク</h3>
+      <p>複数の層で特徴を自動抽出します。</p>
+      <ul><li><strong>CNN</strong> — 画像処理</li><li><strong>RNN/LSTM</strong> — 時系列データ</li><li><strong>Transformer</strong> — 自然言語処理</li></ul>
+      <p>大規模データと計算リソースが必要です。</p>`),
+    lesson('ai-l5', '自然言語処理', `
+      <h3>テキストを理解・生成する</h3>
+      <p>言語モデルでテキストを処理します。</p>
+      <ul><li><strong>Tokenization</strong> — 分かち書き</li><li><strong>Embedding</strong> — ベクトル化</li><li><strong>Attention</strong> — 重要度計算</li></ul>
+      <p>翻訳、要約、チャットボットなどで使われます。</p>`),
+    lesson('ai-l6', '生成AI', `
+      <h3>新しいコンテンツを生成</h3>
+      <p>テキスト、画像、音声などを生成します。</p>
+      <ul><li><strong>GPT</strong> — テキスト生成</li><li><strong>DALL-E</strong> — 画像生成</li><li><strong>Whisper</strong> — 音声認識</li></ul>
+      <p class="note">ハルシネーション（誤情報生成）に注意が必要です。</p>`),
+    lesson('ai-l7', 'モデル評価', `
+      <h3>モデルの性能を測る</h3>
+      <p>適切な指標で評価します。</p>
+      <ul><li><strong>正解率</strong> — 全体の正解率</li><li><strong>適合率・再現率</strong> — 不均衡データ</li><li><strong>F1スコア</strong> — 適合率と再現率の調和平均</li></ul>
+      <p>検証データで汎化性能を確認します。</p>`),
+    lesson('ai-l8', 'MLOps', `
+      <h3>MLシステムを運用する</h3>
+      <p>モデルの開発、デプロイ、監視を自動化します。</p>
+      <ul><li><strong>Feature Store</strong> — 特徴管理</li><li><strong>Model Registry</strong> — モデル管理</li><li><strong>Monitoring</strong> — ドリフト検知</li></ul>
+      <p>モデルの劣化を検知し、再学習をトリガーします。</p>`),
+    lesson('ai-l9', 'AI倫理', `
+      <h3>責任あるAI開発</h3>
+      <p>バイアス、公平性、透明性を考慮します。</p>
+      <ul><li><strong>公平性</strong> — 差別の排除</li><li><strong>説明可能性</strong> — 判断根拠の提示</li><li><strong>プライバシー</strong> — 個人情報保護</li></ul>
+      <p class="note">AIガイドラインを遵守することが重要です。</p>`),
+    lesson('ai-l10', '実践的プロジェクト', `
+      <h3>AIプロジェクトの進め方</h3>
+      <p>問題定義→データ収集→モデル開発→評価→デプロイのサイクルを回します。</p>
+      <ul><li><strong>データ品質</strong> — 最も重要</li><li><strong>シンプルさ</strong> — まずはシンプルなモデル</li><li><strong>継続的改善</strong> — フィードバックループ</li></ul>
+      <p>ビジネス価値にフォーカスします。</p>`),
+  ]),
+  git: module('git', 'Git・開発ツール', '🔧', '#34d399', [
+    lesson('git-l1', 'Gitの基本', `
+      <h3>バージョン管理システム</h3>
+      <p>Gitは変更履歴を管理し、過去の状態に戻せます。</p>
+      <ul><li><strong>commit</strong> — 変更の保存</li><li><strong>branch</strong> — 作業分岐</li><li><strong>merge</strong> — 分岐の統合</li></ul>
+      <pre><code>git add .
+git commit -m "Add feature"
+git push origin main</code></pre>
+      <p class="note">コミットメッセージは明確に書きます。</p>`),
+    lesson('git-l2', 'ブランチ戦略', `
+      <h3>効果的なブランチ管理</h3>
+      <p>Git FlowやGitHub Flowでブランチ戦略を決めます。</p>
+      <ul><li><strong>main</strong> — 本番環境</li><li><strong>develop</strong> — 開発環境</li><li><strong>feature</strong> — 新機能</li><li><strong>hotfix</strong> — 緊急修正</li></ul>
+      <p>ブランチの目的を明確にします。</p>`),
+    lesson('git-l3', 'GitHub', `
+      <h3>クラウドGitホスティング</h3>
+      <p>GitHubでコードを共有し、コラボレーションします。</p>
+      <ul><li><strong>Pull Request</strong> — 変更の提案</li><strong>Code Review</strong> — コードレビュー</li><strong>Actions</strong> — CI/CD</li></ul>
+      <p>Issuesでタスク管理、Wikiでドキュメント管理もできます。</p>`),
+    lesson('git-l4', 'コンフリクト解決', `
+      <h3>変更の衝突を解決する</h3>
+      <p>同じ行を変更した場合にコンフリクトが発生します。</p>
+      <pre><code>git pull
+# コンフリクトを手動で解決
+git add .
+git commit</code></pre>
+      <p>チームでコミュニケーションを取りながら解決します。</p>`),
+    lesson('git-l5', 'テスト', `
+      <h3>品質を保証する</h3>
+      <p>単体テスト、統合テストを自動化します。</p>
+      <pre><code>describe('Calculator', () => {
+  test('adds 1 + 2 to equal 3', () => {
+    expect(add(1, 2)).toBe(3);
+  });
+});</code></pre>
+      <p>テストカバレッジを追跡します。</p>`),
+    lesson('git-l6', 'デバッグ', `
+      <h3>バグを特定・修正する</h3>
+      <p>ブレークポイント、ログ、デバッガーを使います。</p>
+      <ul><li><strong>Chrome DevTools</strong> — ブラウザデバッグ</li><li><strong>VS Code Debugger</strong> — エディタデバッグ</li><li><strong>console.log</strong> — 簡易ログ</li></ul>
+      <p>再現手順を明確にすることが重要です。</p>`),
+    lesson('git-l7', 'LintとFormat', `
+      <h3>コード品質を統一する</h3>
+      <p>ESLint、Prettierでコードスタイルを統一します。</p>
+      <pre><code>{
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "double"]
+  }
+}</code></pre>
+      <p>自動フォーマットでレビュー負担を減らします。</p>`),
+    lesson('git-l8', 'パッケージ管理', `
+      <h3>依存関係を管理する</h3>
+      <p>npm、yarnでパッケージを管理します。</p>
+      <pre><code>npm install lodash
+npm install --save-dev jest</code></pre>
+      <p>package-lock.jsonでバージョンを固定します。</p>`),
+    lesson('git-l9', 'ドキュメント', `
+      <h3>知識を共有する</h3>
+      <p>README、APIドキュメント、コメントで知識を文書化します。</p>
+      <ul><li><strong>README.md</strong> — プロジェクト概要</li><li><strong>JSDoc</strong> — APIドキュメント</li><li><strong>コメント</strong> — 複雑なロジックの説明</li></ul>
+      <p class="note">コードは「書く時間」より「読む時間」が長いです。</p>`),
+    lesson('git-l10', 'コードレビュー', `
+      <h3>品質を高める協業</h3>
+      <p>Pull Requestでコードレビューを行います。</p>
+      <ul><li><strong>明確な説明</strong> — 変更の意図</li><strong>建設的フィードバック</strong> — 具体的な改善案</li><strong>小さなPR</strong> — レビュー負担軽減</li></ul>
+      <p>学びの機会として捉えます。</p>`),
+  ]),
+  sysdesign: module('sysdesign', 'システム設計', '🏗️', '#f472b6', [
+    lesson('sysdesign-l1', 'スケーラビリティ', `
+      <h3>負荷増加に対応する</h3>
+      <p>垂直スケーリング（スケールアップ）と水平スケーリング（スケールアウト）があります。</p>
+      <ul><li><strong>垂直</strong> — サーバー強化</li><li><strong>水平</strong> — サーバー追加</li></ul>
+      <p>水平スケーリングの方が柔軟性が高く、コスト効率も良いです。</p>`),
+    lesson('sysdesign-l2', '可用性', `
+      <h3>システムを止めない</h3>
+      <p>冗長化、フェイルオーバーで可用性を高めます。</p>
+      <ul><li><strong>冗長化</strong> — 重複配置</li><strong>負荷分散</strong> — トラフィック分散</li><strong>フェイルオーバー</strong> — 自動切り替え</li></ul>
+      <p>99.9%の可用性は月に約43分の停止を許容します。</p>`),
+    lesson('sysdesign-l3', 'キャッシュ', `
+      <h3>高速化と負荷軽減</h3>
+      <p>キャッシュでデータを一時保存し、アクセスを高速化します。</p>
+      <ul><li><strong>ブラウザキャッシュ</strong> — クライアント側</li><strong>CDN</strong> — エッジ側</li><strong>Redis</strong> — サーバー側</li></ul>
+      <p class="note">キャッシュ無効化戦略も重要です。</p>`),
+    lesson('sysdesign-l4', 'データベース設計', `
+      <h3>適切なDBを選ぶ</h3>
+      <p>RDBMSとNoSQLの使い分けが重要です。</p>
+      <ul><li><strong>RDBMS</strong> — トランザクション、複雑なクエリ</li><li><strong>NoSQL</strong> — スケーラビリティ、柔軟性</li></ul>
+      <p>ACID要件とCAP定理を考慮します。</p>`),
+    lesson('sysdesign-l5', 'API設計', `
+      <h3>良いAPIを設計する</h3>
+      <p>REST、GraphQLでAPIを設計します。</p>
+      <ul><li><strong>REST</strong> — リソース指向</li><strong>GraphQL</strong> — クエリ指向</li><strong>gRPC</strong> — 高性能RPC</li></ul>
+      <p>バージョニング、エラーハンドリング、レート制限を設計します。</p>`),
+    lesson('sysdesign-l6', 'マイクロサービス', `
+      <h3>サービスを分割する</h3>
+      <p>単一責任原則でサービスを分割します。</p>
+      <ul><li><strong>利点</strong> — スケーラビリティ、技術的自由</li><strong>欠点</strong> — 運用複雑度、ネットワーク遅延</li></ul>
+      <p>モノリスから徐々に移行するのが現実的です。</p>`),
+    lesson('sysdesign-l7', 'メッセージキュー', `
+      <h3>非同期通信を実現</h3>
+      <p>Kafka、RabbitMQでメッセージをキューイングします。</p>
+      <ul><li><strong>デカップリング</strong> — 依存関係削減</li><strong>バッファリング</strong> — 負荷平準化</li><strong>再試行</strong> — 信頼性向上</li></ul>
+      <p>イベント駆動アーキテクチャの基盤です。</p>`),
+    lesson('sysdesign-l8', 'セキュリティ設計', `
+      <h3>セキュアなシステムを設計</h3>
+      <p>認証、認可、暗号化を設計します。</p>
+      <ul><li><strong>認証</strong> — 本人確認（JWT、OAuth）</li><strong>認可</strong> — アクセス制御（RBAC）</li><strong>暗号化</strong> — TLS、AES</li></ul>
+      <p class="note">最小権限の原則と防御の深さを守ります。</p>`),
+    lesson('sysdesign-l9', '監視とオブザーバビリティ', `
+      <h3>システムの状態を把握</h3>
+      <p>メトリクス、ログ、トレースを収集します。</p>
+      <ul><li><strong>SLI/SLO</strong> — サービス品質目標</li><strong>アラート</strong> — 異常通知</li><strong>ダッシュボード</strong> — 可視化</li></ul>
+      <p>MTTR（平均復旧時間）を短縮します。</p>`),
+    lesson('sysdesign-l10', 'コスト設計', `
+      <h3>コストを最適化</h3>
+      <p>アーキテクチャでコストを最適化します。</p>
+      <ul><li><strong>スポットインスタンス</strong> — 割安リソース</li><strong>ライフサイクル管理</strong> — 不要リソース削除</li><strong>予約購入</strong> — 長期利用割引</li></ul>
+      <p>コストモニタリングと予算管理を行います。</p>`),
+  ]),
 }
 
 export const skillQuestions = [
@@ -281,10 +638,15 @@ export const skillGlossary = {
   linux: terms('linux', [['シェル', 'コマンドを解釈してOSへ伝えるプログラム。'], ['ルートディレクトリ', 'ファイルシステムの最上位「/」。'], ['パイプ', '前の出力を次の入力へ渡す仕組み。'], ['パーミッション', '読み取り・書き込み・実行のアクセス権。'], ['プロセス', '実行中のプログラムの単位。'], ['systemd', 'サービス管理システム。']]),
   database: terms('database', [['主キー', '行を一意に識別するキー。'], ['外部キー', '別テーブルとの関係を表す列。'], ['SQL', 'リレーショナルDBを操作する言語。'], ['JOIN', '複数テーブルを関連付ける操作。'], ['トランザクション', '一まとまりとして扱う処理単位。'], ['インデックス', '検索を高速化するデータ構造。']]),
   web: terms('web', [['HTML', 'Web文書の意味と構造を記述する言語。'], ['CSS', '見た目や配置を指定する言語。'], ['DOM', 'HTMLをオブジェクトのツリーとして表すモデル。'], ['HTTP', 'Webの通信プロトコル。'], ['REST API', 'リソースとHTTPメソッドを中心に設計するAPI。'], ['JSON', 'APIで広く使われるテキスト形式。']]),
+  programming: terms('programming', [['変数', 'データを保存する「箱」。'], ['関数', '処理のまとまり。'], ['配列', '順序付きデータの集合。'], ['オブジェクト', 'キーと値のペア。'], ['Promise', '非同期処理の結果を表すオブジェクト。'], ['async/await', '非同期処理を同期的に記述する構文。'], ['クラス', 'オブジェクトの設計図。'], ['スコープ', '変数の有効範囲。'], ['O記法', 'アルゴリズムの計算量を表す記法。'], ['モジュール', 'コードを分割した単位。'], ['単体テスト', '関数やクラスの最小単位のテスト。'], ['デバッグ', 'バグを特定・修正する作業。']]),
+  cloud: terms('cloud', [['IaaS', 'インフラを提供するクラウドサービス。'], ['PaaS', 'プラットフォームを提供するクラウドサービス。'], ['SaaS', 'ソフトウェアを提供するクラウドサービス。'], ['Docker', 'コンテナ型仮想化プラットフォーム。'], ['Kubernetes', 'コンテナのオーケストレーションツール。'], ['CI/CD', '継続的インテグレーションとデリバリー。'], ['IaC', 'インフラをコードで管理する手法。'], ['VPC', '仮想的なプライベートネットワーク。'], ['IAM', 'アクセス権限管理。'], ['Lambda', 'AWSのサーバーレス関数。'], ['S3', 'AWSのオブジェクトストレージ。'], ['EC2', 'AWSの仮想サーバー。']]),
+  ai: terms('ai', [['機械学習', 'データから学習するAI。'], ['ディープラーニング', '多層ニューラルネットワーク。'], ['教師あり学習', 'ラベル付きデータで学習。'], ['教師なし学習', 'ラベルなしデータで学習。'], ['CNN', '画像処理に特化したNN。'], ['RNN', '時系列データに特化したNN。'], ['Transformer', 'Attention機構を持つNN。'], ['生成AI', '新しいコンテンツを生成するAI。'], ['ハルシネーション', 'もっともらしい誤情報を生成する現象。'], ['ファインチューニング', '学習済みモデルを再学習。'], ['RAG', '外部検索で回答を補完する技術。'], ['XAI', 'AIの判断を説明可能にする分野。']]),
+  git: terms('git', [['Git', 'バージョン管理システム。'], ['commit', '変更を記録する操作。'], ['branch', '作業分岐。'], ['merge', '分岐を統合する操作。'], ['Pull Request', '変更を本流へ取り込んでもらう依頼。'], ['.gitignore', 'Git管理から除外するファイル指定。'], ['stash', '変更を一時退避する操作。'], ['clone', 'リモートリポジトリを複製。'], ['push', '変更をリモートへ送信。'], ['pull', 'リモートの変更を取得。'], ['コンフリクト', '変更の衝突。'], ['TDD', 'テスト駆動開発。']]),
+  sysdesign: terms('sysdesign', [['スケーラビリティ', '負荷増加への対応能力。'], ['可用性', 'システムが稼働し続ける能力。'], ['SPOF', '単一障害点。'], ['水平スケール', 'サーバー台数を増やす拡張。'], ['垂直スケール', 'サーバー性能を上げる拡張。'], ['マイクロサービス', '独立した小さなサービス。'], ['モノリス', '1つのアプリケーション。'], ['API Gateway', 'APIの入り口。'], ['キャッシュ', '高速化のための一時保存。'], ['Redis', 'インメモリデータストア。'], ['シャーディング', 'DBを複数に分割。'], ['レプリケーション', 'データを複製。']]),
 }
 
-function topic(id, title, subtitle, icon, color, description) {
-  return { id, title, subtitle, icon, color, description, level: 'beginner', status: 'available', category: 'skill', path: `/study/${id}`, lessons: 3 }
+function topic(id, title, subtitle, icon, color, description, lessons = 3) {
+  return { id, title, subtitle, icon, color, description, level: 'beginner', status: 'available', category: 'skill', path: `/study/${id}`, lessons }
 }
 function lockedTopic(id, title, icon, description) {
   return { id, title, subtitle: 'Coming Soon', icon, color: '#888', description, level: 'intermediate', status: 'locked', category: 'skill', path: `/study/${id}`, lessons: 0 }

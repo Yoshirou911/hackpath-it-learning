@@ -1,4 +1,4 @@
-import { getState, getQuizStats, getOverallProgress, getTopicProgress } from '../store.js'
+import { getState, getQuizStats, getOverallProgress, getTopicQuizProgress } from '../store.js'
 import { roadmapTopics } from '../data/topics.js'
 import { questions } from '../data/questions.js'
 import { accountRanks, getAccountRank, getCourseRank } from '../data/ranks.js'
@@ -12,7 +12,7 @@ export function renderDashboard() {
   const topicCards = roadmapTopics
     .filter((topic) => topic.status !== 'locked')
     .map((topic) => {
-      const progress = getTopicProgress(topic.id, topic.lessons)
+      const progress = getTopicQuizProgress(topic.id)
       const rank = getCourseRank(progress.completed, progress.total)
       return `
         <a href="#${topic.path}" class="glass-card topic-card ranked-topic-card rank-surface-${rank.id}" data-nav="${topic.path}">
@@ -26,7 +26,7 @@ export function renderDashboard() {
             <div class="progress-bar rank-progress">
               <div class="progress-fill" style="width: ${progress.pct}%; background: ${rank.color}"></div>
             </div>
-            <span class="progress-label">${progress.completed}/${progress.total} レッスン · ${rank.stage}</span>
+            <span class="progress-label">${progress.completed}/${progress.total} 問正解 · ${rank.stage}</span>
           </div>
         </a>
       `
@@ -46,7 +46,7 @@ export function renderDashboard() {
       <div class="rank-command-copy">
         <span class="eyebrow">CURRENT OPERATOR RANK</span>
         <h2>${accountRank.current.label} <small>${accountRank.current.stage}</small></h2>
-        <p>${accountRank.current.tagline}。レッスンとクイズを攻略して次のランクへ。</p>
+        <p>${accountRank.current.tagline}。問題に回答してXPを獲得し、次のランクへ。</p>
         <div class="rank-xp-row"><strong>${state.xp} XP</strong><span>${accountRank.next ? `次の${accountRank.next.label}まで ${accountRank.remainingXP} XP` : '最高ランク到達'}</span></div>
         <div class="rank-meter"><span style="width: ${accountRank.progress}%"></span></div>
       </div>

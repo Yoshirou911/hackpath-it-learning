@@ -1,5 +1,5 @@
 import { roadmapTopics } from '../data/topics.js'
-import { getTopicProgress } from '../store.js'
+import { getTopicQuizProgress } from '../store.js'
 import { getCourseRank, learningRanks } from '../data/ranks.js'
 import { renderRankBadge } from '../components/rank.js'
 
@@ -11,7 +11,7 @@ export function renderRoadmap() {
     <div class="page-header roadmap-rank-header">
       <span class="eyebrow">RANK PROTOCOL</span>
       <h1>3つのランクで、<br><span>知識を実力に変える。</span></h1>
-      <p class="page-subtitle">すべてのコースは基礎・応用・上級の順に解放されます。</p>
+      <p class="page-subtitle">基礎・応用・上級のすべてを自由に閲覧できます。問題に回答してXPを獲得しよう。</p>
     </div>
 
     <div class="rank-protocol-grid">
@@ -22,7 +22,7 @@ export function renderRoadmap() {
           <h2>${rank.stage}</h2>
           <p>${rank.tagline}</p>
           <span class="rank-protocol-line"></span>
-          <small>${index === 0 ? 'START HERE' : index === 1 ? 'BRONZE CLEAR' : 'SILVER CLEAR'}</small>
+          <small>いつでも閲覧可能</small>
         </article>
       `).join('')}
     </div>
@@ -44,7 +44,7 @@ function renderGroup(title, description, topics) {
 }
 
 function renderTopic(topic) {
-  const progress = getTopicProgress(topic.id, topic.lessons)
+  const progress = getTopicQuizProgress(topic.id)
   const rank = getCourseRank(progress.completed, progress.total)
   const locked = topic.status === 'locked'
 
@@ -58,7 +58,7 @@ function renderTopic(topic) {
       <h3>${topic.title}</h3>
       <p>${topic.description}</p>
       <div class="rank-card-footer">
-        <div><div class="progress-bar"><div class="progress-fill" style="width: ${progress.pct}%; background: ${rank.color}"></div></div><small>${progress.completed}/${progress.total} COMPLETE</small></div>
+        <div><div class="progress-bar"><div class="progress-fill" style="width: ${progress.pct}%; background: ${rank.color}"></div></div><small>${progress.completed}/${progress.total} 問正解</small></div>
         ${locked ? '<span class="rank-lock-symbol">⌁</span>' : `<a href="#${topic.path}" class="rank-arrow-link" data-nav="${topic.path}" aria-label="${topic.title}を開く">↗</a>`}
       </div>
     </article>

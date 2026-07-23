@@ -282,7 +282,7 @@ export function bindQuizEvents(container) {
       const question = currentQuestions[currentQuestionIndex]
       const isCorrect = selectedChoice === question.answer
       answered = true
-      recordQuizAnswer(question.id, isCorrect)
+      recordQuizAnswer(question.id, isCorrect, question.topic)
       
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)

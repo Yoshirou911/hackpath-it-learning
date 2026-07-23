@@ -1,3 +1,5 @@
+import { getQuestionsByTopic } from './data/questions.js'
+
 const STORAGE_KEY = 'hackpath-progress'
 const STORAGE_OWNER_KEY = 'hackpath-progress-owner'
 
@@ -194,7 +196,7 @@ export function addXP(amount) {
   return state
 }
 
-export function recordQuizAnswer(questionId, isCorrect) {
+export function recordQuizAnswer(questionId, isCorrect, topicId = null) {
   const previousAnswer = state.quiz.answered[questionId]
   if (previousAnswer === true || (previousAnswer === false && !isCorrect)) return state
 
@@ -202,6 +204,7 @@ export function recordQuizAnswer(questionId, isCorrect) {
     state.quiz.answered[questionId] = true
     state.quiz.correct += 1
     addXP(8)
+    if (topicId) syncTopicProgressFromQuiz(topicId)
     addHistoryEntry('quiz', { questionId, isCorrect, corrected: true })
     saveState(state)
     return state
@@ -215,9 +218,32 @@ export function recordQuizAnswer(questionId, isCorrect) {
   } else {
     addXP(2)
   }
+  if (topicId) syncTopicProgressFromQuiz(topicId)
   addHistoryEntry('quiz', { questionId, isCorrect })
   saveState(state)
   return state
+}
+
+// 問題IDが数値の資格コースと文字列の実務コースの両方に対応する。
+function syncTopicProgressFromQuiz(topicId) {
+  const topicQuestions = getQuestionsByTopic(topicId)
+  const questionIds = new Set(topicQuestions.map((question) => String(question.id)))
+  const correctCount = Object.entries(state.quiz.answered)
+    .filter(([id, correct]) => questionIds.has(String(id)) && correct === true)
+    .length
+  const topic = state.topics[topicId] || { completedLessonIds: [] }
+  topic.completedLessonIds ??= []
+  topic.completed = correctCount
+  topic.total = topicQuestions.length
+  state.topics[topicId] = topic
+  return topic
+}
+
+export function getTopicQuizProgress(topicId) {
+  const topic = syncTopicProgressFromQuiz(topicId)
+  saveState(state)
+  const pct = topic.total > 0 ? Math.round((topic.completed / topic.total) * 100) : 0
+  return { ...topic, pct }
 }
 
 export function getQuizStats() {
@@ -230,7 +256,6 @@ export function getQuizStats() {
 
 export function markFlashcardKnown(termId) {
   state.flashcards[termId] = true
-  addXP(5)
   saveState(state)
 }
 
@@ -256,7 +281,6 @@ export function completeLesson(topicId, totalLessons, lessonId) {
     topic.completed += 1
     topic.total = totalLessons
     state.topics[topicId] = topic
-    addXP(15)
     addHistoryEntry('lesson', { topicId, lessonId })
     saveState(state)
   }
@@ -287,4 +311,37 @@ export function addHistoryEntry(type, data) {
 
 export function getHistory(limit = 50) {
   return state.history.slice(0, limit)
+}
+
+// ─── カスタムレッスン管理（独立したlocalStorageキー） ───────────────────────
+
+const CUSTOM_LESSONS_KEY = 'hackpath-custom-lessons'
+
+export function getCustomLessons() {
+  try {
+    return JSON.parse(localStorage.getItem(CUSTOM_LESSONS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+export function saveCustomLesson({ id, topicId, title, content, tags = '' }) {
+  const lessons = getCustomLessons()
+  const now = Date.now()
+  if (id) {
+    const idx = lessons.findIndex(l => l.id === id)
+    if (idx >= 0) {
+      lessons[idx] = { ...lessons[idx], topicId, title, content, tags, updatedAt: now }
+    } else {
+      lessons.push({ id, topicId, title, content, tags, createdAt: now, updatedAt: now })
+    }
+  } else {
+    lessons.push({ id: `custom-${now}`, topicId, title, content, tags, createdAt: now, updatedAt: now })
+  }
+  localStorage.setItem(CUSTOM_LESSONS_KEY, JSON.stringify(lessons))
+}
+
+export function deleteCustomLesson(id) {
+  const lessons = getCustomLessons().filter(l => l.id !== id)
+  localStorage.setItem(CUSTOM_LESSONS_KEY, JSON.stringify(lessons))
 }
