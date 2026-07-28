@@ -26,6 +26,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
 - `src/data/ranks.js`: ランク定義、XPランク判定、レッスンの3段階配分
 - `src/components/rank.js`: ランクバッジとエンブレムの共通描画
+- `src/components/lessonExplainer.js`: 短い教材へ分野説明と用語の意味・必要性・理解チェックを補う共通描画
 - `src/store.js`: XP、回答、進捗、履歴のlocalStorage保存・クラウド同期・旧データ移行
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
@@ -56,6 +57,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 トピックIDは英小文字の短い名前にし、レッスンIDは`<topic>-l<number>`、クイズIDは既存の数値IDと衝突しない文字列を使います。
 
 深掘り教材は「要点 → 身近なたとえ → 図解 → 仕組みの説明 → 実践課題 → よくある失敗」の順を基本にします。既存の`concept-diagram`、`concept-callout`、`practice-card`、`pitfall-card`を再利用すると、スマートフォンを含め同じ見た目を保てます。
+短い既存教材は`renderExplainedLesson()`が表示時に理解ガイドと用語説明カードを補います。`lesson-lead`を持つ深掘り済み教材と`isCustom`の個人ノートはそのまま表示します。新しい短い教材の用語は`<li><strong>用語</strong> — 概要</li>`形式にすると説明カードへ変換されます。
 
 ## データ契約
 
@@ -100,7 +102,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - 追加ノートは`hackpath-custom-lessons`へ端末内保存する。`renderContent()`で必ずHTMLエスケープしてから限定的なマークダウンを変換しており、生HTMLを許可しない。
 - `getTopicProgress`は参照時にlocalStorageも更新するため、将来は読み取りと保存を分離する余地がある。
 - 成績は全コース合算。分野別集計は未実装。問題画面には全問題・未回答・不正解の復習切り替えがある。
-- `npm.cmd test`で保存データの分離・移行、XPルール、教材数、ID重複、深掘り教材の構成を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
+- `npm.cmd test`で保存データの分離・移行、XPルール、教材数、ID重複、深掘り教材の構成、短い教材の説明変換を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
 - 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。

@@ -1049,6 +1049,115 @@ code {
   line-height: 1.85;
 }
 
+.lesson-understanding-guide {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 28px;
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid rgba(var(--rank-rgb, 192, 132, 252), .28);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(var(--rank-rgb, 192, 132, 252), .12), transparent 55%),
+    #0a101d;
+}
+
+.lesson-understanding-guide::after {
+  position: absolute;
+  right: -54px;
+  bottom: -76px;
+  width: 190px;
+  height: 190px;
+  content: '';
+  border: 1px solid rgba(var(--rank-rgb, 192, 132, 252), .2);
+  border-radius: 50%;
+}
+
+.lesson-understanding-guide h2 {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 12px;
+  color: var(--text-h);
+  font-size: clamp(22px, 3.4vw, 32px);
+  line-height: 1.25;
+}
+
+.lesson-understanding-guide > p {
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+  line-height: 1.85;
+}
+
+.lesson-guide-reason {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin: 18px 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--rank-color, var(--accent));
+  background: rgba(255, 255, 255, .035);
+}
+
+.lesson-guide-reason strong { color: var(--rank-color, var(--accent)); white-space: nowrap; }
+.lesson-guide-reason p { color: var(--text-h); line-height: 1.7; }
+.lesson-guide-tip { font-size: 13px; }
+
+.explained-concept-list {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-explanation-card {
+  position: relative;
+  display: grid;
+  gap: 11px;
+  padding: 19px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid rgba(var(--rank-rgb, 192, 132, 252), .7);
+  border-radius: 12px;
+  background: linear-gradient(110deg, rgba(var(--rank-rgb, 192, 132, 252), .075), var(--card-bg) 42%);
+}
+
+.concept-explanation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.concept-explanation-heading strong { color: var(--text-h); font-size: 18px; }
+.concept-explanation-heading span {
+  color: var(--rank-color, var(--accent));
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  white-space: nowrap;
+}
+
+.concept-explanation-card p { margin: 0; color: var(--text); line-height: 1.75; }
+.concept-explanation-card p b {
+  display: inline-block;
+  min-width: 78px;
+  margin-right: 8px;
+  color: var(--text-h);
+  font-size: 12px;
+}
+
+.concept-explanation-card .concept-check {
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, .11);
+  font-size: 12px;
+  opacity: .82;
+}
+
 .concept-callout {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -1271,6 +1380,9 @@ code {
   .foundation-map-card img { min-height: 210px; max-height: 260px; }
   .foundation-map-card figcaption { padding: 22px; }
   .concept-callout { grid-template-columns: 1fr; gap: 8px; }
+  .lesson-guide-reason { grid-template-columns: 1fr; gap: 6px; }
+  .concept-explanation-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .concept-explanation-card p b { display: block; margin: 0 0 3px; }
   .diagram-track, .compare-diagram .diagram-track { grid-template-columns: 1fr; }
   .flow-diagram .diagram-node:not(:last-child)::after,
   .sequence-diagram .diagram-node:not(:last-child)::after {

@@ -2,6 +2,7 @@ import { getStudyModule } from '../data/content.js'
 import { getTopicById } from '../data/topics.js'
 import { getCourseRank, getLessonRank, getStageLayout } from '../data/ranks.js'
 import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
+import { renderExplainedLesson } from '../components/lessonExplainer.js'
 import { getTopicQuizProgress, getCustomLessons } from '../store.js'
 import { renderContent } from './editor.js'
 
@@ -49,6 +50,11 @@ export function renderStudy(path, params) {
   const lessonRank = getLessonRank(lessonIndex, mergedModule.lessons.length)
   const prevLesson = lessonIndex > 0 ? mergedModule.lessons[lessonIndex - 1] : null
   const nextLesson = lessonIndex < mergedModule.lessons.length - 1 ? mergedModule.lessons[lessonIndex + 1] : null
+  const explainedContent = renderExplainedLesson(lesson.content, {
+    topicId,
+    lessonTitle: lesson.title,
+    isCustom: lesson.isCustom,
+  })
 
   return `
     <div class="page-header lesson-rank-header">
@@ -60,7 +66,7 @@ export function renderStudy(path, params) {
     </div>
 
     <div class="lesson-content rank-lesson-content rank-surface-${lessonRank.id}">
-      <div class="glass-card"><div class="lesson-content-body">${lesson.content}</div></div>
+      <div class="glass-card"><div class="lesson-content-body">${explainedContent}</div></div>
 
       <!-- 読むだけモード：XPなし・問題演習への誘導のみ -->
       <div class="glass-card" style="margin-top:16px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; background: rgba(108,71,255,0.08); border: 1px solid rgba(108,71,255,0.25);">
