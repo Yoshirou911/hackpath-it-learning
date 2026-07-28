@@ -23,6 +23,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/questions.js`: 全クイズを統合
 - `src/data/glossary.js`: 全用語を統合
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
+- `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
 - `src/data/ranks.js`: ランク定義、XPランク判定、レッスンの3段階配分
 - `src/components/rank.js`: ランクバッジとエンブレムの共通描画
 - `src/store.js`: XP、回答、進捗、履歴のlocalStorage保存・クラウド同期・旧データ移行
@@ -42,6 +43,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 ## コース追加手順
 
 実務スキル系コースは原則として`src/data/skillCourses.js`へ追加します。
+基盤4分野の教材を拡張する場合は、見通しを保つため`src/data/foundationCourseExpansion.js`へ追加し、`skillCourses.js`から統合します。
 
 1. `skillCourseTopics`へトピック情報を追加
 2. 同じIDで`skillCourseModules`へレッスンを追加
@@ -52,6 +54,8 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 7. `PROGRESS.md`を更新
 
 トピックIDは英小文字の短い名前にし、レッスンIDは`<topic>-l<number>`、クイズIDは既存の数値IDと衝突しない文字列を使います。
+
+深掘り教材は「要点 → 身近なたとえ → 図解 → 仕組みの説明 → 実践課題 → よくある失敗」の順を基本にします。既存の`concept-diagram`、`concept-callout`、`practice-card`、`pitfall-card`を再利用すると、スマートフォンを含め同じ見た目を保てます。
 
 ## データ契約
 
@@ -95,15 +99,15 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - レッスンHTMLは信頼済みのローカルデータを直接描画している。ユーザー入力を同じ方法で描画しないこと。
 - 追加ノートは`hackpath-custom-lessons`へ端末内保存する。`renderContent()`で必ずHTMLエスケープしてから限定的なマークダウンを変換しており、生HTMLを許可しない。
 - `getTopicProgress`は参照時にlocalStorageも更新するため、将来は読み取りと保存を分離する余地がある。
-- 成績は全コース合算。分野別集計と苦手問題モードは未実装。
-- `npm.cmd test`でアカウント切り替え時の分離と旧localStorage移行を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
+- 成績は全コース合算。分野別集計は未実装。問題画面には全問題・未回答・不正解の復習切り替えがある。
+- `npm.cmd test`で保存データの分離・移行、XPルール、教材数、ID重複、深掘り教材の構成を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
 - 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。
 
 ## 推奨する次の実装
 
-最優先は「復習モード」です。`state.quiz.answered`を利用し、不正解・未回答・全問題を切り替えられるようにします。その後、履歴を日別・分野別に集計する成績グラフを追加してください。
+次は、履歴を日別・分野別に集計する成績グラフ、SQLやJavaScriptを安全に試せるブラウザ演習、コース検索と難易度フィルターの順で検討してください。
 
 ## 完了条件
 

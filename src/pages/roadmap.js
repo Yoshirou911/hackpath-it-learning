@@ -14,6 +14,15 @@ export function renderRoadmap() {
       <p class="page-subtitle">基礎・応用・上級のすべてを自由に閲覧できます。問題に回答してXPを獲得しよう。</p>
     </div>
 
+    <figure class="foundation-map-card">
+      <img src="/foundations-map.png" alt="Web、Linuxサーバー、ネットワーク、データベースが連携するITシステムの全体図">
+      <figcaption>
+        <span class="eyebrow">FOUNDATION SYSTEM MAP</span>
+        <h2>4つの基盤は、1つのシステムとしてつながる。</h2>
+        <p>Webの要求はネットワークを通り、Linux上の処理がデータベースを読み書きします。各教材では仕組み・実践・障害対応をつなげて学びます。</p>
+      </figcaption>
+    </figure>
+
     <div class="rank-protocol-grid">
       ${learningRanks.map((rank, index) => `
         <article class="rank-protocol-card rank-surface-${rank.id}">

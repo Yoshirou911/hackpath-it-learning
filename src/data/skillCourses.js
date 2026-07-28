@@ -1,11 +1,16 @@
 // 実務スキル系コース。topic / module / questions / glossary は同じIDで揃える。
 // 資格系データと分離し、コース単位で追加・差し替えしやすくしている。
+import {
+  foundationCourseLessons,
+  foundationCourseQuestions,
+  foundationGlossaryTerms,
+} from './foundationCourseExpansion.js'
 
 export const skillCourseTopics = [
-  topic('network', 'ネットワーク基礎', '通信の流れを図解で理解する', '🌐', '#20c997', 'TCP/IP、IPアドレス、DNS、HTTPと障害調査の基本', 3),
-  topic('linux', 'Linux・OS', 'コマンド操作とOSの仕組み', '🐧', '#f5b700', 'ファイル操作、権限、プロセス、ログの読み方', 3),
-  topic('database', 'データベース・SQL', 'データを正しく設計して扱う', '🗄️', '#4dabf7', 'SQL、テーブル設計、正規化、トランザクション', 3),
-  topic('web', 'Web開発・API', 'Webアプリが動く仕組みを学ぶ', '🕸️', '#ff6b9d', 'HTML/CSS/JavaScript、HTTP、REST API、ブラウザ', 3),
+  topic('network', 'ネットワーク基礎', '通信の流れを図解で理解する', '🌐', '#20c997', 'TCP/IP、IPアドレス、DNS、HTTPと障害調査の基本', 10),
+  topic('linux', 'Linux・OS', 'コマンド操作とOSの仕組み', '🐧', '#f5b700', 'ファイル操作、権限、プロセス、ログの読み方', 10),
+  topic('database', 'データベース・SQL', 'データを正しく設計して扱う', '🗄️', '#4dabf7', 'SQL、テーブル設計、正規化、トランザクション', 10),
+  topic('web', 'Web開発・API', 'Webアプリが動く仕組みを学ぶ', '🕸️', '#ff6b9d', 'HTML/CSS/JavaScript、HTTP、REST API、ブラウザ', 10),
   topic('programming', 'プログラミング', 'プログラミング基礎', '⌨️', '#a78bfa', '変数・ループ・関数・OOP・アルゴリズム', 10),
   topic('cloud', 'クラウド・DevOps', 'クラウド・DevOps基礎', '☁️', '#38bdf8', 'AWS・Docker・K8s・CI/CD・IaC', 10),
   topic('ai', 'AI・機械学習', 'AI・機械学習基礎', '🤖', '#fb923c', 'ML・DL・NLP・生成AI・倫理', 10),
@@ -47,6 +52,7 @@ export const skillCourseModules = {
       <h3>URLを開いたときに起こること</h3>
       <ol><li>DNSで名前解決</li><li>TCP接続を確立</li><li>HTTPSではTLSで暗号化</li><li>HTTPレスポンスを受信</li></ol>
       <p><code>ping</code>、<code>nslookup</code>、<code>tracert</code>、<code>curl</code>を使うと、段階ごとに状態を確認できます。</p>`),
+    ...foundationCourseLessons.network,
   ]),
   linux: module('linux', 'Linux・OS', '🐧', '#f5b700', [
     lesson('linux-l1', 'Linuxとシェルの基本', `
@@ -61,6 +67,7 @@ export const skillCourseModules = {
       <h3>動作中のシステムを観察する</h3>
       <ul><li><code>ps</code> / <code>top</code> — プロセス確認</li><li><code>systemctl</code> — サービス管理</li><li><code>journalctl</code> — ログ確認</li><li><code>kill</code> — シグナル送信</li></ul>
       <p>障害時は状態、ログ、設定、リソース使用量の順に確認すると整理しやすくなります。</p>`),
+    ...foundationCourseLessons.linux,
   ]),
   database: module('database', 'データベース・SQL', '🗄️', '#4dabf7', [
     lesson('database-l1', 'リレーショナルDBの基本', `
@@ -105,6 +112,7 @@ export const skillCourseModules = {
       <h3>正しさと速さを両立する</h3>
       <p><code>JOIN</code>は関連するキーで複数テーブルを結合します。トランザクションは複数操作を一まとまりにしてACID特性を守ります。</p>
       <p>インデックスは検索を高速化しますが、保存容量と書き込みコストが増えるため検索条件に合わせて設計します。</p>`),
+    ...foundationCourseLessons.database,
   ]),
   web: module('web', 'Web開発・API', '🕸️', '#ff6b9d', [
     lesson('web-l1', 'HTML・CSS・JavaScript', `
@@ -150,6 +158,7 @@ export const skillCourseModules = {
       <h3>クライアントとサーバーの対話</h3>
       <ul><li><strong>GET</strong> — 取得</li><li><strong>POST</strong> — 作成</li><li><strong>PATCH</strong> — 更新</li><li><strong>DELETE</strong> — 削除</li></ul>
       <p>RESTではURLをリソースとして設計し、JSONでデータを交換します。通信失敗に加えて4xx・5xxも処理します。</p>`),
+    ...foundationCourseLessons.web,
   ]),
   programming: module('programming', 'プログラミング', '⌨️', '#a78bfa', [
     lesson('programming-l1', '変数とデータ型', `
@@ -631,13 +640,14 @@ export const skillQuestions = [
   q('web-1', 'web', 'Webページの意味と構造を担当するものはどれか。', ['HTML', 'CSS', 'SQL', 'DNS'], 0, 'HTMLは文書の意味と構造を表します。'),
   q('web-2', 'web', '既存リソースの取得に通常使うHTTPメソッドはどれか。', ['GET', 'POST', 'DELETE', 'PATCH'], 0, 'GETはリソースの取得に使用します。'),
   q('web-3', 'web', 'JavaScriptからHTML要素を操作するモデルはどれか。', ['DOM', 'DNS', 'ORM', 'CLI'], 0, 'DOMはHTMLをツリー状のオブジェクトとして表します。'),
+  ...foundationCourseQuestions,
 ]
 
 export const skillGlossary = {
-  network: terms('network', [['TCP/IP', 'インターネット通信を支えるプロトコル群。'], ['IPアドレス', '機器を識別する論理アドレス。'], ['サブネット', 'IPネットワークを分割した範囲。'], ['DNS', 'ドメイン名とIPアドレスを対応付ける仕組み。'], ['ルータ', '異なるネットワーク間でパケットを転送する機器。'], ['HTTPS', 'TLSで暗号化されたHTTP通信。']]),
-  linux: terms('linux', [['シェル', 'コマンドを解釈してOSへ伝えるプログラム。'], ['ルートディレクトリ', 'ファイルシステムの最上位「/」。'], ['パイプ', '前の出力を次の入力へ渡す仕組み。'], ['パーミッション', '読み取り・書き込み・実行のアクセス権。'], ['プロセス', '実行中のプログラムの単位。'], ['systemd', 'サービス管理システム。']]),
-  database: terms('database', [['主キー', '行を一意に識別するキー。'], ['外部キー', '別テーブルとの関係を表す列。'], ['SQL', 'リレーショナルDBを操作する言語。'], ['JOIN', '複数テーブルを関連付ける操作。'], ['トランザクション', '一まとまりとして扱う処理単位。'], ['インデックス', '検索を高速化するデータ構造。']]),
-  web: terms('web', [['HTML', 'Web文書の意味と構造を記述する言語。'], ['CSS', '見た目や配置を指定する言語。'], ['DOM', 'HTMLをオブジェクトのツリーとして表すモデル。'], ['HTTP', 'Webの通信プロトコル。'], ['REST API', 'リソースとHTTPメソッドを中心に設計するAPI。'], ['JSON', 'APIで広く使われるテキスト形式。']]),
+  network: terms('network', [['TCP/IP', 'インターネット通信を支えるプロトコル群。'], ['IPアドレス', '機器を識別する論理アドレス。'], ['サブネット', 'IPネットワークを分割した範囲。'], ['DNS', 'ドメイン名とIPアドレスを対応付ける仕組み。'], ['ルータ', '異なるネットワーク間でパケットを転送する機器。'], ['HTTPS', 'TLSで暗号化されたHTTP通信。'], ...foundationGlossaryTerms.network]),
+  linux: terms('linux', [['シェル', 'コマンドを解釈してOSへ伝えるプログラム。'], ['ルートディレクトリ', 'ファイルシステムの最上位「/」。'], ['パイプ', '前の出力を次の入力へ渡す仕組み。'], ['パーミッション', '読み取り・書き込み・実行のアクセス権。'], ['プロセス', '実行中のプログラムの単位。'], ['systemd', 'サービス管理システム。'], ...foundationGlossaryTerms.linux]),
+  database: terms('database', [['主キー', '行を一意に識別するキー。'], ['外部キー', '別テーブルとの関係を表す列。'], ['SQL', 'リレーショナルDBを操作する言語。'], ['JOIN', '複数テーブルを関連付ける操作。'], ['トランザクション', '一まとまりとして扱う処理単位。'], ['インデックス', '検索を高速化するデータ構造。'], ...foundationGlossaryTerms.database]),
+  web: terms('web', [['HTML', 'Web文書の意味と構造を記述する言語。'], ['CSS', '見た目や配置を指定する言語。'], ['DOM', 'HTMLをオブジェクトのツリーとして表すモデル。'], ['HTTP', 'Webの通信プロトコル。'], ['REST API', 'リソースとHTTPメソッドを中心に設計するAPI。'], ['JSON', 'APIで広く使われるテキスト形式。'], ...foundationGlossaryTerms.web]),
   programming: terms('programming', [['変数', 'データを保存する「箱」。'], ['関数', '処理のまとまり。'], ['配列', '順序付きデータの集合。'], ['オブジェクト', 'キーと値のペア。'], ['Promise', '非同期処理の結果を表すオブジェクト。'], ['async/await', '非同期処理を同期的に記述する構文。'], ['クラス', 'オブジェクトの設計図。'], ['スコープ', '変数の有効範囲。'], ['O記法', 'アルゴリズムの計算量を表す記法。'], ['モジュール', 'コードを分割した単位。'], ['単体テスト', '関数やクラスの最小単位のテスト。'], ['デバッグ', 'バグを特定・修正する作業。']]),
   cloud: terms('cloud', [['IaaS', 'インフラを提供するクラウドサービス。'], ['PaaS', 'プラットフォームを提供するクラウドサービス。'], ['SaaS', 'ソフトウェアを提供するクラウドサービス。'], ['Docker', 'コンテナ型仮想化プラットフォーム。'], ['Kubernetes', 'コンテナのオーケストレーションツール。'], ['CI/CD', '継続的インテグレーションとデリバリー。'], ['IaC', 'インフラをコードで管理する手法。'], ['VPC', '仮想的なプライベートネットワーク。'], ['IAM', 'アクセス権限管理。'], ['Lambda', 'AWSのサーバーレス関数。'], ['S3', 'AWSのオブジェクトストレージ。'], ['EC2', 'AWSの仮想サーバー。']]),
   ai: terms('ai', [['機械学習', 'データから学習するAI。'], ['ディープラーニング', '多層ニューラルネットワーク。'], ['教師あり学習', 'ラベル付きデータで学習。'], ['教師なし学習', 'ラベルなしデータで学習。'], ['CNN', '画像処理に特化したNN。'], ['RNN', '時系列データに特化したNN。'], ['Transformer', 'Attention機構を持つNN。'], ['生成AI', '新しいコンテンツを生成するAI。'], ['ハルシネーション', 'もっともらしい誤情報を生成する現象。'], ['ファインチューニング', '学習済みモデルを再学習。'], ['RAG', '外部検索で回答を補完する技術。'], ['XAI', 'AIの判断を説明可能にする分野。']]),
