@@ -1,4 +1,5 @@
 import { skillCourseTopics } from './skillCourses.js'
+import { stackTopic } from './stackCourse.js'
 
 const certificationTopics = [
   {
@@ -68,7 +69,7 @@ certificationTopics.forEach((topic) => {
   topic.category ??= topic.id === 'gamedev' ? 'skill' : 'certification'
 })
 
-export const roadmapTopics = [...certificationTopics, ...skillCourseTopics]
+export const roadmapTopics = [...certificationTopics, ...skillCourseTopics, stackTopic]
 
 export function getTopicById(id) {
   return roadmapTopics.find((t) => t.id === id)

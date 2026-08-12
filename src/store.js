@@ -25,6 +25,7 @@ const DEFAULT_STATE = {
     ai: { completed: 0, total: 0, completedLessonIds: [] },
     git: { completed: 0, total: 0, completedLessonIds: [] },
     sysdesign: { completed: 0, total: 0, completedLessonIds: [] },
+    stack: { completed: 0, total: 0, completedLessonIds: [] },
   },
   flashcards: {},
   lastVisited: '/',

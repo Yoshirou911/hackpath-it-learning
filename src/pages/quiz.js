@@ -6,17 +6,32 @@ import { navigate } from '../router.js'
 let currentQuestionIndex = 0
 let currentQuestions = []
 let selectedChoice = null
+let textAnswer = ''
 let answered = false
 let currentMode = 'all'
 let currentTopic = ''
 
-// mode: 'all' | 'unanswered' | 'incorrect'
+// mode: 'all' | 'weak' | 'unanswered' | 'incorrect'
 function filterQuestions(base, mode) {
   const state = getState()
   const answeredMap = state.quiz.answered || {}
   if (mode === 'unanswered') return base.filter(q => !(q.id in answeredMap))
   if (mode === 'incorrect') return base.filter(q => answeredMap[q.id] === false)
+  if (mode === 'weak') {
+    return [...base].sort((a, b) => weaknessScore(b, answeredMap) - weaknessScore(a, answeredMap)
+      || stableQuestionOrder(a.id) - stableQuestionOrder(b.id))
+  }
   return base
+}
+
+function weaknessScore(question, answeredMap) {
+  const result = answeredMap[question.id]
+  const answerWeight = result === false ? 5 : result === true ? 1 : 3
+  return answerWeight * 10 + (Number(question.difficulty) || 0)
+}
+
+function stableQuestionOrder(id) {
+  return [...String(id)].reduce((total, character) => total + character.charCodeAt(0), 0)
 }
 
 export function renderQuiz(path, params = []) {
@@ -28,6 +43,7 @@ export function renderQuiz(path, params = []) {
   currentQuestions = filterQuestions(baseQuestions, currentMode)
   currentQuestionIndex = 0
   selectedChoice = null
+  textAnswer = ''
   answered = false
 
   const stats = getQuizStats()
@@ -47,6 +63,7 @@ export function renderQuiz(path, params = []) {
 
   const modeOptions = [
     { value: 'all',        label: `全問題 (${totalAll})`,        icon: '📋' },
+    { value: 'weak',       label: '苦手優先',                    icon: '🎯' },
     { value: 'unanswered', label: `未回答 (${totalUnanswered})`, icon: '❓' },
     { value: 'incorrect',  label: `不正解 (${totalIncorrect})`,  icon: '❌' },
   ]
@@ -96,10 +113,43 @@ export function renderQuiz(path, params = []) {
     </div>
 
     <div class="quiz-container">
+      ${renderCategoryInsights(baseQuestions, answeredMap)}
       <div id="quiz-content">
         ${renderQuestionCard()}
       </div>
     </div>
+  `
+}
+
+function renderCategoryInsights(baseQuestions, answeredMap) {
+  const categories = new Map()
+  baseQuestions.filter((question) => question.category).forEach((question) => {
+    const current = categories.get(question.category) || { total: 0, answered: 0, correct: 0 }
+    current.total += 1
+    if (question.id in answeredMap) current.answered += 1
+    if (answeredMap[question.id] === true) current.correct += 1
+    categories.set(question.category, current)
+  })
+  if (!categories.size) return ''
+
+  const rows = [...categories.entries()].map(([name, values]) => ({
+    name,
+    ...values,
+    accuracy: values.answered ? Math.round((values.correct / values.answered) * 100) : null,
+  })).sort((a, b) => (a.accuracy ?? -1) - (b.accuracy ?? -1) || b.total - a.total).slice(0, 6)
+
+  return `
+    <section class="glass-card weakness-panel">
+      <div><span class="eyebrow">WEAKNESS SCAN</span><h2>分野別の理解度</h2><p>未回答・正答率が低い分野から表示しています。</p></div>
+      <div class="weakness-grid">
+        ${rows.map((row) => `
+          <div class="weakness-item">
+            <div><strong>${row.name}</strong><span>${row.answered}/${row.total}問回答</span></div>
+            <b>${row.accuracy === null ? '未回答' : `${row.accuracy}%`}</b>
+          </div>
+        `).join('')}
+      </div>
+    </section>
   `
 }
 
@@ -176,8 +226,16 @@ function renderQuestionCard() {
       </div>
       
       <p class="question-text">${question.question}</p>
-      
-      <ul class="choices-list">
+
+      ${question.pseudocode ? `<pre class="quiz-pseudocode"><code>${escapeHtml(question.pseudocode)}</code></pre>` : ''}
+
+      ${question.inputType === 'text' ? `
+        <div class="text-answer-area">
+          <label for="text-answer">答えを入力</label>
+          <input id="text-answer" type="text" value="${escapeHtml(textAnswer)}" autocomplete="off" ${answered ? 'disabled' : ''} placeholder="例：9 または {1, 2, 3}">
+          ${answered ? `<p class="text-answer-result ${normalizeAnswer(textAnswer) === normalizeAnswer(question.expectedAnswer) ? 'correct' : 'incorrect'}">正解：${escapeHtml(question.expectedAnswer)}</p>` : ''}
+        </div>
+      ` : `<ul class="choices-list">
         ${question.choices.map((choice, index) => `
           <li class="choice-item ${selectedChoice === index ? 'selected' : ''} ${answered && index === question.answer ? 'correct' : ''} ${answered && selectedChoice === index && index !== question.answer ? 'incorrect' : ''}" 
               data-choice="${index}" 
@@ -186,7 +244,7 @@ function renderQuestionCard() {
             ${choice}
           </li>
         `).join('')}
-      </ul>
+      </ul>`}
 
       <div class="explanation ${answered ? 'visible' : ''}">
         <strong>解説:</strong>
@@ -199,7 +257,7 @@ function renderQuestionCard() {
         </button>
         
         ${!answered ? `
-          <button class="btn btn-primary" id="submit-answer" ${selectedChoice === null ? 'disabled style="opacity: 0.5;"' : ''}>
+          <button class="btn btn-primary" id="submit-answer" ${(question.inputType === 'text' ? !textAnswer.trim() : selectedChoice === null) ? 'disabled style="opacity: 0.5;"' : ''}>
             回答する
           </button>
         ` : `
@@ -250,6 +308,7 @@ export function bindQuizEvents(container) {
       currentQuestions = filterQuestions(baseQuestions, currentMode)
       currentQuestionIndex = 0
       selectedChoice = null
+      textAnswer = ''
       answered = false
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)
@@ -273,14 +332,30 @@ export function bindQuizEvents(container) {
     })
   })
 
+  const textInput = container.querySelector('#text-answer')
+  if (textInput && !answered) {
+    textInput.addEventListener('input', () => {
+      textAnswer = textInput.value
+      const submit = container.querySelector('#submit-answer')
+      if (submit) {
+        submit.disabled = !textAnswer.trim()
+        submit.style.opacity = textAnswer.trim() ? '1' : '0.5'
+      }
+    })
+    textInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && textAnswer.trim()) container.querySelector('#submit-answer')?.click()
+    })
+  }
+
   // 回答ボタン
   const submitBtn = container.querySelector('#submit-answer')
   if (submitBtn) {
     submitBtn.addEventListener('click', () => {
-      if (selectedChoice === null || answered) return
-      
       const question = currentQuestions[currentQuestionIndex]
-      const isCorrect = selectedChoice === question.answer
+      if (answered || (question.inputType === 'text' ? !textAnswer.trim() : selectedChoice === null)) return
+      const isCorrect = question.inputType === 'text'
+        ? normalizeAnswer(textAnswer) === normalizeAnswer(question.expectedAnswer)
+        : selectedChoice === question.answer
       answered = true
       recordQuizAnswer(question.id, isCorrect, question.topic)
       
@@ -295,6 +370,7 @@ export function bindQuizEvents(container) {
     nextBtn.addEventListener('click', () => {
       currentQuestionIndex++
       selectedChoice = null
+      textAnswer = ''
       answered = false
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)
@@ -308,6 +384,7 @@ export function bindQuizEvents(container) {
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--
         selectedChoice = null
+        textAnswer = ''
         answered = false
         container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
         bindQuizEvents(container)
@@ -321,6 +398,7 @@ function _reloadWithCurrentSettings() {
   currentQuestions = filterQuestions(baseQuestions, currentMode)
   currentQuestionIndex = 0
   selectedChoice = null
+  textAnswer = ''
   answered = false
   // ページ全体を再描画
   const app = document.getElementById('app')
@@ -329,4 +407,14 @@ function _reloadWithCurrentSettings() {
     app.innerHTML = renderQuiz(path, currentTopic ? [currentTopic, currentMode] : ['', currentMode])
     bindQuizEvents(app)
   }
+}
+
+function normalizeAnswer(value) {
+  return String(value ?? '').trim().replace(/[\s　]/g, '').toLocaleLowerCase('ja')
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[character])
 }

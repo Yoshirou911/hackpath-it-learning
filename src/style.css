@@ -767,6 +767,61 @@ code {
   margin-top: 24px;
 }
 
+.weakness-panel {
+  display: grid;
+  grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr);
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 209, 102, .2);
+  background: linear-gradient(135deg, rgba(255, 209, 102, .075), var(--card-bg) 45%);
+}
+
+.weakness-panel h2 { margin: 5px 0; }
+.weakness-panel p { color: var(--text); font-size: 13px; }
+.weakness-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.weakness-item { display: flex; justify-content: space-between; gap: 12px; padding: 11px 12px; border: 1px solid var(--border); border-radius: 9px; background: rgba(0, 0, 0, .12); }
+.weakness-item div { min-width: 0; }
+.weakness-item strong, .weakness-item span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.weakness-item strong { color: var(--text-h); font-size: 12px; }
+.weakness-item span { margin-top: 3px; color: var(--text); font-size: 10px; }
+.weakness-item b { flex: 0 0 auto; color: #ffd166; font-size: 13px; }
+
+.quiz-pseudocode {
+  overflow-x: auto;
+  margin: 18px 0;
+  padding: 18px;
+  color: #d9f7ff;
+  border: 1px solid rgba(125, 211, 252, .25);
+  border-radius: 11px;
+  background: #07101c;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.text-answer-area { display: grid; gap: 8px; margin: 18px 0; }
+.text-answer-area label { color: var(--text-h); font-size: 13px; font-weight: 700; }
+.text-answer-area input { width: 100%; box-sizing: border-box; padding: 13px 15px; color: var(--text-h); border: 1px solid var(--border); border-radius: 9px; outline: none; background: var(--bg); font: inherit; }
+.text-answer-area input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(192, 132, 252, .12); }
+.text-answer-result { padding: 10px 12px; border-radius: 8px; font-size: 13px; }
+.text-answer-result.correct { color: #00ff88; background: rgba(0, 255, 136, .08); }
+.text-answer-result.incorrect { color: #ff6b81; background: rgba(255, 68, 102, .08); }
+
+.stack-lesson-meta { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 24px; }
+.stack-lesson-meta span { padding: 5px 9px; color: #7dd3fc; border: 1px solid rgba(125, 211, 252, .24); border-radius: 999px; background: rgba(125, 211, 252, .07); font-size: 10px; font-weight: 800; letter-spacing: .06em; }
+.stack-textbook-content { color: var(--text); line-height: 1.85; }
+.stack-textbook-content h2 { margin: 30px 0 12px; color: var(--text-h); font-size: 24px; }
+.stack-textbook-content h3 { margin: 27px 0 10px; color: var(--text-h); font-size: 19px; }
+.stack-textbook-content h4 { margin: 22px 0 8px; color: var(--text-h); font-size: 16px; }
+.stack-textbook-content p { margin: 10px 0; }
+.stack-textbook-content ul, .stack-textbook-content ol { margin: 12px 0; padding-left: 24px; }
+.stack-textbook-content li { margin: 7px 0; }
+.stack-textbook-content code { color: #9bf6ff; background: rgba(155, 246, 255, .08); padding: 2px 5px; border-radius: 4px; }
+.stack-textbook-content .table-wrapper { overflow-x: auto; margin: 18px 0; }
+.stack-textbook-content .note-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.stack-textbook-content .note-table th, .stack-textbook-content .note-table td { padding: 10px 12px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+.stack-textbook-content .note-table th { color: var(--text-h); background: rgba(125, 211, 252, .08); }
+
 /* Roadmap Styles */
 .roadmap-container {
   max-width: 900px;
@@ -1375,6 +1430,8 @@ code {
 .rank-lock-symbol { color: var(--text); }
 
 @media (max-width: 760px) {
+  .weakness-panel { grid-template-columns: 1fr; }
+  .weakness-grid { grid-template-columns: 1fr; }
   .foundation-map-card { grid-template-columns: 1fr; }
   .foundation-map-card::after { background: linear-gradient(180deg, transparent 42%, rgba(6, 10, 20, .28)); }
   .foundation-map-card img { min-height: 210px; max-height: 260px; }

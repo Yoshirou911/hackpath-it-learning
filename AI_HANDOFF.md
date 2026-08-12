@@ -24,6 +24,8 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/glossary.js`: 全用語を統合
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
 - `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
+- `src/data/stackCourse.js`: `it-study-app`から読み取り専用で移植したIT総合教本83本と科目A/B問題99問の変換・統合
+- `src/data/stack/`: 移植元の教材・問題JSONのリポジトリ内スナップショット（外部フォルダーへ実行時依存しない）
 - `src/data/ranks.js`: ランク定義、XPランク判定、レッスンの3段階配分
 - `src/components/rank.js`: ランクバッジとエンブレムの共通描画
 - `src/components/lessonExplainer.js`: 短い教材へ分野説明と用語の意味・必要性・理解チェックを補う共通描画
@@ -71,6 +73,9 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 // question
 { id, topic, level, question, choices, answer, explanation }
 
+// 科目Bの入力問題（追加フィールド）
+{ id, topic, category, level, question, pseudocode, inputType: 'text', expectedAnswer, explanation }
+
 // glossary term
 { id, term, reading, definition }
 ```
@@ -101,7 +106,8 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - レッスンHTMLは信頼済みのローカルデータを直接描画している。ユーザー入力を同じ方法で描画しないこと。
 - 追加ノートは`hackpath-custom-lessons`へ端末内保存する。`renderContent()`で必ずHTMLエスケープしてから限定的なマークダウンを変換しており、生HTMLを許可しない。
 - `getTopicProgress`は参照時にlocalStorageも更新するため、将来は読み取りと保存を分離する余地がある。
-- 成績は全コース合算。分野別集計は未実装。問題画面には全問題・未回答・不正解の復習切り替えがある。
+- 成績は全コース合算。問題画面には全問題・苦手優先・未回答・不正解の切り替えと、カテゴリ情報を持つ問題の分野別理解度がある。日別の推移グラフは未実装。
+- `stack`コースのデータは`it-study-app`から移植したスナップショットであり、元フォルダーを直接参照・変更しない。更新時も元データを読み取り専用で確認し、JSONを検証してからこのリポジトリ側だけを更新する。
 - `npm.cmd test`で保存データの分離・移行、XPルール、教材数、ID重複、深掘り教材の構成、短い教材の説明変換を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
@@ -109,7 +115,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 
 ## 推奨する次の実装
 
-次は、履歴を日別・分野別に集計する成績グラフ、SQLやJavaScriptを安全に試せるブラウザ演習、コース検索と難易度フィルターの順で検討してください。
+次は、履歴を日別に集計する成績グラフ、間隔反復（最終回答日時・連続正解を考慮）、SQLやJavaScriptを安全に試せるブラウザ演習、コース検索と難易度フィルターの順で検討してください。
 
 ## 完了条件
 
