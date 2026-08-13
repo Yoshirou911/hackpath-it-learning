@@ -1,20 +1,11 @@
 import { getCustomLessons, saveCustomLesson, deleteCustomLesson } from '../store.js'
+import { roadmapTopics } from '../data/topics.js'
 
 // 全トピック一覧（ドロップダウン用）
-const ALL_TOPICS = [
-  { id: 'itp',        label: 'ITパスポート',      icon: '📘' },
-  { id: 'fe',         label: '基本情報技術者',      icon: '💻' },
-  { id: 'ap',         label: '応用情報技術者',      icon: '🎯' },
-  { id: 'sec',        label: 'セキュリティ',        icon: '🔒' },
-  { id: 'network',    label: 'ネットワーク基礎',    icon: '🌐' },
-  { id: 'linux',      label: 'Linux・OS',           icon: '🐧' },
-  { id: 'database',   label: 'データベース・SQL',   icon: '🗄️' },
-  { id: 'web',        label: 'Web開発・API',        icon: '🕸️' },
-  { id: 'programming',label: 'プログラミング基礎',  icon: '⌨️' },
-  { id: 'cloud',      label: 'クラウド・DevOps',    icon: '☁️' },
-  { id: 'ai',         label: 'AI・機械学習',        icon: '🤖' },
-  { id: 'git',        label: 'Git・開発ツール',     icon: '🔧' },
-  { id: 'sysdesign',  label: 'システム設計',        icon: '🏗️' },
+export const editorTopics = [
+  ...roadmapTopics
+    .filter((topic) => topic.status === 'available')
+    .map((topic) => ({ id: topic.id, label: topic.title, icon: topic.icon })),
   { id: 'custom',     label: 'その他・カスタム',    icon: '📝' },
 ]
 
@@ -43,7 +34,7 @@ export function renderEditor(path, params) {
           <div>
             <label style="font-size:12px; opacity:0.7; display:block; margin-bottom:6px;">📂 コース・カテゴリ</label>
             <select id="editor-topic" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text-h); font-size:14px;">
-              ${ALL_TOPICS.map(t => `
+              ${editorTopics.map(t => `
                 <option value="${t.id}" ${(editTarget?.topicId || 'custom') === t.id ? 'selected' : ''}>
                   ${t.icon} ${t.label}
                 </option>
@@ -185,15 +176,7 @@ export function bindEditorEvents(container) {
 
       saveCustomLesson({ id: editingId || null, topicId, title, content, tags })
       editingId = null
-
-      // ページを再描画
-      const app = document.getElementById('app')
-      if (app) {
-        const { renderLayout } = window.__hackpath_layout || {}
-        window.location.hash = '#/editor'
-      } else {
-        window.location.reload()
-      }
+      rerenderEditor(container)
     })
   }
 
@@ -202,7 +185,7 @@ export function bindEditorEvents(container) {
   if (cancelBtn) {
     cancelBtn.addEventListener('click', () => {
       editingId = null
-      window.location.hash = '#/editor'
+      rerenderEditor(container)
     })
   }
 
@@ -210,9 +193,7 @@ export function bindEditorEvents(container) {
   container.querySelectorAll('.editor-edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       editingId = btn.dataset.id
-      // スクロールして入力フォームにフォーカス
-      container.querySelector('#editor-title')?.scrollIntoView({ behavior: 'smooth' })
-      window.location.hash = '#/editor'
+      rerenderEditor(container, { focusForm: true })
     })
   })
 
@@ -222,10 +203,21 @@ export function bindEditorEvents(container) {
       if (confirm(`「${btn.dataset.title}」を削除しますか？`)) {
         deleteCustomLesson(btn.dataset.id)
         if (editingId === btn.dataset.id) editingId = null
-        window.location.hash = '#/editor'
+        rerenderEditor(container)
       }
     })
   })
+}
+
+function rerenderEditor(container, { focusForm = false } = {}) {
+  const pageContent = container.querySelector('.page-content') || container
+  pageContent.innerHTML = renderEditor('/editor', [])
+  bindEditorEvents(pageContent)
+  if (focusForm) {
+    const titleInput = pageContent.querySelector('#editor-title')
+    titleInput?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    titleInput?.focus()
+  }
 }
 
 // ─── ユーティリティ ───────────────────────────────────────────

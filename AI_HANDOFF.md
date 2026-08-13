@@ -2,6 +2,17 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-14 操作不具合修正の引き継ぎ
+
+- `src/pages/quiz.js`のフィルター変更は`getQuizPath()`から`navigate()`を呼び、ルーター経由で全レイアウトを再描画する。`#app`へクイズ本文だけを直接代入しない
+- 全分野のフィルターURLでは`all`をトピックのURL値として使い、表示時に空のトピックへ戻す
+- 効果音ボタンは`.mode-tab-btn`の見た目を共有するが`data-mode`を持たない。復習モードのイベント対象は必ず`[data-mode]`に限定する
+- 基本情報以外へ分野を変更するときは、科目A・Bモードを`all`へ戻す
+- クイズ選択肢は`radiogroup`・`radio`としてEnter/Space操作に対応し、問題が0件のランクは無効化する
+- `src/pages/editor.js`のコース選択肢は`roadmapTopics`から自動生成する。保存・編集・削除後は`rerenderEditor()`で`.page-content`だけを更新する
+- 保存形式とlocalStorageキーは変更していない
+- `tests/interaction-regressions.test.mjs`がフィルターURL、選択肢アクセシビリティ、ノート追加先の全コース同期を検証する
+
 ## 2026-08-14 ナビゲーション再編の引き継ぎ
 
 - `src/components/layout.js`の`sidebarNavGroups`が`roadmapTopics`の`category`から資格対策とITスキルを自動分類する

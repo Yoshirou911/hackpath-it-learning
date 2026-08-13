@@ -16,6 +16,9 @@ let currentRankFilter = 'all'
 let sessionCorrect = 0
 let sessionAnswered = 0
 
+const QUIZ_MODES = ['all', 'weak', 'unanswered', 'incorrect', 'section-a', 'section-b']
+const RANK_FILTERS = ['all', 'bronze', 'silver', 'gold', 'sovereign']
+
 // mode: 'all' | 'weak' | 'unanswered' | 'incorrect' | 'section-a' | 'section-b'
 function filterQuestions(base, mode) {
   const state = getState()
@@ -42,10 +45,15 @@ function stableQuestionOrder(id) {
 }
 
 export function renderQuiz(path, params = []) {
-  currentTopic = params[0] || ''
-  const urlMode = params[1] || 'all'
-  currentMode = urlMode
-  currentRankFilter = params[2] || 'all'
+  const requestedTopic = params[0] || ''
+  currentTopic = requestedTopic === 'all' ? '' : requestedTopic
+  const requestedMode = params[1] || 'all'
+  const supportsExamSections = currentTopic === 'fe'
+  currentMode = QUIZ_MODES.includes(requestedMode)
+    && (supportsExamSections || !requestedMode.startsWith('section-'))
+    ? requestedMode
+    : 'all'
+  currentRankFilter = RANK_FILTERS.includes(params[2]) ? params[2] : 'all'
 
   const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
   const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
@@ -78,8 +86,8 @@ export function renderQuiz(path, params = []) {
     { value: 'unanswered', label: `未回答 (${totalUnanswered})`, icon: '❓' },
     { value: 'incorrect',  label: `不正解 (${totalIncorrect})`,  icon: '❌' },
     ...(currentTopic === 'fe' ? [
-      { value: 'section-a', label: `科目A (${topicQuestions.filter(q => (q.examSection || 'A') === 'A').length})`, icon: '🧠' },
-      { value: 'section-b', label: `科目B (${topicQuestions.filter(q => q.examSection === 'B').length})`, icon: '⌘' },
+      { value: 'section-a', label: `科目A (${baseQuestions.filter(q => (q.examSection || 'A') === 'A').length})`, icon: '🧠' },
+      { value: 'section-b', label: `科目B (${baseQuestions.filter(q => q.examSection === 'B').length})`, icon: '⌘' },
     ] : []),
   ]
   const rankOptions = [
@@ -135,11 +143,14 @@ export function renderQuiz(path, params = []) {
       </div>
       <div class="quiz-rank-filter" aria-label="問題ランク選択">
         <span>DIFFICULTY ACCESS</span>
-        ${rankOptions.map((rank) => `
-          <button type="button" class="quiz-rank-option rank-surface-${rank.value === 'all' ? 'platinum' : rank.value} ${currentRankFilter === rank.value ? 'is-active' : ''}" data-rank-filter="${rank.value}">
-            <b>${rank.label}</b><small>${rank.sub} · ${filterQuestionsByRank(topicQuestions, rank.value).length}問</small>
-          </button>
-        `).join('')}
+        ${rankOptions.map((rank) => {
+          const questionCount = filterQuestionsByRank(topicQuestions, rank.value).length
+          return `
+            <button type="button" class="quiz-rank-option rank-surface-${rank.value === 'all' ? 'platinum' : rank.value} ${currentRankFilter === rank.value ? 'is-active' : ''}" data-rank-filter="${rank.value}" ${questionCount === 0 ? 'disabled aria-disabled="true"' : ''}>
+              <b>${rank.label}</b><small>${rank.sub} · ${questionCount}問</small>
+            </button>
+          `
+        }).join('')}
       </div>
     </div>
 
@@ -268,10 +279,14 @@ function renderQuestionCard() {
           <input id="text-answer" type="text" value="${escapeHtml(textAnswer)}" autocomplete="off" ${answered ? 'disabled' : ''} placeholder="例：9 または {1, 2, 3}">
           ${answered ? `<p class="text-answer-result ${normalizeAnswer(textAnswer) === normalizeAnswer(question.expectedAnswer) ? 'correct' : 'incorrect'}">正解：${escapeHtml(question.expectedAnswer)}</p>` : ''}
         </div>
-      ` : `<ul class="choices-list">
+      ` : `<ul class="choices-list" role="radiogroup" aria-label="選択肢">
         ${question.choices.map((choice, index) => `
           <li class="choice-item ${selectedChoice === index ? 'selected' : ''} ${answered && index === question.answer ? 'correct' : ''} ${answered && selectedChoice === index && index !== question.answer ? 'incorrect' : ''}" 
               data-choice="${index}" 
+              role="radio"
+              aria-checked="${selectedChoice === index}"
+              aria-disabled="${answered}"
+              tabindex="${answered ? '-1' : '0'}"
               ${answered ? 'style="pointer-events: none;"' : ''}>
             <span style="margin-right: 12px; font-weight: 500;">${String.fromCharCode(65 + index)}.</span>
             ${choice}
@@ -322,12 +337,13 @@ export function bindQuizEvents(container) {
     topicFilter.dataset.eventsBound = 'true'
     topicFilter.addEventListener('change', (e) => {
       currentTopic = e.target.value
+      if (currentTopic !== 'fe' && currentMode.startsWith('section-')) currentMode = 'all'
       _reloadWithCurrentSettings()
     })
   }
 
   // モードタブ
-  container.querySelectorAll('.mode-tab-btn').forEach(btn => {
+  container.querySelectorAll('[data-mode]').forEach(btn => {
     if (btn.dataset.eventsBound) return
     btn.dataset.eventsBound = 'true'
     btn.addEventListener('click', () => {
@@ -365,17 +381,27 @@ export function bindQuizEvents(container) {
 
   // 選択肢クリック
   const choices = container.querySelectorAll('.choice-item')
+  const selectChoice = (choice) => {
+    if (answered) return
+    selectedChoice = parseInt(choice.dataset.choice)
+    choices.forEach((item) => {
+      const isSelected = item === choice
+      item.classList.toggle('selected', isSelected)
+      item.setAttribute('aria-checked', String(isSelected))
+    })
+
+    const submitBtn = container.querySelector('#submit-answer')
+    if (submitBtn) {
+      submitBtn.disabled = false
+      submitBtn.style.opacity = '1'
+    }
+  }
   choices.forEach(choice => {
-    choice.addEventListener('click', () => {
-      if (answered) return
-      selectedChoice = parseInt(choice.dataset.choice)
-      choices.forEach(c => c.classList.remove('selected'))
-      choice.classList.add('selected')
-      
-      const submitBtn = container.querySelector('#submit-answer')
-      if (submitBtn) {
-        submitBtn.disabled = false
-        submitBtn.style.opacity = '1'
+    choice.addEventListener('click', () => selectChoice(choice))
+    choice.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        selectChoice(choice)
       }
     })
   })
@@ -455,22 +481,11 @@ export function bindQuizEvents(container) {
 }
 
 function _reloadWithCurrentSettings() {
-  const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
-  const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
-  currentQuestions = filterQuestions(baseQuestions, currentMode)
-  currentQuestionIndex = 0
-  selectedChoice = null
-  textAnswer = ''
-  answered = false
-  sessionCorrect = 0
-  sessionAnswered = 0
-  // ページ全体を再描画
-  const app = document.getElementById('app')
-  if (app) {
-    const path = `/quiz/${currentTopic}/${currentMode}/${currentRankFilter}`
-    app.innerHTML = renderQuiz(path, [currentTopic, currentMode, currentRankFilter])
-    bindQuizEvents(app)
-  }
+  navigate(getQuizPath(currentTopic, currentMode, currentRankFilter))
+}
+
+export function getQuizPath(topic = '', mode = 'all', rankFilter = 'all') {
+  return `/quiz/${topic || 'all'}/${mode}/${rankFilter}`
 }
 
 function filterQuestionsByRank(base, rankFilter) {
