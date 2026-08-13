@@ -122,8 +122,13 @@ export async function initCloudProgress() {
     if (!progressResponse.ok) throw new Error('Progress download failed')
     const remote = await progressResponse.json()
     if (remote.progress) {
-      state = normalizeState(remote.progress)
+      const localState = state
+      const canMergeThisDevice = savedOwnerKey === ownerKey
+      state = canMergeThisDevice ? mergeProgress(remote.progress, localState) : normalizeState(remote.progress)
       saveState(state, { localOnly: true })
+      if (canMergeThisDevice && JSON.stringify(state) !== JSON.stringify(normalizeState(remote.progress))) {
+        await uploadProgress(state)
+      }
     } else {
       await uploadProgress(state)
     }
@@ -177,6 +182,37 @@ function bindCloudFlushEvents() {
   cloudEventsBound = true
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') flushCloudProgress()
+  })
+  window.addEventListener('pagehide', flushCloudProgress)
+}
+
+// 同一アカウントで更新直後に再読込しても、未送信の端末進捗を古いクラウド値で失わない。
+function mergeProgress(remoteValue, localValue) {
+  const remote = normalizeState(remoteValue)
+  const local = normalizeState(localValue)
+  const answered = { ...remote.quiz.answered }
+  Object.entries(local.quiz.answered).forEach(([id, result]) => {
+    answered[id] = answered[id] === true || result === true ? true : false
+  })
+  const topics = { ...remote.topics }
+  Object.entries(local.topics).forEach(([id, localTopic]) => {
+    const remoteTopic = topics[id] || {}
+    topics[id] = {
+      ...remoteTopic,
+      ...localTopic,
+      completed: Math.max(Number(remoteTopic.completed) || 0, Number(localTopic.completed) || 0),
+      total: Math.max(Number(remoteTopic.total) || 0, Number(localTopic.total) || 0),
+      completedLessonIds: [...new Set([...(remoteTopic.completedLessonIds || []), ...(localTopic.completedLessonIds || [])])],
+    }
+  })
+  return normalizeState({
+    ...remote,
+    xp: Math.max(remote.xp, local.xp),
+    quiz: { answered },
+    topics,
+    flashcards: { ...remote.flashcards, ...local.flashcards },
+    history: local.history.length >= remote.history.length ? local.history : remote.history,
+    lastVisited: local.lastVisited || remote.lastVisited,
   })
 }
 

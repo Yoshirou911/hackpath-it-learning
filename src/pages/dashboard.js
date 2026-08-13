@@ -2,12 +2,14 @@ import { getState, getQuizStats, getOverallProgress, getTopicQuizProgress } from
 import { roadmapTopics } from '../data/topics.js'
 import { questions } from '../data/questions.js'
 import { accountRanks, getAccountRank, getCourseRank } from '../data/ranks.js'
-import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
+import { renderRankBadge, renderRankEmblem, renderRankSigil } from '../components/rank.js'
+import { getAchievements } from '../data/achievements.js'
 
 export function renderDashboard() {
   const state = getState()
   const quiz = getQuizStats()
   const accountRank = getAccountRank(state.xp)
+  const achievements = getAchievements(state)
 
   const topicCards = roadmapTopics
     .filter((topic) => topic.status !== 'locked')
@@ -57,7 +59,7 @@ export function renderDashboard() {
       ${accountRanks.map((rank, index) => `
         <div class="rank-ladder-step rank-surface-${rank.id} ${index <= accountRanks.indexOf(accountRank.current) ? 'is-active' : ''}">
           <span class="rank-step-index">0${index + 1}</span>
-          <span class="rank-gem" aria-hidden="true"></span>
+          ${renderRankSigil(rank, 'rank-sigil-small')}
           <div><strong>${rank.name}</strong><small>${rank.stage} · ${rank.tagline}</small></div>
         </div>
       `).join('')}
@@ -69,6 +71,22 @@ export function renderDashboard() {
       <div class="glass-card stat-card"><span class="stat-icon">◎</span><div><span class="stat-value">${quiz.accuracy}%</span><span class="stat-label">正答率</span></div></div>
       <div class="glass-card stat-card"><span class="stat-icon">▰</span><div><span class="stat-value">${overall}%</span><span class="stat-label">全体進捗</span></div></div>
     </div>
+
+    <section class="achievement-section">
+      <div class="section-header rank-section-header">
+        <div><span class="eyebrow">COMBAT RECORD</span><h2>実績バッジ</h2></div>
+        <span class="achievement-count">${achievements.filter((item) => item.unlocked).length}/${achievements.length} UNLOCKED</span>
+      </div>
+      <div class="achievement-grid">
+        ${achievements.map((item) => `
+          <article class="achievement-card ${item.unlocked ? 'is-unlocked' : 'is-locked'}">
+            <div class="achievement-medal"><span>${item.icon}</span></div>
+            <div><small>${item.name}</small><strong>${item.label}</strong><p>${item.description}</p></div>
+            <b>${item.unlocked ? '獲得済み' : 'LOCKED'}</b>
+          </article>
+        `).join('')}
+      </div>
+    </section>
 
     <section class="section">
       <div class="section-header rank-section-header">

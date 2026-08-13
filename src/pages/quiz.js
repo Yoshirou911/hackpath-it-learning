@@ -2,6 +2,8 @@ import { questions, getQuestionsByTopic } from '../data/questions.js'
 import { recordQuizAnswer, getQuizStats, getState } from '../store.js'
 import { roadmapTopics } from '../data/topics.js'
 import { navigate } from '../router.js'
+import { getAccountRank } from '../data/ranks.js'
+import { isSoundEnabled, playAnswerSound, playClearSound, showClearCelebration, toggleSound } from '../components/effects.js'
 
 let currentQuestionIndex = 0
 let currentQuestions = []
@@ -10,6 +12,8 @@ let textAnswer = ''
 let answered = false
 let currentMode = 'all'
 let currentTopic = ''
+let sessionCorrect = 0
+let sessionAnswered = 0
 
 // mode: 'all' | 'weak' | 'unanswered' | 'incorrect'
 function filterQuestions(base, mode) {
@@ -45,6 +49,8 @@ export function renderQuiz(path, params = []) {
   selectedChoice = null
   textAnswer = ''
   answered = false
+  sessionCorrect = 0
+  sessionAnswered = 0
 
   const stats = getQuizStats()
   const state = getState()
@@ -109,6 +115,7 @@ export function renderQuiz(path, params = []) {
             "
           >${m.icon} ${m.label}</button>
         `).join('')}
+        <button class="mode-tab-btn sound-toggle" id="sound-toggle" type="button" aria-pressed="${isSoundEnabled()}">${isSoundEnabled() ? '🔊 効果音 ON' : '🔇 効果音 OFF'}</button>
       </div>
     </div>
 
@@ -173,17 +180,15 @@ function renderQuestionCard() {
 
   if (currentQuestionIndex >= currentQuestions.length) {
     const stats = getQuizStats()
-    const correct = currentQuestions.filter(q => {
-      const state = getState()
-      return state.quiz.answered[q.id] === true
-    }).length
+    const correct = sessionCorrect
+    const resultTotal = sessionAnswered || currentQuestions.length
     return `
       <div class="glass-card" style="text-align: center; padding: 48px;">
         <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
         <h2 style="margin-bottom: 8px;">クイズ完了！</h2>
         <p style="font-size: 18px; margin-bottom: 24px;">
-          今回の正答率: <strong>${currentQuestions.length > 0 ? Math.round((correct / currentQuestions.length) * 100) : 0}%</strong>
-          (${correct}/${currentQuestions.length}問正解)
+          今回の正答率: <strong>${resultTotal > 0 ? Math.round((correct / resultTotal) * 100) : 0}%</strong>
+          (${correct}/${resultTotal}問正解)
         </p>
         <p style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">
           累計 — 回答済み: ${stats.answered}問 | 正答率: ${stats.accuracy}%
@@ -271,6 +276,12 @@ function renderQuestionCard() {
 }
 
 export function bindQuizEvents(container) {
+  const soundToggle = container.querySelector('#sound-toggle')
+  soundToggle?.addEventListener('click', () => {
+    const enabled = toggleSound()
+    soundToggle.textContent = enabled ? '🔊 効果音 ON' : '🔇 効果音 OFF'
+    soundToggle.setAttribute('aria-pressed', String(enabled))
+  })
   // 分野フィルター
   const topicFilter = container.querySelector('#topic-filter')
   if (topicFilter && !topicFilter.dataset.eventsBound) {
@@ -310,6 +321,8 @@ export function bindQuizEvents(container) {
       selectedChoice = null
       textAnswer = ''
       answered = false
+      sessionCorrect = 0
+      sessionAnswered = 0
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)
     })
@@ -356,11 +369,20 @@ export function bindQuizEvents(container) {
       const isCorrect = question.inputType === 'text'
         ? normalizeAnswer(textAnswer) === normalizeAnswer(question.expectedAnswer)
         : selectedChoice === question.answer
+      const previousRank = getAccountRank(getState().xp).current
       answered = true
+      sessionAnswered += 1
+      if (isCorrect) sessionCorrect += 1
       recordQuizAnswer(question.id, isCorrect, question.topic)
+      const nextRank = getAccountRank(getState().xp).current
+      playAnswerSound(isCorrect)
       
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)
+      if (nextRank.id !== previousRank.id) {
+        playClearSound()
+        showClearCelebration({ rank: nextRank })
+      }
     })
   }
 
@@ -374,6 +396,10 @@ export function bindQuizEvents(container) {
       answered = false
       container.querySelector('#quiz-content').innerHTML = renderQuestionCard()
       bindQuizEvents(container)
+      if (currentQuestionIndex >= currentQuestions.length) {
+        playClearSound()
+        showClearCelebration()
+      }
     })
   }
 
@@ -400,6 +426,8 @@ function _reloadWithCurrentSettings() {
   selectedChoice = null
   textAnswer = ''
   answered = false
+  sessionCorrect = 0
+  sessionAnswered = 0
   // ページ全体を再描画
   const app = document.getElementById('app')
   if (app) {
