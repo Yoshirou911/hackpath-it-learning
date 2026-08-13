@@ -2,28 +2,80 @@ import { navigate, getCurrentPath } from '../router.js'
 import { clearLocalSession, getCloudAccount, getState } from '../store.js'
 import { getAccountRank } from '../data/ranks.js'
 import { renderRankBadge } from './rank.js'
+import { roadmapTopics } from '../data/topics.js'
 
-const navItems = [
+const primaryNavItems = [
   { path: '/', label: 'ダッシュボード', icon: '⚡' },
   { path: '/roadmap', label: 'ロードマップ', icon: '🗺️' },
-  { path: '/study/itp', label: 'ITパスポート', icon: '📘' },
-  { path: '/study/fe', label: '基本情報', icon: '💻' },
-  { path: '/study/ap', label: '応用情報', icon: '🎯' },
-  { path: '/security', label: 'セキュリティ', icon: '🔒' },
-  { path: '/study/network', label: 'ネットワーク', icon: '🌐' },
-  { path: '/study/linux', label: 'Linux', icon: '🐧' },
-  { path: '/study/database', label: 'DB・SQL', icon: '🗄️' },
-  { path: '/study/web', label: 'Web開発', icon: '🕸️' },
-  { path: '/study/programming', label: 'プログラミング', icon: '⌨️' },
-  { path: '/study/cloud', label: 'クラウド', icon: '☁️' },
-  { path: '/study/ai', label: 'AI・ML', icon: '🤖' },
-  { path: '/study/git', label: 'Git・ツール', icon: '🔧' },
-  { path: '/study/sysdesign', label: 'システム設計', icon: '🏗️' },
+]
+
+const toolNavItems = [
   { path: '/quiz', label: '問題演習', icon: '🧠' },
   { path: '/glossary', label: '用語集', icon: '📖' },
   { path: '/editor', label: 'ノート追加', icon: '📝' },
   { path: '/history', label: '履歴', icon: '📊' },
 ]
+
+const certificationLabelAliases = {
+  itp: 'ITパスポート',
+  fe: '基本情報技術者',
+  ap: '応用情報技術者',
+  sec: 'セキュリティ基礎',
+}
+
+function topicToNavItem(topic) {
+  return {
+    path: topic.path,
+    label: certificationLabelAliases[topic.id] || topic.title,
+    icon: topic.icon,
+  }
+}
+
+export const sidebarNavGroups = [
+  {
+    id: 'certification',
+    label: '資格対策',
+    icon: '🏅',
+    description: '国家・ベンダー資格',
+    items: roadmapTopics.filter((topic) => topic.category === 'certification' && topic.status === 'available').map(topicToNavItem),
+  },
+  {
+    id: 'skill',
+    label: 'ITスキル',
+    icon: '🛠️',
+    description: '実務・技術分野',
+    items: roadmapTopics.filter((topic) => topic.category === 'skill' && topic.status === 'available').map(topicToNavItem),
+  },
+]
+
+function isNavItemActive(item, currentPath) {
+  return currentPath === item.path || (item.path !== '/' && currentPath.startsWith(`${item.path}/`))
+}
+
+function renderNavLink(item, currentPath) {
+  return `
+    <a href="#${item.path}" class="nav-link ${isNavItemActive(item, currentPath) ? 'active' : ''}" data-path="${item.path}" title="${item.label}">
+      <span class="nav-icon" aria-hidden="true">${item.icon}</span>
+      <span class="nav-label">${item.label}</span>
+    </a>
+  `
+}
+
+function renderNavGroup(group, currentPath) {
+  const isOpen = group.items.some((item) => isNavItemActive(item, currentPath))
+  return `
+    <details class="sidebar-nav-group" ${isOpen ? 'open' : ''}>
+      <summary>
+        <span class="nav-group-icon" aria-hidden="true">${group.icon}</span>
+        <span><strong>${group.label}</strong><small>${group.description}</small></span>
+        <b>${group.items.length}</b>
+      </summary>
+      <div class="sidebar-nav-group-items">
+        ${group.items.map((item) => renderNavLink(item, currentPath)).join('')}
+      </div>
+    </details>
+  `
+}
 
 export function renderLayout(content, activePath) {
   const state = getState()
@@ -44,12 +96,20 @@ export function renderLayout(content, activePath) {
         </div>
 
         <nav class="sidebar-nav">
-          ${navItems.map((item) => `
-            <a href="#${item.path}" class="nav-link ${currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path)) ? 'active' : ''}" data-path="${item.path}">
-              <span class="nav-icon">${item.icon}</span>
-              ${item.label}
-            </a>
-          `).join('')}
+          <div class="sidebar-nav-section">
+            <span class="sidebar-nav-heading">メイン</span>
+            ${primaryNavItems.map((item) => renderNavLink(item, currentPath)).join('')}
+          </div>
+
+          <div class="sidebar-nav-section sidebar-course-groups">
+            <span class="sidebar-nav-heading">コース</span>
+            ${sidebarNavGroups.map((group) => renderNavGroup(group, currentPath)).join('')}
+          </div>
+
+          <div class="sidebar-nav-section">
+            <span class="sidebar-nav-heading">学習ツール</span>
+            ${toolNavItems.map((item) => renderNavLink(item, currentPath)).join('')}
+          </div>
         </nav>
 
         <div class="sidebar-footer">

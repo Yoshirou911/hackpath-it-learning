@@ -2,6 +2,14 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-14 ナビゲーション再編の引き継ぎ
+
+- `src/components/layout.js`の`sidebarNavGroups`が`roadmapTopics`の`category`から資格対策とITスキルを自動分類する
+- 利用可能な新コースを追加すると、左メニューにも自動追加される。資格は`category: 'certification'`、実務分野は`category: 'skill'`を維持する
+- 左メニューは`details`要素で開閉し、現在のコースを含むグループだけ自動展開する
+- ロードマップ見出しは`.roadmap-rank-header`専用グリッドで制御し、1180px以下は2列、760px以下は1列になる
+- `tests/sidebar-navigation.test.mjs`が利用可能な全資格・ITスキルの収録と重複を検証する
+
 ## 2026-08-14 基本情報徹底強化の引き継ぎ
 
 - `src/data/feIntensiveCourse.js`: 基本情報の追加26教材、科目A 66問、科目B 20問、追加72用語、現行試験仕様を一括定義

@@ -352,15 +352,20 @@ code {
 
 .sidebar-nav {
   flex: 1;
-  padding: 16px;
+  padding: 12px;
   overflow-y: auto;
 }
+
+.sidebar-nav-section { display: grid; gap: 3px; padding: 7px 0 11px; border-bottom: 1px solid var(--border); }
+.sidebar-nav-section:last-child { border-bottom: 0; }
+.sidebar-nav-heading { padding: 0 12px 5px; color: var(--text); opacity: .55; font-size: 9px; font-weight: 900; letter-spacing: .18em; }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  min-width: 0;
+  padding: 10px 12px;
   border-radius: 8px;
   color: var(--text);
   text-decoration: none;
@@ -377,6 +382,23 @@ code {
     font-weight: 500;
   }
 }
+
+.nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.sidebar-nav-group { min-width: 0; }
+.sidebar-nav-group + .sidebar-nav-group { margin-top: 5px; }
+.sidebar-nav-group > summary { display: grid; grid-template-columns: 26px minmax(0,1fr) auto; gap: 9px; align-items: center; min-height: 48px; padding: 6px 10px; color: var(--text); border: 1px solid transparent; border-radius: 9px; cursor: pointer; list-style: none; transition: background .18s,border-color .18s; }
+.sidebar-nav-group > summary::-webkit-details-marker { display: none; }
+.sidebar-nav-group > summary:hover { background: var(--code-bg); }
+.sidebar-nav-group[open] > summary { color: var(--text-h); border-color: var(--border); background: rgba(255,255,255,.025); }
+.sidebar-nav-group > summary span:nth-child(2) { display: grid; min-width: 0; line-height: 1.2; }
+.sidebar-nav-group > summary strong { color: inherit; font-size: 13px; }
+.sidebar-nav-group > summary small { overflow: hidden; margin-top: 2px; opacity: .62; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-nav-group > summary b { display: grid; min-width: 22px; height: 22px; place-items: center; color: var(--accent); border-radius: 999px; background: var(--accent-bg); font-size: 9px; }
+.nav-group-icon { font-size: 16px; }
+.sidebar-nav-group-items { display: grid; gap: 2px; margin: 4px 0 2px 13px; padding-left: 9px; border-left: 1px solid var(--border); }
+.sidebar-nav-group-items .nav-link { padding-block: 8px; font-size: 12px; }
+.sidebar-nav-group-items .nav-icon { font-size: 15px; }
 
 .nav-icon {
   font-size: 18px;
@@ -422,6 +444,7 @@ code {
 
 .main-area {
   flex: 1;
+  min-width: 0;
   margin-left: 260px;
   display: flex;
   flex-direction: column;
@@ -491,6 +514,8 @@ code {
 .page-content {
   padding: 32px;
   flex: 1;
+  min-width: 0;
+  overflow-x: clip;
 
   @media (max-width: 768px) {
     padding: 20px;
@@ -1421,6 +1446,18 @@ code {
 .course-rank-header>.eyebrow { grid-row: 1/3; text-align: center; }
 .course-rank-header>h1 { grid-column: 2; margin: 0; }
 .course-rank-header>.page-subtitle { grid-column: 2; margin: 0; }
+.roadmap-rank-header { display: grid; grid-template-columns: 132px minmax(330px,1.15fr) minmax(260px,.85fr); align-items: center; gap: 24px; }
+.roadmap-rank-header > * { min-width: 0; }
+.roadmap-rank-header > .eyebrow { margin: 0; text-align: center; line-height: 2; }
+.roadmap-rank-header > h1 { margin: 0; font-size: clamp(38px,4.15vw,58px); line-height: 1.04; text-wrap: balance; }
+.roadmap-rank-header > h1 span { display: inline-block; }
+.roadmap-rank-header > .page-subtitle { max-width: 430px; margin: 0; justify-self: end; line-height: 1.75; overflow-wrap: anywhere; }
+
+@media (max-width: 1180px) and (min-width: 769px) {
+  .roadmap-rank-header { grid-template-columns: 112px minmax(0,1fr); }
+  .roadmap-rank-header > .eyebrow { grid-row: 1/3; }
+  .roadmap-rank-header > h1,.roadmap-rank-header > .page-subtitle { grid-column: 2; justify-self: stretch; max-width: none; }
+}
 .course-rank-summary { display: flex; align-items: center; gap: 16px; min-width: 250px; padding: 14px; border: 1px solid rgba(var(--rank-rgb),.35); border-radius: 14px; background: rgba(var(--rank-rgb),.07); box-sizing: border-box; }
 .course-rank-summary-copy { display: grid; gap: 4px; }
 .course-progress-number { color: var(--rank-color); font-size: 22px; font-weight: 900; }
@@ -1650,6 +1687,9 @@ code {
   .course-rank-header, .roadmap-rank-header, .rank-stage-header { align-items: flex-start; flex-direction: column; }
   .course-rank-header { display: grid; grid-template-columns: 1fr; }
   .course-rank-header>.eyebrow,.course-rank-header>h1,.course-rank-header>.page-subtitle { grid-column: 1; grid-row: auto; text-align: left; }
+  .roadmap-rank-header { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .roadmap-rank-header > .eyebrow,.roadmap-rank-header > h1,.roadmap-rank-header > .page-subtitle { grid-column: 1; grid-row: auto; justify-self: stretch; max-width: none; text-align: left; }
+  .roadmap-rank-header > h1 { font-size: clamp(34px,11vw,48px); line-height: 1.06; }
   .course-rank-summary { width: 100%; min-width: 0; }
   .fe-command-center { grid-template-columns: 1fr; }
   .fe-study-cycle { grid-template-columns: repeat(2,1fr); }
