@@ -25,6 +25,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
 - `src/data/skillCourseBreadthExpansion.js`: データ分析・モバイル・IoT・SRE・UX・ITガバナンスの追加6コース
 - `src/data/certificationExpansion.js`: 追加9資格のコース、教材、独自確認問題、用語を一括定義
+- `src/data/certificationPyramid.js`: 資格スキルピラミッドの7段ランクと資格コース配置
 - `src/data/eliteCourse.js`: 最初から閲覧・挑戦できる最高難度`SOVEREIGN LAB`の教材・問題・用語
 - `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
 - `src/data/stackCourse.js`: `it-study-app`から読み取り専用で移植したIT総合教本83本と科目A/B問題99問の変換・統合
@@ -113,6 +114,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - 実績は保存形式を増やさず、同期済みの回答履歴とXPから都度導出する。過去ユーザーにも自動適用される。
 - 効果音設定は端末ローカルの`hackpath-sound-enabled`に保存し、ユーザー進捗とは分離する。
 - 全ランク紋章はダッシュボードで未到達分もプレビューできる。ランクは称号・進捗表示であり、教材や問題をロックしない。
+- ロードマップの資格スキルピラミッドはHackPath独自の学習目安であり、公式な資格序列ではない。資格を増減した場合は`certificationPyramid.js`も更新し、全資格が重複なく配置されるテストを維持する。
 - 問題の階級フィルターは`level`と`difficulty`からブロンズ・シルバー・ゴールド・SOVEREIGNへ分類する。`elite`または難易度7以上はSOVEREIGN扱い。
 
 ## 現在の注意点

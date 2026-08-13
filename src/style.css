@@ -1447,6 +1447,32 @@ code {
 .rank-protocol-card p { margin: 0; color: var(--text); font-size: 13px; }
 .rank-protocol-line { position: absolute; right: -20px; bottom: -24px; width: 100px; height: 100px; border: 1px solid rgba(var(--rank-rgb),.32); border-radius: 50%; }
 .ranked-course-group { margin-top: 32px; }
+.certification-pyramid-section { margin-top: 36px; }
+.certification-pyramid-header { align-items: center; }
+.certification-pyramid-header h2 { margin-top: 5px; }
+.pyramid-direction { display: grid; grid-template-rows: auto 54px auto; justify-items: center; gap: 4px; color: var(--text); font-size: 8px; font-weight: 900; letter-spacing: .16em; }
+.pyramid-direction i { position: relative; width: 1px; height: 54px; background: linear-gradient(var(--accent-2),var(--border)); }
+.pyramid-direction i::before { position: absolute; top: -2px; left: -3px; width: 7px; height: 7px; content: ''; transform: rotate(45deg); border-top: 1px solid var(--accent-2); border-left: 1px solid var(--accent-2); }
+.certification-pyramid-shell { position: relative; overflow: hidden; max-width: 1120px; margin: 0 auto; padding: clamp(18px,3vw,32px); border: 1px solid var(--border); border-radius: 22px; background: radial-gradient(circle at 50% 0,rgba(255,54,95,.08),transparent 32%),repeating-linear-gradient(90deg,transparent 0 59px,rgba(255,255,255,.016) 60px),linear-gradient(180deg,#09111f,#070c16); }
+.certification-pyramid-shell::before { position: absolute; inset: 0; content: ''; pointer-events: none; background: linear-gradient(120deg,transparent 18%,rgba(255,255,255,.025) 50%,transparent 82%); }
+.certification-pyramid { position: relative; z-index: 1; display: grid; gap: 5px; }
+.certification-tier { position: relative; display: grid; grid-template-columns: minmax(120px,.62fr) minmax(0,1.38fr); gap: clamp(10px,2vw,22px); align-items: center; width: var(--tier-width); min-height: 90px; margin-inline: auto; padding: 13px clamp(22px,4vw,48px); box-sizing: border-box; overflow: hidden; clip-path: polygon(5% 0,95% 0,100% 100%,0 100%); border: 1px solid rgba(var(--rank-rgb),.42); color: var(--text-h); background: linear-gradient(110deg,rgba(var(--rank-rgb),.24),rgba(var(--rank-rgb),.08) 42%,rgba(7,12,22,.96)); box-shadow: inset 0 1px 0 rgba(255,255,255,.1); transition: filter .2s ease,transform .2s ease; }
+.certification-tier:hover { z-index: 2; filter: brightness(1.12); transform: scale(1.008); }
+.certification-tier::after { position: absolute; right: 5%; bottom: -45px; width: 120px; height: 90px; content: ''; transform: rotate(35deg); border: 1px solid rgba(var(--rank-rgb),.15); }
+.certification-tier-rank { display: flex; align-items: center; min-width: 0; gap: 10px; }
+.certification-tier-rank > span:last-child { display: grid; min-width: 0; gap: 2px; }
+.certification-tier-rank strong { overflow: hidden; color: var(--rank-color); font-size: clamp(9px,1.1vw,12px); letter-spacing: .13em; text-overflow: ellipsis; }
+.certification-tier-rank small { overflow: hidden; color: var(--text); font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+.certification-tier-sigil { width: 34px; height: 38px; }
+.certification-tier-body { display: grid; min-width: 0; gap: 8px; }
+.certification-tier-body > p { overflow: hidden; margin: 0; color: var(--text); font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+.certification-tier-courses { display: flex; flex-wrap: wrap; gap: 6px; }
+.certification-pyramid-course { position: relative; z-index: 1; display: inline-grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 6px; align-items: center; min-width: 0; padding: 7px 9px; color: var(--text-h); border: 1px solid rgba(var(--rank-rgb),.3); border-radius: 999px; background: rgba(3,8,16,.58); transition: color .18s,border-color .18s,background .18s,transform .18s; }
+.certification-pyramid-course:hover,.certification-pyramid-course:focus-visible { color: #fff; border-color: var(--rank-color); background: rgba(var(--rank-rgb),.16); transform: translateY(-1px); outline: none; }
+.certification-pyramid-course > span { font-size: 12px; }
+.certification-pyramid-course strong { overflow: hidden; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
+.certification-pyramid-course small { color: var(--rank-color); font-size: 8px; font-weight: 900; }
+.certification-pyramid-note { max-width: 900px; margin: 12px auto 0; color: var(--text); font-size: 10px; line-height: 1.7; }
 .ranked-roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 16px; }
 .ranked-roadmap-card { display: flex; flex-direction: column; min-height: 230px; padding: 20px; border: 1px solid var(--border); border-top: 2px solid var(--rank-color); border-radius: 15px; background: var(--card-bg); }
 .ranked-roadmap-card.is-locked { opacity: .62; }
@@ -1519,6 +1545,16 @@ code {
   .rank-command-copy > p { margin-inline: auto; }
   .rank-emblem { width: 128px; height: 144px; }
   .rank-ladder, .rank-protocol-grid { grid-template-columns: 1fr; }
+  .certification-pyramid-header { align-items: flex-start; }
+  .pyramid-direction { display: none; }
+  .certification-pyramid-shell { padding: 14px 8px; border-radius: 16px; }
+  .certification-tier { grid-template-columns: 1fr; width: calc(100% - var(--tier-mobile-inset)); min-height: 0; gap: 8px; padding: 12px 24px; clip-path: polygon(4% 0,96% 0,100% 100%,0 100%); }
+  .certification-tier-rank { justify-content: center; }
+  .certification-tier-rank strong,.certification-tier-rank small { text-align: center; }
+  .certification-tier-body > p { display: none; }
+  .certification-tier-courses { justify-content: center; }
+  .certification-pyramid-course { max-width: 100%; }
+  .certification-pyramid-course strong { font-size: 9px; }
   .rank-stats-grid { grid-template-columns: repeat(2,1fr); }
   .achievement-grid { grid-template-columns: 1fr; }
   .rank-showcase { grid-template-columns: repeat(2,minmax(0,1fr)); }
