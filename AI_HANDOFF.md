@@ -23,6 +23,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/questions.js`: 全クイズを統合
 - `src/data/glossary.js`: 全用語を統合
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
+- `src/data/skillCourseBreadthExpansion.js`: データ分析・モバイル・IoT・SRE・UX・ITガバナンスの追加6コース
 - `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
 - `src/data/stackCourse.js`: `it-study-app`から読み取り専用で移植したIT総合教本83本と科目A/B問題99問の変換・統合
 - `src/data/stack/`: 移植元の教材・問題JSONのリポジトリ内スナップショット（外部フォルダーへ実行時依存しない）
@@ -47,6 +48,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 
 実務スキル系コースは原則として`src/data/skillCourses.js`へ追加します。
 基盤4分野の教材を拡張する場合は、見通しを保つため`src/data/foundationCourseExpansion.js`へ追加し、`skillCourses.js`から統合します。
+追加6分野の内容を拡張する場合は`src/data/skillCourseBreadthExpansion.js`を更新し、`skillCourses.js`の統合を維持します。
 
 1. `skillCourseTopics`へトピック情報を追加
 2. 同じIDで`skillCourseModules`へレッスンを追加
