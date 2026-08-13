@@ -2,6 +2,7 @@ import { roadmapTopics } from '../data/topics.js'
 import { getTopicQuizProgress } from '../store.js'
 import { accountRanks, getCourseRank, learningRanks } from '../data/ranks.js'
 import { certificationPyramidTiers } from '../data/certificationPyramid.js'
+import { certificationDifficultyRanking, certificationDifficultyRubric, certificationDifficultySources } from '../data/certificationDifficulty.js'
 import { renderRankBadge, renderRankSigil } from '../components/rank.js'
 
 export function renderRoadmap() {
@@ -38,8 +39,83 @@ export function renderRoadmap() {
     </div>
 
     ${renderCertificationPyramid(certifications)}
+    ${renderCertificationDifficultyRanking(certifications)}
     ${renderGroup('実務スキル', '現場で使う技術をランク別に攻略', skills)}
     ${renderGroup('IT資格', '試験範囲を基礎から上級へ積み上げる', certifications)}
+  `
+}
+
+function renderCertificationDifficultyRanking(certifications) {
+  const topicMap = new Map(certifications.map((topic) => [topic.id, topic]))
+  const ranking = certificationDifficultyRanking
+    .map((entry, index) => ({ ...entry, position: index + 1, topic: topicMap.get(entry.topicId) }))
+    .filter((entry) => entry.topic)
+  const podium = ranking.slice(0, 3)
+
+  return `
+    <section class="section certification-difficulty-section" aria-labelledby="certification-difficulty-title">
+      <div class="section-header rank-section-header certification-difficulty-header">
+        <div>
+          <span class="eyebrow">CERTIFICATION DIFFICULTY INDEX</span>
+          <h2 id="certification-difficulty-title">資格難易度ランキング</h2>
+          <p class="progress-label">学習順とは別に、試験で要求される知識・判断・解答負荷を100点で比較しています。</p>
+        </div>
+        <span class="difficulty-edition">2026.08<br><b>HACKPATH ESTIMATE</b></span>
+      </div>
+
+      <div class="difficulty-method-card">
+        <div>
+          <strong>採点ルーブリック</strong>
+          <p>公式区分を基礎資料として、5項目を共通採点。合格率や学習時間は受験者・年度で変わるため含めていません。</p>
+        </div>
+        <div class="difficulty-rubric-grid">
+          ${certificationDifficultyRubric.map((item) => `<span><b>${item.max}</b><small>${item.label}</small></span>`).join('')}
+        </div>
+      </div>
+
+      <div class="difficulty-podium">
+        ${podium.map((entry) => renderDifficultyPodium(entry)).join('')}
+      </div>
+
+      <div class="difficulty-ranking-list">
+        ${ranking.map((entry) => renderDifficultyRow(entry)).join('')}
+      </div>
+
+      <div class="difficulty-ranking-footer">
+        <p>※ HackPath独自推定です。同じS帯の高度資格は専門分野が異なり、点差がそのまま優劣を意味するものではありません。「セキュリティ＆倫理的ハッキング」は単一の資格ではないため対象外です。</p>
+        <div>${certificationDifficultySources.map((source) => `<a href="${source.url}" target="_blank" rel="noopener noreferrer">${source.label} ↗</a>`).join('')}</div>
+      </div>
+    </section>
+  `
+}
+
+function renderDifficultyPodium(entry) {
+  return `
+    <a class="difficulty-podium-card difficulty-place-${entry.position} difficulty-tier-${entry.tier.toLowerCase()}" href="#${entry.topic.path}" data-nav="${entry.topic.path}">
+      <span class="difficulty-place">#${String(entry.position).padStart(2, '0')}</span>
+      <span class="difficulty-topic-icon" aria-hidden="true">${entry.topic.icon}</span>
+      <strong>${entry.topic.title}</strong>
+      <small>${entry.officialBand}</small>
+      <b>${entry.score}<i>/100</i></b>
+    </a>
+  `
+}
+
+function renderDifficultyRow(entry) {
+  return `
+    <article class="difficulty-ranking-row difficulty-tier-${entry.tier.toLowerCase()}">
+      <span class="difficulty-rank-number">${String(entry.position).padStart(2, '0')}</span>
+      <span class="difficulty-tier-label">${entry.tier}</span>
+      <div class="difficulty-course-copy">
+        <a href="#${entry.topic.path}" data-nav="${entry.topic.path}">${entry.topic.icon} <strong>${entry.topic.title}</strong></a>
+        <small>${entry.officialBand}</small>
+        <p>${entry.reason}</p>
+      </div>
+      <div class="difficulty-breakdown" aria-label="${entry.topic.title}の採点内訳">
+        ${certificationDifficultyRubric.map((item) => `<span title="${item.label} ${entry.breakdown[item.id]}/${item.max}"><i style="--meter:${(entry.breakdown[item.id] / item.max) * 100}%"></i><small>${item.label}</small></span>`).join('')}
+      </div>
+      <div class="difficulty-score"><strong>${entry.score}</strong><small>/100</small></div>
+    </article>
   `
 }
 

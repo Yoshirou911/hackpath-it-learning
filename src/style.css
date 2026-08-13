@@ -1473,6 +1473,53 @@ code {
 .certification-pyramid-course strong { overflow: hidden; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
 .certification-pyramid-course small { color: var(--rank-color); font-size: 8px; font-weight: 900; }
 .certification-pyramid-note { max-width: 900px; margin: 12px auto 0; color: var(--text); font-size: 10px; line-height: 1.7; }
+.certification-difficulty-section { margin-top: 44px; }
+.certification-difficulty-header { align-items: center; }
+.certification-difficulty-header h2 { margin-top: 5px; }
+.difficulty-edition { padding: 10px 13px; text-align: right; color: var(--text); border: 1px solid var(--border); border-radius: 10px; font-size: 9px; line-height: 1.5; letter-spacing: .1em; }
+.difficulty-edition b { color: var(--accent-2); font-size: 8px; }
+.difficulty-method-card { display: grid; grid-template-columns: minmax(220px,.75fr) minmax(0,1.25fr); gap: 24px; align-items: center; margin-bottom: 14px; padding: 18px; border: 1px solid var(--border); border-radius: 15px; background: linear-gradient(120deg,rgba(108,71,255,.1),var(--card-bg) 52%); }
+.difficulty-method-card strong { color: var(--text-h); }
+.difficulty-method-card p { margin: 5px 0 0; color: var(--text); font-size: 11px; line-height: 1.65; }
+.difficulty-rubric-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 7px; }
+.difficulty-rubric-grid span { display: grid; gap: 2px; padding: 10px 7px; text-align: center; border: 1px solid var(--border); border-radius: 9px; background: rgba(4,9,17,.56); }
+.difficulty-rubric-grid b { color: var(--accent-2); font-size: 17px; }
+.difficulty-rubric-grid small { color: var(--text); font-size: 8px; }
+.difficulty-podium { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+.difficulty-podium-card { position: relative; display: grid; justify-items: center; min-height: 184px; padding: 20px 15px 16px; overflow: hidden; text-align: center; color: var(--text-h); border: 1px solid var(--difficulty-color); border-radius: 14px; background: radial-gradient(circle at 50% 30%,var(--difficulty-glow),transparent 40%),linear-gradient(145deg,rgba(255,255,255,.035),#070d18); transition: transform .18s,box-shadow .18s; }
+.difficulty-podium-card:hover,.difficulty-podium-card:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 32px var(--difficulty-glow); outline: none; }
+.difficulty-place { position: absolute; top: 10px; left: 12px; color: var(--difficulty-color); font-size: 10px; font-weight: 950; letter-spacing: .12em; }
+.difficulty-topic-icon { font-size: 30px; filter: drop-shadow(0 0 12px var(--difficulty-glow)); }
+.difficulty-podium-card > strong { margin-top: 8px; font-size: 14px; }
+.difficulty-podium-card > small { max-width: 220px; margin-top: 4px; color: var(--text); font-size: 9px; }
+.difficulty-podium-card > b { margin-top: 11px; color: var(--difficulty-color); font-size: 30px; line-height: 1; }
+.difficulty-podium-card > b i { font-size: 9px; font-style: normal; }
+.difficulty-tier-s { --difficulty-color: #ff5f7d; --difficulty-glow: rgba(255,54,95,.2); }
+.difficulty-tier-a { --difficulty-color: #ffd166; --difficulty-glow: rgba(255,209,102,.18); }
+.difficulty-tier-b { --difficulty-color: #6ee7ff; --difficulty-glow: rgba(110,231,255,.16); }
+.difficulty-tier-c { --difficulty-color: #b8c4d6; --difficulty-glow: rgba(184,196,214,.13); }
+.difficulty-ranking-list { display: grid; overflow: hidden; border: 1px solid var(--border); border-radius: 15px; }
+.difficulty-ranking-row { display: grid; grid-template-columns: 42px 38px minmax(250px,.9fr) minmax(260px,1.1fr) 70px; gap: 11px; align-items: center; min-height: 88px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg,var(--difficulty-glow),transparent 25%),var(--card-bg); }
+.difficulty-ranking-row:last-child { border-bottom: 0; }
+.difficulty-rank-number { color: var(--text); font-size: 11px; font-weight: 900; }
+.difficulty-tier-label { display: grid; width: 32px; height: 32px; place-items: center; color: #07101b; border-radius: 8px; background: var(--difficulty-color); box-shadow: 0 0 14px var(--difficulty-glow); font-size: 13px; font-weight: 950; }
+.difficulty-course-copy { min-width: 0; }
+.difficulty-course-copy a { color: var(--text-h); font-size: 12px; }
+.difficulty-course-copy a:hover { color: var(--difficulty-color); }
+.difficulty-course-copy small { display: block; margin-top: 2px; color: var(--difficulty-color); font-size: 8px; font-weight: 800; }
+.difficulty-course-copy p { overflow: hidden; margin: 5px 0 0; color: var(--text); font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+.difficulty-breakdown { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; }
+.difficulty-breakdown > span { display: grid; gap: 4px; min-width: 0; }
+.difficulty-breakdown > span::before { grid-area: 1/1; width: 100%; height: 4px; content: ''; border-radius: 4px; background: rgba(255,255,255,.07); }
+.difficulty-breakdown i { grid-area: 1/1; width: var(--meter); height: 4px; border-radius: 4px; background: var(--difficulty-color); box-shadow: 0 0 6px var(--difficulty-glow); }
+.difficulty-breakdown small { overflow: hidden; color: var(--text); font-size: 7px; white-space: nowrap; text-overflow: ellipsis; }
+.difficulty-score { text-align: right; }
+.difficulty-score strong { color: var(--difficulty-color); font-size: 25px; }
+.difficulty-score small { color: var(--text); font-size: 8px; }
+.difficulty-ranking-footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 10px; color: var(--text); font-size: 9px; line-height: 1.6; }
+.difficulty-ranking-footer p { max-width: 720px; margin: 0; }
+.difficulty-ranking-footer > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.difficulty-ranking-footer a { color: var(--accent-2); white-space: nowrap; }
 .ranked-roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 16px; }
 .ranked-roadmap-card { display: flex; flex-direction: column; min-height: 230px; padding: 20px; border: 1px solid var(--border); border-top: 2px solid var(--rank-color); border-radius: 15px; background: var(--card-bg); }
 .ranked-roadmap-card.is-locked { opacity: .62; }
@@ -1555,6 +1602,18 @@ code {
   .certification-tier-courses { justify-content: center; }
   .certification-pyramid-course { max-width: 100%; }
   .certification-pyramid-course strong { font-size: 9px; }
+  .certification-difficulty-header { align-items: flex-start; }
+  .difficulty-edition { text-align: left; }
+  .difficulty-method-card { grid-template-columns: 1fr; gap: 12px; }
+  .difficulty-rubric-grid { grid-template-columns: repeat(5,minmax(54px,1fr)); overflow-x: auto; }
+  .difficulty-podium { grid-template-columns: 1fr; }
+  .difficulty-podium-card { min-height: 146px; }
+  .difficulty-ranking-row { grid-template-columns: 34px 32px minmax(0,1fr) 55px; min-height: 82px; padding: 11px 10px; }
+  .difficulty-breakdown { display: none; }
+  .difficulty-course-copy p { white-space: normal; line-height: 1.45; }
+  .difficulty-score strong { font-size: 21px; }
+  .difficulty-ranking-footer { flex-direction: column; }
+  .difficulty-ranking-footer > div { justify-content: flex-start; }
   .rank-stats-grid { grid-template-columns: repeat(2,1fr); }
   .achievement-grid { grid-template-columns: 1fr; }
   .rank-showcase { grid-template-columns: repeat(2,minmax(0,1fr)); }
