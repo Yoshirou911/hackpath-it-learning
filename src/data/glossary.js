@@ -1,5 +1,6 @@
 import { skillGlossary } from './skillCourses.js'
 import { stackGlossary } from './stackCourse.js'
+import { expandedCertificationGlossary } from './certificationExpansion.js'
 
 const certificationGlossary = {
   itp: [
@@ -123,7 +124,7 @@ const certificationGlossary = {
   ],
 }
 
-export const glossary = { ...certificationGlossary, ...skillGlossary, stack: stackGlossary }
+export const glossary = { ...certificationGlossary, ...expandedCertificationGlossary, ...skillGlossary, stack: stackGlossary }
 
 export function getGlossaryByTopic(topicId) {
   return glossary[topicId] || []

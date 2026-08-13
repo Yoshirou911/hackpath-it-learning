@@ -1,5 +1,6 @@
 import { skillQuestions } from './skillCourses.js'
 import { stackQuestions } from './stackCourse.js'
+import { expandedCertificationQuestions } from './certificationExpansion.js'
 
 const certificationQuestions = [
   {
@@ -1789,7 +1790,7 @@ const certificationQuestions = [
   },
 ]
 
-export const questions = [...certificationQuestions, ...skillQuestions, ...stackQuestions]
+export const questions = [...certificationQuestions, ...expandedCertificationQuestions, ...skillQuestions, ...stackQuestions]
 
 export function getQuestionsByTopic(topic) {
   if (!topic || topic === 'all') return questions

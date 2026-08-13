@@ -24,6 +24,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/glossary.js`: 全用語を統合
 - `src/data/skillCourses.js`: 新しい実務スキル系コースの定義
 - `src/data/skillCourseBreadthExpansion.js`: データ分析・モバイル・IoT・SRE・UX・ITガバナンスの追加6コース
+- `src/data/certificationExpansion.js`: 追加9資格のコース、教材、独自確認問題、用語を一括定義
 - `src/data/eliteCourse.js`: 最初から閲覧・挑戦できる最高難度`SOVEREIGN LAB`の教材・問題・用語
 - `src/data/foundationCourseExpansion.js`: ネットワーク・Linux・DB・Webの深掘りレッスン、問題、用語
 - `src/data/stackCourse.js`: `it-study-app`から読み取り専用で移植したIT総合教本83本と科目A/B問題99問の変換・統合
@@ -52,6 +53,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 実務スキル系コースは原則として`src/data/skillCourses.js`へ追加します。
 基盤4分野の教材を拡張する場合は、見通しを保つため`src/data/foundationCourseExpansion.js`へ追加し、`skillCourses.js`から統合します。
 追加6分野の内容を拡張する場合は`src/data/skillCourseBreadthExpansion.js`を更新し、`skillCourses.js`の統合を維持します。
+資格対策コースは`src/data/certificationExpansion.js`へ追加し、公式の公開試験範囲を参照しながらも、問題文は転載せず独自に作成します。各教材には非公式教材であることと、最新範囲は主催者の公式情報で確認する旨を残してください。
 
 1. `skillCourseTopics`へトピック情報を追加
 2. 同じIDで`skillCourseModules`へレッスンを追加
@@ -121,6 +123,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - 成績は全コース合算。問題画面には全問題・苦手優先・未回答・不正解の切り替えと、カテゴリ情報を持つ問題の分野別理解度がある。日別の推移グラフは未実装。
 - `stack`コースのデータは`it-study-app`から移植したスナップショットであり、元フォルダーを直接参照・変更しない。更新時も元データを読み取り専用で確認し、JSONを検証してからこのリポジトリ側だけを更新する。
 - `npm.cmd test`で保存データの分離・移行、XPルール、教材数、ID重複、深掘り教材の構成、短い教材の説明変換を確認できる。ほかの画面は最低限ビルドとデータ整合性を確認すること。
+- 資格の試験範囲・名称・バージョンは変更される可能性がある。`certificationExpansion.js`を更新するときは、IPA、AWS、Cisco、LPI-Japanなど主催者の最新公式情報を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
 - 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。
