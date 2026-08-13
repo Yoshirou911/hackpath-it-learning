@@ -11,6 +11,7 @@ import {
   breadthQuestions,
   breadthTopics,
 } from './skillCourseBreadthExpansion.js'
+import { eliteGlossary, eliteModule, eliteQuestions, eliteTopic } from './eliteCourse.js'
 
 export const skillCourseTopics = [
   topic('network', 'ネットワーク基礎', '通信の流れを図解で理解する', '🌐', '#20c997', 'TCP/IP、IPアドレス、DNS、HTTPと障害調査の基本', 10),
@@ -23,10 +24,12 @@ export const skillCourseTopics = [
   topic('git', 'Git・開発ツール', 'Git・開発ツール基礎', '🔧', '#34d399', 'Git・GitHub・PR・テスト・デバッグ', 10),
   topic('sysdesign', 'システム設計', 'システム設計基礎', '🏗️', '#f472b6', 'スケール・可用性・キャッシュ・API・マイクロサービス', 10),
   ...breadthTopics,
+  eliteTopic,
 ]
 
 export const skillCourseModules = {
   ...breadthModules,
+  sovereign: eliteModule,
   network: module('network', 'ネットワーク基礎', '🌐', '#20c997', [
     lesson('network-l1', 'ネットワークとTCP/IP', `
       <h3>データは層に分かれて運ばれる</h3>
@@ -529,6 +532,7 @@ npm install --save-dev jest</code></pre>
 
 export const skillQuestions = [
   ...breadthQuestions,
+  ...eliteQuestions,
   q('programming-1', 'programming', 'プログラミングにおいて、データを入れる箱のような役割を持つものはどれか。', ['関数', '変数', 'ループ', 'クラス'], 1, '解説1'),
   q('programming-2', 'programming', 'JavaScriptで変数を宣言するキーワードはどれか。', ['let', 'int', 'string', 'def'], 0, '解説2'),
   q('programming-3', 'programming', '条件分岐を行う構文はどれか。', ['for', 'while', 'if', 'function'], 2, '解説3'),
@@ -654,6 +658,7 @@ export const skillQuestions = [
 
 export const skillGlossary = {
   ...breadthGlossary,
+  sovereign: eliteGlossary,
   network: terms('network', [['TCP/IP', 'インターネット通信を支えるプロトコル群。'], ['IPアドレス', '機器を識別する論理アドレス。'], ['サブネット', 'IPネットワークを分割した範囲。'], ['DNS', 'ドメイン名とIPアドレスを対応付ける仕組み。'], ['ルータ', '異なるネットワーク間でパケットを転送する機器。'], ['HTTPS', 'TLSで暗号化されたHTTP通信。'], ...foundationGlossaryTerms.network]),
   linux: terms('linux', [['シェル', 'コマンドを解釈してOSへ伝えるプログラム。'], ['ルートディレクトリ', 'ファイルシステムの最上位「/」。'], ['パイプ', '前の出力を次の入力へ渡す仕組み。'], ['パーミッション', '読み取り・書き込み・実行のアクセス権。'], ['プロセス', '実行中のプログラムの単位。'], ['systemd', 'サービス管理システム。'], ...foundationGlossaryTerms.linux]),
   database: terms('database', [['主キー', '行を一意に識別するキー。'], ['外部キー', '別テーブルとの関係を表す列。'], ['SQL', 'リレーショナルDBを操作する言語。'], ['JOIN', '複数テーブルを関連付ける操作。'], ['トランザクション', '一まとまりとして扱う処理単位。'], ['インデックス', '検索を高速化するデータ構造。'], ...foundationGlossaryTerms.database]),

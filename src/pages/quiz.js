@@ -12,6 +12,7 @@ let textAnswer = ''
 let answered = false
 let currentMode = 'all'
 let currentTopic = ''
+let currentRankFilter = 'all'
 let sessionCorrect = 0
 let sessionAnswered = 0
 
@@ -42,8 +43,10 @@ export function renderQuiz(path, params = []) {
   currentTopic = params[0] || ''
   const urlMode = params[1] || 'all'
   currentMode = urlMode
+  currentRankFilter = params[2] || 'all'
 
-  const baseQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+  const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+  const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
   currentQuestions = filterQuestions(baseQuestions, currentMode)
   currentQuestionIndex = 0
   selectedChoice = null
@@ -72,6 +75,13 @@ export function renderQuiz(path, params = []) {
     { value: 'weak',       label: '苦手優先',                    icon: '🎯' },
     { value: 'unanswered', label: `未回答 (${totalUnanswered})`, icon: '❓' },
     { value: 'incorrect',  label: `不正解 (${totalIncorrect})`,  icon: '❌' },
+  ]
+  const rankOptions = [
+    { value: 'all', label: 'ALL RANKS', sub: '全階級' },
+    { value: 'bronze', label: 'BRONZE', sub: '基礎' },
+    { value: 'silver', label: 'SILVER', sub: '応用' },
+    { value: 'gold', label: 'GOLD', sub: '上級' },
+    { value: 'sovereign', label: 'SOVEREIGN', sub: '超高難度' },
   ]
 
   return `
@@ -116,6 +126,14 @@ export function renderQuiz(path, params = []) {
           >${m.icon} ${m.label}</button>
         `).join('')}
         <button class="mode-tab-btn sound-toggle" id="sound-toggle" type="button" aria-pressed="${isSoundEnabled()}">${isSoundEnabled() ? '🔊 効果音 ON' : '🔇 効果音 OFF'}</button>
+      </div>
+      <div class="quiz-rank-filter" aria-label="問題ランク選択">
+        <span>DIFFICULTY ACCESS</span>
+        ${rankOptions.map((rank) => `
+          <button type="button" class="quiz-rank-option rank-surface-${rank.value === 'all' ? 'platinum' : rank.value} ${currentRankFilter === rank.value ? 'is-active' : ''}" data-rank-filter="${rank.value}">
+            <b>${rank.label}</b><small>${rank.sub} · ${filterQuestionsByRank(topicQuestions, rank.value).length}問</small>
+          </button>
+        `).join('')}
       </div>
     </div>
 
@@ -222,6 +240,7 @@ function renderQuestionCard() {
           <span style="font-size: 12px; padding: 3px 10px; border-radius: 12px; background: rgba(108,71,255,0.15); color: var(--accent-2);">
             ${question.topic.toUpperCase()}
           </span>
+          <span class="question-rank-chip rank-surface-${getQuestionRank(question)}">${getQuestionRank(question).toUpperCase()}</span>
         </div>
       </div>
 
@@ -282,6 +301,12 @@ export function bindQuizEvents(container) {
     soundToggle.textContent = enabled ? '🔊 効果音 ON' : '🔇 効果音 OFF'
     soundToggle.setAttribute('aria-pressed', String(enabled))
   })
+  container.querySelectorAll('[data-rank-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      currentRankFilter = button.dataset.rankFilter
+      _reloadWithCurrentSettings()
+    })
+  })
   // 分野フィルター
   const topicFilter = container.querySelector('#topic-filter')
   if (topicFilter && !topicFilter.dataset.eventsBound) {
@@ -315,7 +340,8 @@ export function bindQuizEvents(container) {
   const restartBtn = container.querySelector('#restart-quiz')
   if (restartBtn) {
     restartBtn.addEventListener('click', () => {
-      const baseQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+      const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+      const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
       currentQuestions = filterQuestions(baseQuestions, currentMode)
       currentQuestionIndex = 0
       selectedChoice = null
@@ -420,7 +446,8 @@ export function bindQuizEvents(container) {
 }
 
 function _reloadWithCurrentSettings() {
-  const baseQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+  const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
+  const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
   currentQuestions = filterQuestions(baseQuestions, currentMode)
   currentQuestionIndex = 0
   selectedChoice = null
@@ -431,10 +458,22 @@ function _reloadWithCurrentSettings() {
   // ページ全体を再描画
   const app = document.getElementById('app')
   if (app) {
-    const path = currentTopic ? `/quiz/${currentTopic}` : '/quiz'
-    app.innerHTML = renderQuiz(path, currentTopic ? [currentTopic, currentMode] : ['', currentMode])
+    const path = `/quiz/${currentTopic}/${currentMode}/${currentRankFilter}`
+    app.innerHTML = renderQuiz(path, [currentTopic, currentMode, currentRankFilter])
     bindQuizEvents(app)
   }
+}
+
+function filterQuestionsByRank(base, rankFilter) {
+  if (!rankFilter || rankFilter === 'all') return [...base]
+  return base.filter((question) => getQuestionRank(question) === rankFilter)
+}
+
+function getQuestionRank(question) {
+  if (question.level === 'elite' || Number(question.difficulty) >= 7) return 'sovereign'
+  if (question.level === 'advanced' || Number(question.difficulty) >= 4) return 'gold'
+  if (question.level === 'intermediate' || Number(question.difficulty) === 3) return 'silver'
+  return 'bronze'
 }
 
 function normalizeAnswer(value) {

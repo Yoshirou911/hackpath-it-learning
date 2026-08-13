@@ -8,7 +8,8 @@ export const achievementDefinitions = [
   { id: 'century', name: 'CENTURY CORE', label: '百戦錬磨', icon: '100', description: '100問正解', test: ({ correct }) => correct >= 100 },
   { id: 'pathfinder', name: 'PATHFINDER', label: '開拓者', icon: '◇', description: '5分野で問題に回答', test: ({ topics }) => topics >= 5 },
   { id: 'all-rounder', name: 'ALL ROUNDER', label: '万能型', icon: '✦', description: '10分野で問題に回答', test: ({ topics }) => topics >= 10 },
-  { id: 'master-rank', name: 'APEX MIND', label: '知識の頂点', icon: '▲', description: 'マスターランクへ到達', test: ({ xp }) => xp >= 2100 },
+  { id: 'master-rank', name: 'MASTER CORE', label: '知識の達人', icon: 'M', description: 'マスターランクへ到達', test: ({ xp }) => xp >= 2100 },
+  { id: 'sovereign-rank', name: 'SOVEREIGN MIND', label: '知識の最高位', icon: '♛', description: 'ソヴリンランクへ到達', test: ({ xp }) => xp >= 3200 },
 ]
 
 export function getAchievements(state) {

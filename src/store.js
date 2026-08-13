@@ -32,6 +32,7 @@ const DEFAULT_STATE = {
     sre: { completed: 0, total: 0, completedLessonIds: [] },
     ux: { completed: 0, total: 0, completedLessonIds: [] },
     governance: { completed: 0, total: 0, completedLessonIds: [] },
+    sovereign: { completed: 0, total: 0, completedLessonIds: [] },
   },
   flashcards: {},
   lastVisited: '/',

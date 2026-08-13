@@ -22,6 +22,7 @@ registerRoute('/security', () => {
 registerRoute('/quiz', renderQuiz)
 registerRoute('/quiz/:topicFilter', renderQuiz)
 registerRoute('/quiz/:topicFilter/:mode', renderQuiz)
+registerRoute('/quiz/:topicFilter/:mode/:rankFilter', renderQuiz)
 registerRoute('/glossary', renderGlossary)
 registerRoute('/glossary/:topicFilter', renderGlossary)
 registerRoute('/history', renderHistory)

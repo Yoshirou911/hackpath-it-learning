@@ -57,6 +57,15 @@ export const accountRanks = [
     xpMin: 2100,
     color: '#d8a4ff',
   },
+  {
+    id: 'sovereign',
+    name: 'SOVEREIGN',
+    label: 'ソヴリン',
+    stage: '最高位',
+    tagline: '深層知識を支配する',
+    xpMin: 3200,
+    color: '#ff365f',
+  },
 ]
 
 export function getAccountRank(xp = 0) {

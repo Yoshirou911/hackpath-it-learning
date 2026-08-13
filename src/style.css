@@ -1340,6 +1340,7 @@ code {
 .rank-surface-platinum { --rank-color: #9bf6ff; --rank-rgb: 155, 246, 255; --rank-deep: #367f8c; }
 .rank-surface-diamond { --rank-color: #6ee7ff; --rank-rgb: 110, 231, 255; --rank-deep: #1b6fa4; }
 .rank-surface-master { --rank-color: #d8a4ff; --rank-rgb: 216, 164, 255; --rank-deep: #7138a5; }
+.rank-surface-sovereign { --rank-color: #ff365f; --rank-rgb: 255, 54, 95; --rank-deep: #75051f; }
 .rank-badge { display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 8px 12px; border: 1px solid rgba(var(--rank-rgb), .45); border-radius: 999px; color: var(--rank-color); background: linear-gradient(135deg, rgba(var(--rank-rgb), .14), rgba(var(--rank-rgb), .04)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
 .rank-badge-compact { padding: 6px 10px; }
 .rank-badge-copy { display: grid; line-height: 1.05; }
@@ -1362,7 +1363,9 @@ code {
 .wing-left { left: -23px; clip-path: polygon(100% 0,100% 100%,0 68%,70% 54%,8% 35%,76% 30%); }
 .wing-right { right: -23px; clip-path: polygon(0 0,0 100%,100% 68%,30% 54%,92% 35%,24% 30%); }
 .rank-emblem[data-tier="1"] .rank-emblem-wing { display: none; }
-.rank-emblem[data-tier="5"], .rank-emblem[data-tier="6"] { --wing-opacity: .55; }
+.rank-emblem[data-tier="5"], .rank-emblem[data-tier="6"], .rank-emblem[data-tier="7"] { --wing-opacity: .55; }
+.rank-emblem[data-tier="7"]::before { background: linear-gradient(145deg,#fff,var(--rank-color) 23%,#2a000b 78%); animation: sovereign-pulse 2.2s ease-in-out infinite; }
+.rank-emblem[data-tier="7"] .rank-emblem-core { background: radial-gradient(circle at 50% 35%,rgba(255,54,95,.32),transparent 35%),linear-gradient(160deg,#220712,#03050b 74%); }
 .rank-emblem-name { position: absolute; z-index: 1; bottom: 34px; font-size: 10px; font-weight: 900; letter-spacing: .18em; }
 .rank-emblem-pips { position: absolute; z-index: 2; bottom: 11px; display: flex; gap: 6px; }
 .rank-emblem-pips i { width: 9px; height: 5px; transform: skewX(-28deg); background: var(--rank-color); box-shadow: 0 0 7px rgba(var(--rank-rgb),.65); }
@@ -1391,6 +1394,18 @@ code {
 .rank-step-index { color: var(--rank-color); font-size: 11px; font-weight: 900; }
 .rank-ladder-step strong, .rank-ladder-step small { display: block; }
 .rank-ladder-step small { margin-top: 3px; color: var(--text); }
+.rank-showcase-section { margin: 18px 0 30px; }
+.rank-showcase { display: grid; grid-template-columns: repeat(auto-fit,minmax(175px,1fr)); gap: 12px; }
+.rank-showcase-card { position: relative; display: grid; justify-items: center; min-height: 255px; padding: 12px 12px 16px; overflow: hidden; text-align: center; border: 1px solid rgba(var(--rank-rgb),.28); border-radius: 16px; background: radial-gradient(circle at 50% 30%,rgba(var(--rank-rgb),.12),transparent 44%),#09101c; }
+.rank-showcase-card.is-preview { opacity: .7; }
+.rank-showcase-card.is-current { border-color: var(--rank-color); box-shadow: 0 0 30px rgba(var(--rank-rgb),.2),inset 0 -3px 0 var(--rank-color); }
+.rank-showcase-card .rank-step-index { position: absolute; top: 11px; left: 12px; z-index: 3; }
+.rank-showcase-card .rank-emblem { width: 124px; height: 142px; transform: scale(.82); transform-origin: center; }
+.rank-showcase-card > div:last-child { display: grid; gap: 3px; }
+.rank-showcase-card strong { color: var(--text-h); letter-spacing: .08em; }
+.rank-showcase-card small { color: var(--text); font-size: 10px; }
+.rank-showcase-card b { margin-top: 4px; color: var(--rank-color); font-size: 8px; letter-spacing: .16em; }
+@keyframes sovereign-pulse { 50% { filter: drop-shadow(0 12px 30px rgba(var(--rank-rgb),.75)); } }
 .rank-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 32px; }
 .rank-stats-grid .stat-card { min-width: 0; gap: 12px; padding-inline: 16px; }
 .rank-stats-grid .stat-card > div { min-width: 0; }
@@ -1459,6 +1474,14 @@ code {
 .achievement-card p { margin: 4px 0 0; color: var(--text); font-size: 11px; }
 .achievement-card > b { position: absolute; top: 7px; right: 9px; color: #ffd166; font-size: 7px; letter-spacing: .1em; }
 .sound-toggle { margin-left: auto; padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px; color: var(--text); background: transparent; cursor: pointer; }
+.quiz-rank-filter { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.quiz-rank-filter > span { grid-column: 1/-1; color: var(--text); font-size: 9px; font-weight: 900; letter-spacing: .16em; }
+.quiz-rank-option { display: grid; gap: 3px; min-width: 0; padding: 10px; text-align: left; color: var(--text); border: 1px solid var(--border); border-radius: 9px; background: transparent; cursor: pointer; }
+.quiz-rank-option b { overflow: hidden; color: var(--rank-color); font-size: 10px; letter-spacing: .09em; text-overflow: ellipsis; }
+.quiz-rank-option small { font-size: 9px; }
+.quiz-rank-option.is-active { border-color: var(--rank-color); background: rgba(var(--rank-rgb),.1); box-shadow: inset 0 -2px 0 var(--rank-color); }
+.question-rank-chip { padding: 3px 9px; color: var(--rank-color); border: 1px solid rgba(var(--rank-rgb),.4); border-radius: 12px; background: rgba(var(--rank-rgb),.08); font-size: 9px; font-weight: 900; letter-spacing: .08em; }
+.sovereign-flow { border-color: rgba(255,54,95,.32); background: linear-gradient(135deg,rgba(255,54,95,.09),rgba(5,9,18,.9)); }
 .mission-celebration { position: fixed; z-index: 9999; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0; background: radial-gradient(circle,rgba(var(--rank-rgb),.16),rgba(2,6,14,.84) 58%); transition: opacity .2s ease; }
 .mission-celebration.is-visible { opacity: 1; }
 .mission-celebration.is-leaving { opacity: 0; transition-duration: .5s; }
@@ -1498,6 +1521,8 @@ code {
   .rank-ladder, .rank-protocol-grid { grid-template-columns: 1fr; }
   .rank-stats-grid { grid-template-columns: repeat(2,1fr); }
   .achievement-grid { grid-template-columns: 1fr; }
+  .rank-showcase { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .quiz-rank-filter { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .sound-toggle { margin-left: 0; }
   .course-rank-header, .roadmap-rank-header, .rank-stage-header { align-items: flex-start; flex-direction: column; }
   .course-rank-summary { width: 100%; min-width: 0; }
@@ -1515,4 +1540,5 @@ code {
 @media (prefers-reduced-motion: reduce) {
   .celebration-card,.celebration-burst,.celebration-particles i { animation: none; }
   .mission-celebration { transition: none; }
+  .rank-emblem[data-tier="7"]::before { animation: none; }
 }

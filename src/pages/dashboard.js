@@ -2,7 +2,7 @@ import { getState, getQuizStats, getOverallProgress, getTopicQuizProgress } from
 import { roadmapTopics } from '../data/topics.js'
 import { questions } from '../data/questions.js'
 import { accountRanks, getAccountRank, getCourseRank } from '../data/ranks.js'
-import { renderRankBadge, renderRankEmblem, renderRankSigil } from '../components/rank.js'
+import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
 import { getAchievements } from '../data/achievements.js'
 
 export function renderDashboard() {
@@ -55,15 +55,18 @@ export function renderDashboard() {
       <div class="rank-command-number">0${accountRanks.indexOf(accountRank.current) + 1}</div>
     </section>
 
-    <div class="rank-ladder" aria-label="学習ランク一覧">
+    <section class="rank-showcase-section">
+      <div class="section-header rank-section-header"><div><span class="eyebrow">RANK ARCHIVE</span><h2>全ランク紋章</h2></div><span class="achievement-count">全階級を閲覧可能</span></div>
+      <div class="rank-showcase" aria-label="学習ランク一覧">
       ${accountRanks.map((rank, index) => `
-        <div class="rank-ladder-step rank-surface-${rank.id} ${index <= accountRanks.indexOf(accountRank.current) ? 'is-active' : ''}">
+        <article class="rank-showcase-card rank-surface-${rank.id} ${index < accountRanks.indexOf(accountRank.current) ? 'is-reached' : ''} ${index === accountRanks.indexOf(accountRank.current) ? 'is-current' : 'is-preview'}">
           <span class="rank-step-index">0${index + 1}</span>
-          ${renderRankSigil(rank, 'rank-sigil-small')}
-          <div><strong>${rank.name}</strong><small>${rank.stage} · ${rank.tagline}</small></div>
-        </div>
+          ${renderRankEmblem(rank)}
+          <div><strong>${rank.name}</strong><small>${rank.stage} · ${rank.tagline}</small><b>${index <= accountRanks.indexOf(accountRank.current) ? 'REACHED' : `${rank.xpMin} XP`}</b></div>
+        </article>
       `).join('')}
-    </div>
+      </div>
+    </section>
 
     <div class="stats-grid rank-stats-grid">
       <div class="glass-card stat-card"><span class="stat-icon">⚡</span><div><span class="stat-value">Lv.${state.level}</span><span class="stat-label">オペレーターレベル</span></div></div>

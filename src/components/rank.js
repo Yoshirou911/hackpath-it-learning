@@ -32,9 +32,9 @@ export function renderRankSigil(rank, className = '') {
 }
 
 function rankTier(rank) {
-  return ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'master'].indexOf(rank.id) + 1
+  return ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'master', 'sovereign'].indexOf(rank.id) + 1
 }
 
 function rankMark(rank) {
-  return ({ bronze: 'I', silver: 'II', gold: 'III', platinum: 'P', diamond: 'D', master: 'M' })[rank.id] || 'H'
+  return ({ bronze: 'I', silver: 'II', gold: 'III', platinum: 'P', diamond: 'D', master: 'M', sovereign: 'S' })[rank.id] || 'H'
 }
