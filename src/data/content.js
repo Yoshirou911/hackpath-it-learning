@@ -1,6 +1,7 @@
 import { skillCourseModules } from './skillCourses.js'
 import { stackModule } from './stackCourse.js'
 import { expandedCertificationModules } from './certificationExpansion.js'
+import { feIntensiveLessons } from './feIntensiveCourse.js'
 
 const certificationModules = {
   itp: {
@@ -640,7 +641,16 @@ const certificationModules = {
   },
 }
 
-export const studyModules = { ...certificationModules, ...expandedCertificationModules, ...skillCourseModules, stack: stackModule }
+export const studyModules = {
+  ...certificationModules,
+  fe: {
+    ...certificationModules.fe,
+    lessons: [...certificationModules.fe.lessons, ...feIntensiveLessons],
+  },
+  ...expandedCertificationModules,
+  ...skillCourseModules,
+  stack: stackModule,
+}
 
 export function getStudyModule(topicId) {
   return studyModules[topicId]

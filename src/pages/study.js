@@ -5,6 +5,7 @@ import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
 import { renderExplainedLesson } from '../components/lessonExplainer.js'
 import { getTopicQuizProgress, getCustomLessons } from '../store.js'
 import { renderContent } from './editor.js'
+import { feExamBlueprint } from '../data/feIntensiveCourse.js'
 
 export function renderStudy(path, params) {
   const topicId = params[0]
@@ -110,6 +111,8 @@ function renderLessonList({ topicId, topic, module, progress, stages, currentRan
       <strong class="course-progress-number">${progress.pct}%</strong>
     </section>
 
+    ${topicId === 'fe' ? renderFeCommandCenter(module, progress) : ''}
+
     <div class="glass-card" style="margin-bottom:20px; padding:14px 18px; display:flex; align-items:center; gap:12px; background:rgba(0,255,136,0.06); border:1px solid rgba(0,255,136,0.2);">
       <span style="font-size:22px;">💡</span>
       <div>
@@ -124,6 +127,36 @@ function renderLessonList({ topicId, topic, module, progress, stages, currentRan
     <div class="rank-stage-list">
       ${stages.map((stage) => renderStage({ stage, topicId, module })).join('')}
     </div>
+  `
+}
+
+function renderFeCommandCenter(module, progress) {
+  const [sectionA, sectionB] = feExamBlueprint.sections
+  return `
+    <section class="fe-command-center">
+      <div class="fe-command-copy">
+        <span class="eyebrow">FE EXAM COMMAND CENTER</span>
+        <h2>基本情報を、合格後も使える知識へ。</h2>
+        <p>シラバスVer.${feExamBlueprint.syllabusVersion}を基準に、用語の意味、仕組み、計算、擬似言語のトレースまで段階的に学びます。</p>
+        <div class="fe-command-actions">
+          <a href="#/quiz/fe/section-a/all" class="btn btn-primary" data-nav="/quiz/fe/section-a/all">科目Aを演習</a>
+          <a href="#/quiz/fe/section-b/all" class="btn btn-secondary" data-nav="/quiz/fe/section-b/all">科目Bを演習</a>
+          <a href="${feExamBlueprint.syllabusUrl}" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">IPAシラバス ↗</a>
+        </div>
+      </div>
+      <div class="fe-exam-specs">
+        <article><span>${sectionA.label}</span><strong>${sectionA.questions}問 / ${sectionA.minutes}分</strong><p>${sectionA.focus}</p></article>
+        <article><span>${sectionB.label}</span><strong>${sectionB.questions}問 / ${sectionB.minutes}分</strong><p>${sectionB.focus}</p></article>
+        <article class="fe-exam-total"><span>HACKPATH収録</span><strong>${module.lessons.length}教材 / ${progress.total}問</strong><p>読むだけは自由。XPは回答で獲得します。</p></article>
+      </div>
+      <ol class="fe-study-cycle" aria-label="基本情報の推奨学習サイクル">
+        <li><b>01</b><span>教材で「何か」を理解</span></li>
+        <li><b>02</b><span>図と例で仕組みを説明</span></li>
+        <li><b>03</b><span>科目別問題で根拠を確認</span></li>
+        <li><b>04</b><span>不正解だけ再挑戦</span></li>
+      </ol>
+      <p class="source-note">試験仕様は2026年8月時点のIPA公開情報を基準に表示しています。HackPathは公式教材ではなく、問題はすべて独自作成です。</p>
+    </section>
   `
 }
 

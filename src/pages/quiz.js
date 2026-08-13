@@ -16,10 +16,12 @@ let currentRankFilter = 'all'
 let sessionCorrect = 0
 let sessionAnswered = 0
 
-// mode: 'all' | 'weak' | 'unanswered' | 'incorrect'
+// mode: 'all' | 'weak' | 'unanswered' | 'incorrect' | 'section-a' | 'section-b'
 function filterQuestions(base, mode) {
   const state = getState()
   const answeredMap = state.quiz.answered || {}
+  if (mode === 'section-a') return base.filter(q => (q.examSection || 'A') === 'A')
+  if (mode === 'section-b') return base.filter(q => q.examSection === 'B')
   if (mode === 'unanswered') return base.filter(q => !(q.id in answeredMap))
   if (mode === 'incorrect') return base.filter(q => answeredMap[q.id] === false)
   if (mode === 'weak') {
@@ -75,6 +77,10 @@ export function renderQuiz(path, params = []) {
     { value: 'weak',       label: '苦手優先',                    icon: '🎯' },
     { value: 'unanswered', label: `未回答 (${totalUnanswered})`, icon: '❓' },
     { value: 'incorrect',  label: `不正解 (${totalIncorrect})`,  icon: '❌' },
+    ...(currentTopic === 'fe' ? [
+      { value: 'section-a', label: `科目A (${topicQuestions.filter(q => (q.examSection || 'A') === 'A').length})`, icon: '🧠' },
+      { value: 'section-b', label: `科目B (${topicQuestions.filter(q => q.examSection === 'B').length})`, icon: '⌘' },
+    ] : []),
   ]
   const rankOptions = [
     { value: 'all', label: 'ALL RANKS', sub: '全階級' },
@@ -183,6 +189,8 @@ function renderQuestionCard() {
     const emptyMessages = {
       unanswered: { emoji: '🎉', title: '未回答の問題はありません！', sub: 'すべての問題に回答しました。不正解の問題を復習しましょう。' },
       incorrect:  { emoji: '✨', title: '不正解の問題はありません！', sub: 'すべての問題を正解しています。素晴らしい！' },
+      'section-a': { emoji: '🧠', title: '科目Aの問題がありません', sub: '分野または難易度フィルターを確認してください。' },
+      'section-b': { emoji: '⌘', title: '科目Bの問題がありません', sub: '分野または難易度フィルターを確認してください。' },
       all:        { emoji: '📭', title: '問題がありません',            sub: '分野フィルターを確認してください。' },
     }
     const msg = emptyMessages[currentMode] || emptyMessages.all
@@ -240,6 +248,7 @@ function renderQuestionCard() {
           <span style="font-size: 12px; padding: 3px 10px; border-radius: 12px; background: rgba(108,71,255,0.15); color: var(--accent-2);">
             ${question.topic.toUpperCase()}
           </span>
+          ${question.topic === 'fe' ? `<span class="fe-section-chip fe-section-${(question.examSection || 'A').toLowerCase()}">科目${question.examSection || 'A'}</span>` : ''}
           <span class="question-rank-chip rank-surface-${getQuestionRank(question)}">${getQuestionRank(question).toUpperCase()}</span>
         </div>
       </div>

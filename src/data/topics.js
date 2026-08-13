@@ -1,6 +1,7 @@
 import { skillCourseTopics } from './skillCourses.js'
 import { stackTopic } from './stackCourse.js'
 import { expandedCertificationTopics } from './certificationExpansion.js'
+import { feIntensiveLessons } from './feIntensiveCourse.js'
 
 const certificationTopics = [
   {
@@ -69,6 +70,13 @@ const certificationTopics = [
 certificationTopics.forEach((topic) => {
   topic.category ??= topic.id === 'gamedev' ? 'skill' : 'certification'
 })
+
+const feTopic = certificationTopics.find((topic) => topic.id === 'fe')
+if (feTopic) {
+  feTopic.lessons += feIntensiveLessons.length
+  feTopic.subtitle = '科目A・科目Bを徹底攻略する主力コース'
+  feTopic.description = '現行シラバスに沿って、知識・計算・擬似言語・セキュリティを基礎から実戦まで学ぶ'
+}
 
 export const roadmapTopics = [...certificationTopics, ...expandedCertificationTopics, ...skillCourseTopics, stackTopic]
 
