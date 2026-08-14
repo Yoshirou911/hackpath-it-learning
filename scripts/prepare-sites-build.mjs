@@ -22,7 +22,10 @@ if (!workerDirectory) {
 
 const source = new URL(`../dist/${workerDirectory.name}/index.js`, import.meta.url)
 const serverDirectory = new URL('../dist/server/', import.meta.url)
+const hostingDirectory = new URL('../dist/.openai/', import.meta.url)
 await mkdir(serverDirectory, { recursive: true })
+await mkdir(hostingDirectory, { recursive: true })
 await copyFile(source, new URL('index.js', serverDirectory))
+await copyFile(new URL('../.openai/hosting.json', import.meta.url), new URL('hosting.json', hostingDirectory))
 
-console.log(`Prepared Sites Worker from ${join('dist', workerDirectory.name, 'index.js')}`)
+console.log(`Prepared Sites Worker from ${join('dist', workerDirectory.name, 'index.js')} with hosting metadata`)
