@@ -4,6 +4,7 @@ import { roadmapTopics } from '../data/topics.js'
 import { navigate } from '../router.js'
 import { getAccountRank } from '../data/ranks.js'
 import { isSoundEnabled, playAnswerSound, playClearSound, showClearCelebration, toggleSound } from '../components/effects.js'
+import { getFeMockQuestions, getFeMockSpec } from '../data/feMockExam.js'
 
 let currentQuestionIndex = 0
 let currentQuestions = []
@@ -15,14 +16,19 @@ let currentTopic = ''
 let currentRankFilter = 'all'
 let sessionCorrect = 0
 let sessionAnswered = 0
+let activeMockKey = ''
+let mockDeadline = 0
+let mockTimerId = null
 
-const QUIZ_MODES = ['all', 'weak', 'unanswered', 'incorrect', 'section-a', 'section-b']
+const QUIZ_MODES = ['all', 'weak', 'unanswered', 'incorrect', 'section-a', 'section-b', 'mock-a', 'mock-b-1', 'mock-b-2']
 const RANK_FILTERS = ['all', 'bronze', 'silver', 'gold', 'sovereign']
 
 // mode: 'all' | 'weak' | 'unanswered' | 'incorrect' | 'section-a' | 'section-b'
 function filterQuestions(base, mode) {
   const state = getState()
   const answeredMap = state.quiz.answered || {}
+  const mockQuestions = getFeMockQuestions(base, mode)
+  if (mockQuestions) return mockQuestions
   if (mode === 'section-a') return base.filter(q => (q.examSection || 'A') === 'A')
   if (mode === 'section-b') return base.filter(q => q.examSection === 'B')
   if (mode === 'unanswered') return base.filter(q => !(q.id in answeredMap))
@@ -49,11 +55,15 @@ export function renderQuiz(path, params = []) {
   currentTopic = requestedTopic === 'all' ? '' : requestedTopic
   const requestedMode = params[1] || 'all'
   const supportsExamSections = currentTopic === 'fe'
+  const feOnlyMode = requestedMode.startsWith('section-') || requestedMode.startsWith('mock-')
   currentMode = QUIZ_MODES.includes(requestedMode)
-    && (supportsExamSections || !requestedMode.startsWith('section-'))
+    && (supportsExamSections || !feOnlyMode)
     ? requestedMode
     : 'all'
   currentRankFilter = RANK_FILTERS.includes(params[2]) ? params[2] : 'all'
+  const mockSpec = getFeMockSpec(currentMode)
+  if (mockSpec) currentRankFilter = 'all'
+  prepareMockTimer(currentMode, mockSpec)
 
   const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
   const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
@@ -88,6 +98,9 @@ export function renderQuiz(path, params = []) {
     ...(currentTopic === 'fe' ? [
       { value: 'section-a', label: `科目A (${baseQuestions.filter(q => (q.examSection || 'A') === 'A').length})`, icon: '🧠' },
       { value: 'section-b', label: `科目B (${baseQuestions.filter(q => q.examSection === 'B').length})`, icon: '⌘' },
+      { value: 'mock-a', label: '模試A 60問', icon: '⏱' },
+      { value: 'mock-b-1', label: '模試B-1 20問', icon: 'Ⅰ' },
+      { value: 'mock-b-2', label: '模試B-2 20問', icon: 'Ⅱ' },
     ] : []),
   ]
   const rankOptions = [
@@ -141,18 +154,20 @@ export function renderQuiz(path, params = []) {
         `).join('')}
         <button class="mode-tab-btn sound-toggle" id="sound-toggle" type="button" aria-pressed="${isSoundEnabled()}">${isSoundEnabled() ? '🔊 効果音 ON' : '🔇 効果音 OFF'}</button>
       </div>
-      <div class="quiz-rank-filter" aria-label="問題ランク選択">
+      <div class="quiz-rank-filter ${mockSpec ? 'is-disabled-for-mock' : ''}" aria-label="問題ランク選択">
         <span>DIFFICULTY ACCESS</span>
         ${rankOptions.map((rank) => {
           const questionCount = filterQuestionsByRank(topicQuestions, rank.value).length
           return `
-            <button type="button" class="quiz-rank-option rank-surface-${rank.value === 'all' ? 'platinum' : rank.value} ${currentRankFilter === rank.value ? 'is-active' : ''}" data-rank-filter="${rank.value}" ${questionCount === 0 ? 'disabled aria-disabled="true"' : ''}>
+            <button type="button" class="quiz-rank-option rank-surface-${rank.value === 'all' ? 'platinum' : rank.value} ${currentRankFilter === rank.value ? 'is-active' : ''}" data-rank-filter="${rank.value}" ${questionCount === 0 || mockSpec ? 'disabled aria-disabled="true"' : ''}>
               <b>${rank.label}</b><small>${rank.sub} · ${questionCount}問</small>
             </button>
           `
         }).join('')}
       </div>
     </div>
+
+    ${renderMockBanner(mockSpec)}
 
     <div class="quiz-container">
       ${renderCategoryInsights(baseQuestions, answeredMap)}
@@ -202,6 +217,9 @@ function renderQuestionCard() {
       incorrect:  { emoji: '✨', title: '不正解の問題はありません！', sub: 'すべての問題を正解しています。素晴らしい！' },
       'section-a': { emoji: '🧠', title: '科目Aの問題がありません', sub: '分野または難易度フィルターを確認してください。' },
       'section-b': { emoji: '⌘', title: '科目Bの問題がありません', sub: '分野または難易度フィルターを確認してください。' },
+      'mock-a': { emoji: '⏱', title: '科目A模試を開始できません', sub: '問題データを確認してください。' },
+      'mock-b-1': { emoji: '⏱', title: '科目B模試1を開始できません', sub: '問題データを確認してください。' },
+      'mock-b-2': { emoji: '⏱', title: '科目B模試2を開始できません', sub: '問題データを確認してください。' },
       all:        { emoji: '📭', title: '問題がありません',            sub: '分野フィルターを確認してください。' },
     }
     const msg = emptyMessages[currentMode] || emptyMessages.all
@@ -319,6 +337,7 @@ function renderQuestionCard() {
 }
 
 export function bindQuizEvents(container) {
+  bindMockClock(container)
   const soundToggle = container.querySelector('#sound-toggle')
   soundToggle?.addEventListener('click', () => {
     const enabled = toggleSound()
@@ -365,6 +384,11 @@ export function bindQuizEvents(container) {
   const restartBtn = container.querySelector('#restart-quiz')
   if (restartBtn) {
     restartBtn.addEventListener('click', () => {
+      const mockSpec = getFeMockSpec(currentMode)
+      if (mockSpec) {
+        mockDeadline = Date.now() + mockSpec.minutes * 60 * 1000
+        bindMockClock(container)
+      }
       const topicQuestions = currentTopic ? getQuestionsByTopic(currentTopic) : [...questions]
       const baseQuestions = filterQuestionsByRank(topicQuestions, currentRankFilter)
       currentQuestions = filterQuestions(baseQuestions, currentMode)
@@ -502,6 +526,53 @@ function getQuestionRank(question) {
 
 function normalizeAnswer(value) {
   return String(value ?? '').trim().replace(/[\s　]/g, '').toLocaleLowerCase('ja')
+}
+
+function prepareMockTimer(mode, spec) {
+  if (!spec) {
+    activeMockKey = ''
+    mockDeadline = 0
+    if (mockTimerId) clearInterval(mockTimerId)
+    mockTimerId = null
+    return
+  }
+  if (activeMockKey !== mode || mockDeadline <= Date.now()) {
+    activeMockKey = mode
+    mockDeadline = Date.now() + spec.minutes * 60 * 1000
+  }
+}
+
+function renderMockBanner(spec) {
+  if (!spec) return ''
+  return `
+    <section class="fe-mock-banner" aria-label="${spec.label}">
+      <div><span class="eyebrow">OFFICIAL FORMAT TRAINING</span><h2>${spec.label}</h2><p>${spec.note}</p></div>
+      <div class="fe-mock-clock"><span>残り時間</span><strong id="fe-mock-timer">--:--:--</strong><small>${spec.questions}問 / ${spec.minutes}分</small></div>
+      <p class="fe-mock-caution">HackPath独自問題による時間配分トレーニングです。再読み込みするとタイマーは最初から始まります。</p>
+    </section>
+  `
+}
+
+function bindMockClock(container) {
+  const output = container.querySelector('#fe-mock-timer')
+  if (mockTimerId) clearInterval(mockTimerId)
+  mockTimerId = null
+  if (!output || !mockDeadline) return
+  const update = () => {
+    const remaining = Math.max(0, mockDeadline - Date.now())
+    const totalSeconds = Math.ceil(remaining / 1000)
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+    output.textContent = [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
+    output.classList.toggle('is-expired', remaining === 0)
+    if (remaining === 0 && mockTimerId) {
+      clearInterval(mockTimerId)
+      mockTimerId = null
+    }
+  }
+  update()
+  mockTimerId = setInterval(update, 1000)
 }
 
 function escapeHtml(value) {

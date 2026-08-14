@@ -2,6 +2,19 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-14 基本情報 合格力強化の引き継ぎ
+
+- 現在バージョンは`v1.1.0`
+- `src/data/feIntensiveCourse.js`の科目B問題は40問。`bDomain`で`algorithm`32問、`security`8問に分類する
+- `src/data/feMockExam.js`が科目A模試1セットと科目B模試2セットの出題ID・問題数・制限時間を定義する
+- 科目B模試は各20問で、必ずアルゴリズム・プログラミング16問＋情報セキュリティ4問にする。2セット間で問題IDは重複させない
+- 模試URLは`#/quiz/fe/mock-a/all`、`#/quiz/fe/mock-b-1/all`、`#/quiz/fe/mock-b-2/all`
+- 模試回答も通常演習と同じ`recordQuizAnswer()`を使うため、既存の進捗保存・クラウド同期・XP重複防止が働く
+- タイマーは画面内セッション用で、再読込時に最初から始まる。進捗データ形式には追加していない
+- 基本情報コースは36教材・140問・100用語。全体は369教材・691問・481用語
+- `tests/fe-intensive-course.test.mjs`が収録数、科目Bの32:8比率、模試ごとの16:4構成、セット間重複を検証する
+- 合格力チェックの科目A 75%・科目B 80%はHackPath独自の学習目標。IPAの評価点600点と同一視しない
+
 ## バージョン更新の引き継ぎ
 
 - 現在バージョンは`src/data/releases.js`の`releaseHistory[0].version`から取得し、`currentVersion`として画面へ表示する
@@ -33,10 +46,10 @@
 
 ## 2026-08-14 基本情報徹底強化の引き継ぎ
 
-- `src/data/feIntensiveCourse.js`: 基本情報の追加26教材、科目A 66問、科目B 20問、追加72用語、現行試験仕様を一括定義
+- `src/data/feIntensiveCourse.js`: 基本情報の追加26教材、科目A 66問、科目B 40問、追加72用語、現行試験仕様を一括定義
 - 既存データへは`content.js`、`questions.js`、`glossary.js`から追加配列を結合しているため、旧ID・旧進捗は維持される
-- 基本情報の合計は36教材・120問・100用語。全体は369教材・671問・481用語
-- 科目別演習モードは`#/quiz/fe/section-a/all`と`#/quiz/fe/section-b/all`
+- 基本情報の合計は36教材・140問・100用語。全体は369教材・691問・481用語
+- 科目別演習モードは`#/quiz/fe/section-a/all`と`#/quiz/fe/section-b/all`。本番形式模試は`src/data/feMockExam.js`の3モードを使う
 - 既存の基本情報問題には`examSection`がないため、UI上は後方互換として科目A扱いにする
 - `tests/fe-intensive-course.test.mjs`が収録数、試験仕様、4択構造、科目B擬似言語を検証する
 - IPA公開シラバスの範囲を基準にした独自教材であり、試験問題の転載ではない。シラバス改訂時は`feExamBlueprint`と教材範囲を再確認する

@@ -191,6 +191,26 @@ const bBank = [
   ['入力検証', 'size ← input.length\narray[size] ← value', '安全性のため代入前に確認すべきものはどれか。', 'sizeが配列の有効範囲内か', '画面の色', 'CPUの製造年', '利用者の身長', '境界外アクセスを防ぐ。'],
   ['訪問済み', 'procedure visit(v)\n  visited[v] ← true\n  for each u in adjacent[v]\n    if (not visited[u]) visit(u)\n  endfor\nendprocedure', 'visitedを使う主な理由はどれか。', '循環で同じ頂点を無限にたどるのを防ぐ', '配列を暗号化する', '必ず最短路を求める', '通信速度を上げる', 'グラフの再訪問を防止する。'],
   ['総合トレース', '整数型配列: a ← {2, 5, 1, 4}\n整数型: s ← 0\nfor each x in a\n  if (x > 2) s ← s + x\nendfor', '終了時のsはどれか。', '9', '12', '7', '5', '2より大きい5と4を加えて9。'],
+  ['配列の反転', '整数型配列: a ← {1, 2, 3, 4}\nfor (i を 0 から 1 まで)\n  a[i] と a[3-i] を交換する\nendfor', '処理後の配列はどれか。', '{4, 3, 2, 1}', '{2, 1, 4, 3}', '{1, 2, 3, 4}', '{4, 2, 3, 1}', '先頭と末尾、2番目と3番目を交換するため逆順になる。'],
+  ['最大公約数', 'function gcd(a, b)\n  while (b ≠ 0)\n    r ← a mod b\n    a ← b\n    b ← r\n  endwhile\n  return a\nendfunction', 'gcd(48, 18)の戻り値はどれか。', '6', '3', '12', '18', '48 mod 18=12、18 mod 12=6、12 mod 6=0なので6。'],
+  ['累積和', '整数型配列: a ← {2, 1, 3, 2}\n整数型配列: s ← {0, 0, 0, 0}\ns[0] ← a[0]\nfor (i を 1 から 3 まで)\n  s[i] ← s[i-1] + a[i]\nendfor', 's[3]はどれか。', '8', '6', '5', '3', '累積和は2,3,6,8となる。'],
+  ['条件付き集計', '整数型配列: a ← {1, 4, 7, 10}\n整数型: count ← 0\nfor each x in a\n  if (x mod 3 = 1) count ← count + 1\nendfor', '終了時のcountはどれか。', '4', '3', '2', '1', '1,4,7,10はいずれも3で割った余りが1。'],
+  ['選択ソート', 'for (i を 0 から n-2 まで)\n  min ← i\n  for (j を i+1 から n-1 まで)\n    if (a[j] < a[min]) min ← j\n  endfor\n  a[i] と a[min] を交換する\nendfor', '外側ループ1回で確定するものはどれか。', '未整列部分の最小値の位置', '配列全体の中央値', '最大値と最小値の両方', '要素数n', '未整列部分から最小値を選び、先頭へ移す。'],
+  ['ハッシュ探索', 'index ← hash(key) mod tableSize\nwhile (table[index] が使用中 and table[index].key ≠ key)\n  index ← (index + 1) mod tableSize\nendwhile', 'この衝突解決法はどれか。', '線形探索法（オープンアドレス法）', 'チェイン法', '二分探索法', '幅優先探索法', '衝突時に次の区画を順に調べる線形探索法である。'],
+  ['リングバッファ', 'enqueue(x)\n  buffer[tail] ← x\n  tail ← (tail + 1) mod size\nendenqueue', 'mod sizeを使う目的はどれか。', '末尾の次を先頭へ循環させる', '要素を暗号化する', '常にtailを0にする', '配列を自動拡張する', '添字を0からsize-1の範囲で循環させる。'],
+  ['木の走査', 'procedure inorder(node)\n  if (node ≠ null)\n    inorder(node.left)\n    output(node.value)\n    inorder(node.right)\n  endif\nendprocedure', '二分探索木をこの順で走査した出力はどうなるか。', 'キーの昇順', 'キーの降順', '必ず挿入順', '必ずランダム順', '左・根・右の中順走査では二分探索木のキーが昇順になる。'],
+  ['動的計画法', '整数型配列: dp ← {0, 0, 0, 0, 0, 0}\ndp[0] ← 0\ndp[1] ← 1\nfor (i を 2 から 5 まで)\n  dp[i] ← dp[i-1] + dp[i-2]\nendfor', 'dp[5]はどれか。', '5', '8', '3', '13', '0,1,1,2,3,5と直前2項を再利用する。'],
+  ['優先度付きキュー', 'push(5)\npush(2)\npush(8)\nx ← popMax()\ny ← popMax()', '終了時の(x,y)はどれか。', '(8,5)', '(2,5)', '(8,2)', '(5,8)', '最大優先度から取り出すため8、次に5となる。'],
+  ['ビット演算', '整数型: x ← 12  /* 1100 */\n整数型: y ← 10  /* 1010 */\nz ← x AND y', 'zの10進数表現はどれか。', '8', '4', '6', '14', '1100 AND 1010は1000で、10進数では8。'],
+  ['状態遷移', 'state ← "待機"\nif (event = "開始") state ← "実行中"\nif (event = "停止" and state = "実行中") state ← "待機"', '待機状態で開始、続いて停止イベントを受けた後のstateはどれか。', '待機', '実行中', '停止中', '未定義', '開始で実行中となり、その後の停止条件が真なので待機へ戻る。'],
+  ['例外処理', 'try\n  result ← 10 div x\ncatch DivisionByZero\n  result ← -1\nendtry', 'xが0のときresultはどれか。', '-1', '0', '10', '未定義のまま', 'ゼロ除算例外を捕捉し、catch節で-1を代入する。'],
+  ['マージ処理', '整数型配列: a ← {1, 5}\n整数型配列: b ← {2, 4}\ni ← 0, j ← 0\nwhile (i < 2 and j < 2)\n  小さい方を出力して、その添字を1増やす\nendwhile', '最初の3個の出力はどれか。', '1, 2, 4', '1, 5, 2', '2, 4, 1', '1, 2, 5', '整列済み配列の先頭同士を比較すると1、2、4の順になる。'],
+  ['認証試行制御', 'if (loginFailed)\n  failures ← failures + 1\n  if (failures >= 5) lockAccount()\nendif', 'この処理が主に軽減する攻撃はどれか。', '総当たりによるパスワード試行', '盗聴された通信の復号', 'SQLの結合処理', '自然災害による停電', '連続失敗後にロックして大量の認証試行を抑える。'],
+  ['権限検査', 'procedure readFile(user, file)\n  if (not hasPermission(user, file, "read"))\n    return "DENIED"\n  endif\n  return file.content\nendprocedure', '権限判定を読込み前に行う理由はどれか。', '未認可利用者への情報開示を防ぐ', 'ファイル容量を増やす', '通信を必ず高速化する', '利用者名を暗号鍵にする', '利用前にアクセス制御を実施し、認可されない読込みを拒否する。'],
+  ['SQL対策', 'sql ← "SELECT * FROM users WHERE id = ?"\nstatement ← prepare(sql)\nstatement.bind(1, inputId)\nresult ← statement.execute()', 'プレースホルダとバインドを使う主な目的はどれか。', 'SQLインジェクションを防ぎやすくする', '検索結果を必ず1件にする', '通信を暗号化する', 'DB障害を自動復旧する', '入力値をSQL構文として解釈させないパラメータ化クエリである。'],
+  ['セッション管理', 'token ← randomSecureValue()\nstoreHash(hash(token), userId, expiresAt)\nsendCookie(token, Secure=true, HttpOnly=true)', 'HttpOnly属性の主な効果はどれか。', 'ブラウザ上のスクリプトからCookieを読み取りにくくする', '通信経路を必ずVPNにする', 'Cookieを永久保存する', 'パスワードを平文化する', 'JavaScriptからのCookie参照を制限し、窃取リスクを下げる。'],
+  ['ログの秘匿', 'procedure writeLog(event)\n  safe ← removeSecrets(event)\n  safe.userId ← pseudonymize(event.userId)\n  appendLog(safe)\nendprocedure', 'removeSecretsを先に行う主な理由はどれか。', 'パスワードやトークンのログ流出を防ぐ', 'ログを実行可能にする', '全利用者へログを公開する', '時刻情報を削除する', '秘密情報を記録しない設計により、ログ閲覧・漏えい時の影響を抑える。'],
+  ['改ざん検知', 'procedure verify(data, receivedMac, key)\n  calculated ← HMAC(key, data)\n  if (constantTimeEqual(calculated, receivedMac)) return true\n  return false\nendprocedure', 'HMACで主に確認できるものはどれか。', 'データの完全性と共有鍵を持つ送信者', 'データの圧縮率', '公開鍵証明書の有効期限だけ', '利用者の物理的な位置', 'HMACは共有鍵とデータから検証値を作り、改ざんと正当な鍵の保有を確認する。'],
 ]
 
 const sectionBQuestions = bBank.map((item, index) => {
@@ -200,7 +220,7 @@ const sectionBQuestions = bBank.map((item, index) => {
   const rotated = choices.slice(shift).concat(choices.slice(0, shift))
   return {
     id: `fe-b-${String(index + 1).padStart(3, '0')}`,
-    topic: 'fe', examSection: 'B', category, level: index < 6 ? 'beginner' : index < 14 ? 'intermediate' : 'advanced',
+    topic: 'fe', examSection: 'B', bDomain: ((index >= 16 && index <= 17) || index >= 34) ? 'security' : 'algorithm', category, level: index < 6 ? 'beginner' : index < 14 ? 'intermediate' : 'advanced',
     question, pseudocode, choices: rotated, answer: rotated.indexOf(correct), explanation,
   }
 })
