@@ -5,6 +5,7 @@ import { getCourseRank, getLessonRank, getStageLayout } from '../data/ranks.js'
 import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
 import { renderExplainedLesson } from '../components/lessonExplainer.js'
 import { bindFeMasteryCore, renderFeMasteryCore } from '../components/feMasteryCore.js'
+import { renderFeLessonVisual } from '../components/feLessonVisual.js'
 import { getTopicQuizProgress, getCustomLessons, getState } from '../store.js'
 import { renderContent } from './editor.js'
 import { feExamBlueprint } from '../data/feIntensiveCourse.js'
@@ -69,7 +70,10 @@ export function renderStudy(path, params) {
     </div>
 
     <div class="lesson-content rank-lesson-content rank-surface-${lessonRank.id}">
-      <div class="glass-card"><div class="lesson-content-body">${explainedContent}</div></div>
+      <div class="glass-card"><div class="lesson-content-body">
+        ${topicId === 'fe' && !lesson.isCustom ? renderFeLessonVisual(lesson.id) : ''}
+        ${explainedContent}
+      </div></div>
 
       <!-- 読むだけモード：XPなし・問題演習への誘導のみ -->
       <div class="glass-card" style="margin-top:16px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; background: rgba(108,71,255,0.08); border: 1px solid rgba(108,71,255,0.25);">
