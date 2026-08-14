@@ -37,6 +37,25 @@ export const FE_LESSON_VISUALS = {
   'fe-intensive-l26': visual('matrix', '問題に合う処理構造を選ぶ', '整列・スタック・再帰・グラフは、状態と処理順を図にすると追跡しやすくなります。', ['整列｜比較と交換', 'スタック｜LIFO', '再帰｜呼出しを積む', 'グラフ｜訪問済み管理']),
 }
 
+export function renderFeLessonArtwork(lessonId) {
+  const spec = FE_LESSON_VISUALS[lessonId]
+  if (!spec) return ''
+  return `
+    <figure class="fe-lesson-artwork" aria-labelledby="fe-artwork-title-${lessonId}">
+      <div class="fe-artwork-image-shell">
+        <img src="/images/fe-lessons/${lessonId}.webp" width="401" height="401" loading="lazy" decoding="async" alt="${escapeHtml(`${spec.title}をイメージした教材イラスト`)}">
+        <span>LESSON ARTWORK</span>
+      </div>
+      <figcaption>
+        <span class="eyebrow">IMAGINE THE SYSTEM</span>
+        <h2 id="fe-artwork-title-${lessonId}">${escapeHtml(spec.title)}</h2>
+        <p>${escapeHtml(spec.caption)}</p>
+        <small>最初に全体像をイメージし、次の図解で処理の順番と用語を確認しましょう。</small>
+      </figcaption>
+    </figure>
+  `
+}
+
 function visual(type, title, caption, items) {
   return { type, title, caption, items }
 }

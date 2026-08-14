@@ -1735,6 +1735,15 @@ code {
 .fe-section-chip { padding: 3px 9px; border: 1px solid currentColor; border-radius: 12px; font-size: 9px; font-weight: 900; letter-spacing: .08em; }
 .fe-section-a { color: #67dcff; background: rgba(0,204,255,.08); }
 .fe-section-b { color: #ff9d66; background: rgba(255,120,48,.09); }
+.fe-lesson-artwork { position: relative; display: grid; grid-template-columns: minmax(260px,.82fr) minmax(280px,1.18fr); gap: clamp(22px,4vw,46px); align-items: center; margin: 0 0 24px; padding: clamp(14px,2.4vw,24px); overflow: hidden; border: 1px solid rgba(157,116,255,.32); border-radius: 18px; background: radial-gradient(circle at 15% 30%,rgba(0,204,255,.11),transparent 34%),linear-gradient(135deg,#050a14,#0b0d1a 62%,#101026); box-shadow: 0 18px 48px rgba(0,0,0,.24); }
+.fe-lesson-artwork::after { position: absolute; inset: 0; content: ''; pointer-events: none; background: linear-gradient(115deg,transparent 54%,rgba(157,116,255,.06)); }
+.fe-artwork-image-shell { position: relative; z-index: 1; min-width: 0; overflow: hidden; border: 1px solid rgba(103,220,255,.26); border-radius: 14px; background: #020713; box-shadow: 0 0 0 5px rgba(0,204,255,.025),0 16px 34px rgba(0,0,0,.34); }
+.fe-artwork-image-shell img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+.fe-artwork-image-shell>span { position: absolute; left: 10px; bottom: 10px; padding: 5px 8px; color: #dff8ff; border: 1px solid rgba(103,220,255,.34); border-radius: 5px; background: rgba(2,7,19,.82); font-family: var(--mono); font-size: 7px; font-weight: 900; letter-spacing: .15em; backdrop-filter: blur(8px); }
+.fe-lesson-artwork figcaption { position: relative; z-index: 1; min-width: 0; }
+.fe-lesson-artwork figcaption h2 { margin: 8px 0 10px; color: var(--text-h); font-size: clamp(24px,3.6vw,40px); line-height: 1.08; }
+.fe-lesson-artwork figcaption p { margin: 0; color: #c3d3e5; font-size: 12px; line-height: 1.75; }
+.fe-lesson-artwork figcaption small { display: block; margin-top: 16px; padding-top: 13px; color: var(--text); border-top: 1px solid rgba(255,255,255,.08); font-size: 9px; line-height: 1.65; }
 .fe-lesson-visual { position: relative; margin: 0 0 24px; padding: clamp(18px,3vw,28px); overflow: hidden; border: 1px solid rgba(103,220,255,.28); border-radius: 16px; background: radial-gradient(circle at 92% 4%,rgba(108,71,255,.18),transparent 34%),linear-gradient(135deg,#07101d,#0a0d19); box-shadow: inset 0 -2px 0 rgba(103,220,255,.08),0 14px 34px rgba(0,0,0,.18); }
 .fe-lesson-visual::before { position: absolute; inset: 0; content: ''; pointer-events: none; background: repeating-linear-gradient(90deg,transparent 0 49px,rgba(255,255,255,.017) 50px); }
 .fe-lesson-visual figcaption,.fe-visual-canvas,.fe-visual-reading { position: relative; z-index: 1; }
@@ -1860,6 +1869,9 @@ code {
   .fe-mock-clock { text-align: left; }
   .fe-concept-flow { grid-template-columns: 1fr; }
   .fe-concept-flow i { text-align: center; transform: rotate(90deg); }
+  .fe-lesson-artwork { grid-template-columns: 1fr; gap: 18px; padding: 12px; }
+  .fe-lesson-artwork figcaption { padding: 2px 7px 8px; }
+  .fe-lesson-artwork figcaption h2 { font-size: clamp(24px,8vw,34px); }
   .fe-visual-canvas,.fe-visual-matrix .fe-visual-canvas { grid-template-columns: 1fr; gap: 18px; }
   .fe-visual-flow .fe-visual-node:not(:last-child)::after,
   .fe-visual-network .fe-visual-node:not(:last-child)::after,
