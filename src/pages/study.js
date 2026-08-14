@@ -4,6 +4,7 @@ import { getTopicById } from '../data/topics.js'
 import { getCourseRank, getLessonRank, getStageLayout } from '../data/ranks.js'
 import { renderRankBadge, renderRankEmblem } from '../components/rank.js'
 import { renderExplainedLesson } from '../components/lessonExplainer.js'
+import { bindFeMasteryCore, renderFeMasteryCore } from '../components/feMasteryCore.js'
 import { getTopicQuizProgress, getCustomLessons, getState } from '../store.js'
 import { renderContent } from './editor.js'
 import { feExamBlueprint } from '../data/feIntensiveCourse.js'
@@ -113,6 +114,7 @@ function renderLessonList({ topicId, topic, module, progress, stages, currentRan
     </section>
 
     ${topicId === 'fe' ? renderFeCommandCenter(module, progress) : ''}
+    ${topicId === 'fe' ? renderFeMasteryCore(getQuestionsByTopic('fe'), getState().quiz.answered || {}) : ''}
 
     <div class="glass-card" style="margin-bottom:20px; padding:14px 18px; display:flex; align-items:center; gap:12px; background:rgba(0,255,136,0.06); border:1px solid rgba(0,255,136,0.2);">
       <span style="font-size:22px;">💡</span>
@@ -227,7 +229,7 @@ function renderStage({ stage, topicId, module }) {
 }
 
 export function bindStudyEvents(container) {
-  // 読むだけモードのため、completeLesson処理は不要
+  bindFeMasteryCore(container)
 }
 
 function escapeHtml(value) {
