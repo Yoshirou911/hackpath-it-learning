@@ -8,6 +8,7 @@ import { renderQuiz, bindQuizEvents } from './pages/quiz.js'
 import { renderGlossary, bindGlossaryEvents } from './pages/glossary.js'
 import { renderHistory, bindHistoryEvents } from './pages/history.js'
 import { renderEditor, bindEditorEvents } from './pages/editor.js'
+import { renderUpdates } from './pages/updates.js'
 import { initCloudProgress, setLastVisited } from './store.js'
 
 // Register routes
@@ -27,6 +28,7 @@ registerRoute('/glossary', renderGlossary)
 registerRoute('/glossary/:topicFilter', renderGlossary)
 registerRoute('/history', renderHistory)
 registerRoute('/editor', renderEditor)
+registerRoute('/updates', renderUpdates)
 
 const app = document.querySelector('#app')
 app.innerHTML = '<div class="sync-bootstrap"><span aria-hidden="true"></span><p>進捗データを準備しています</p></div>'

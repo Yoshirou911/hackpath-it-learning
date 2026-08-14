@@ -3,17 +3,19 @@ import { clearLocalSession, getCloudAccount, getState } from '../store.js'
 import { getAccountRank } from '../data/ranks.js'
 import { renderRankBadge } from './rank.js'
 import { roadmapTopics } from '../data/topics.js'
+import { currentVersion } from '../data/releases.js'
 
 const primaryNavItems = [
   { path: '/', label: 'ダッシュボード', icon: '⚡' },
   { path: '/roadmap', label: 'ロードマップ', icon: '🗺️' },
 ]
 
-const toolNavItems = [
+export const toolNavItems = [
   { path: '/quiz', label: '問題演習', icon: '🧠' },
   { path: '/glossary', label: '用語集', icon: '📖' },
   { path: '/editor', label: 'ノート追加', icon: '📝' },
   { path: '/history', label: '履歴', icon: '📊' },
+  { path: '/updates', label: 'アップデート', icon: '🛰️' },
 ]
 
 const certificationLabelAliases = {
@@ -113,6 +115,9 @@ export function renderLayout(content, activePath) {
         </nav>
 
         <div class="sidebar-footer">
+          <a class="sidebar-version ${currentPath === '/updates' ? 'active' : ''}" href="#/updates" data-path="/updates" aria-label="アップデート情報 バージョン${currentVersion}">
+            <span>HACKPATH VERSION</span><strong>v${currentVersion}</strong>
+          </a>
           <div class="sidebar-rank">
             <span class="sidebar-rank-label">OPERATOR RANK</span>
             ${renderRankBadge(accountRank, { compact: true })}
@@ -178,7 +183,7 @@ export function bindLayoutEvents(container) {
 
   container.querySelector('[data-cloud-signout]')?.addEventListener('click', clearLocalSession)
 
-  container.querySelectorAll('.nav-link').forEach((link) => {
+  container.querySelectorAll('[data-path]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault()
       const path = link.dataset.path

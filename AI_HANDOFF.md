@@ -2,6 +2,16 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## バージョン更新の引き継ぎ
+
+- 現在バージョンは`src/data/releases.js`の`releaseHistory[0].version`から取得し、`currentVersion`として画面へ表示する
+- `package.json`と`package-lock.json`のルートバージョンを、`currentVersion`と必ず一致させる
+- 新しい公開更新では`releaseHistory`の先頭へ、`version`・`date`・`title`・`summary`・`highlights`・`sections`を追加する
+- `src/pages/updates.js`が`#/updates`の更新履歴画面を描画し、左メニューとサイドバー下部から開ける
+- 更新種別は`feature`（追加）、`improvement`（改善）、`fix`（修正）を使用する
+- `tests/release-history.test.mjs`がバージョン一致、重複、変更内容、ナビゲーションを検証する
+- バージョン表示は学習進捗データと分離されており、localStorageとクラウド保存形式へ影響しない
+
 ## 2026-08-14 操作不具合修正の引き継ぎ
 
 - `src/pages/quiz.js`のフィルター変更は`getQuizPath()`から`navigate()`を呼び、ルーター経由で全レイアウトを再描画する。`#app`へクイズ本文だけを直接代入しない
@@ -64,10 +74,12 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/components/rank.js`: ランクバッジとエンブレムの共通描画
 - `src/components/effects.js`: 正誤・クリア効果音、ミッションクリア・ランク昇格演出、端末別サウンド設定
 - `src/data/achievements.js`: 回答履歴・XPから導出する実績バッジ定義
+- `src/data/releases.js`: 現在バージョンと公開アップデート履歴
 - `src/components/lessonExplainer.js`: 短い教材へ分野説明と用語の意味・必要性・理解チェックを補う共通描画
 - `src/store.js`: XP、回答、進捗、履歴のlocalStorage保存・クラウド同期・旧データ移行
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
+- `src/pages/updates.js`: バージョン別の追加・改善・修正内容を表示する更新履歴画面
 - `src/pages/editor.js`: 端末内に保存する個人ノートの追加・編集と、安全なマークダウン描画
 - `PROGRESS.md`: 現在の実装数と次タスク
 - `HackPathを開く.cmd`: Windows用ワンクリック起動ランチャー（固定ポート5190）
