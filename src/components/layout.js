@@ -12,6 +12,7 @@ const primaryNavItems = [
 
 export const toolNavItems = [
   { path: '/quiz', label: '問題演習', icon: '🧠' },
+  { path: '/lab', label: '演習ラボ', icon: '🧪' },
   { path: '/glossary', label: '用語集', icon: '📖' },
   { path: '/editor', label: 'ノート追加', icon: '📝' },
   { path: '/history', label: '履歴', icon: '📊' },

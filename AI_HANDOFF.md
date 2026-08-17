@@ -2,9 +2,23 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-17 演習ラボの引き継ぎ
+
+- 現在バージョンは`v1.8.0`
+- `#/lab` と `#/lab/:exerciseId`。`src/pages/lab.js`が画面、`src/data/labExercises.js`が8課題、`src/components/labRunner.js`が実行クライアント、`public/lab-runner.js`がWorker本体
+- 課題は`functionName`の関数を定義してもらい、`cases`の`args`と`expected`の一致で判定する。`args`・`expected`は`structuredClone`できる値だけを使う
+- 利用者のコードは必ずWorker内で`new Function`評価する。DOM・localStorage・親スコープへは触れない
+- Worker側で`fetch`・`XMLHttpRequest`・`importScripts`・`indexedDB`・`caches`・`WebSocket`などを評価前に無効化する。追加のグローバルを許可するときは影響を必ず確認する
+- 実行は`LAB_RUN_TIMEOUT_MS`（2000ms）で打ち切り、Workerを`terminate()`する。無限ループを書かれても画面は固まらない
+- CSPは`/lab-runner.js`のレスポンスだけ`script-src 'self' 'unsafe-eval'`にする。Workerは自身のレスポンスのCSPで動くため、画面本体の`script-src 'self'`は緩めない
+- 例外は`worker/index.js`の`withSecurityHeaders(response, pathname)`と`public/_headers`の2か所にある。`_headers`は後の規則が勝つため`/lab-runner.js`を`/*`より後に置く。`index.html`のmeta CSPは変更しない
+- 演習ではXPを付与しない。書きかけコードは`hackpath-lab-drafts`、クリア記録は`hackpath-lab-cleared`へ端末内保存し、進捗・クラウド保存形式へは追加しない
+- 課題を追加するときは`labExercises`へ`starterCode`（未完成）と`solution`（全ケース通過）を必ず用意する。テストが両方を検証する
+- `tests/lab-exercises.test.mjs`が課題の項目、模範解答の正しさ、初期コードが未完成であること、Workerの無効化順序、CSP例外の範囲を検証する
+
 ## 2026-08-17 コース検索・難易度フィルターの引き継ぎ
 
-- 現在バージョンは`v1.7.0`
+- 実装時点のバージョンは`v1.7.0`
 - `src/components/courseFinder.js`が検索インデックス、絞り込み、並び替え、結果カードを担当する
 - インデックスは`roadmapTopics`のメタデータに加え、`getStudyModule()`のレッスン名と`getGlossaryByTopic()`の用語を含める。初回呼び出し時に`cachedIndex`へ保持する
 - 検索語は`normalizeSearchText()`でNFKC正規化＋小文字化する。空白・全角空白・読点区切りの複数キーワードはAND条件
@@ -167,6 +181,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/store.js`: XP、回答、進捗、履歴、日別成績、復習予定のlocalStorage保存・クラウド同期・旧データ移行
 - `src/components/dailyStatsChart.js`: 日別の回答数・正答率・連続学習日数を集計する推移グラフ
 - `src/components/courseFinder.js`: コース検索インデックス、難易度・分野の絞り込み、難易度順の並び替え
+- `src/data/labExercises.js` / `src/pages/lab.js` / `src/components/labRunner.js` / `public/lab-runner.js`: 演習ラボの課題定義、画面、実行クライアント、サンドボックスWorker
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
 - `src/pages/updates.js`: バージョン別の追加・改善・修正内容を表示する更新履歴画面
@@ -261,11 +276,14 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 - 資格の試験範囲・名称・バージョンは変更される可能性がある。`certificationExpansion.js`を更新するときは、IPA、AWS、Cisco、LPI-Japanなど主催者の最新公式情報を確認すること。
 - `npm`はPowerShellの実行ポリシーにより失敗する環境があるため、Windowsでは`npm.cmd`を使用する。
 - 日常利用では`HackPathを開く.cmd`をダブルクリックすると、固定URL `http://localhost:5190/` が既定ブラウザで開く。
-- 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。
+- 公開WorkerのCSP・権限制限・クリックジャッキング防止ヘッダーを弱める場合は、必要性と影響を確認する。CSPの例外は現在`/lab-runner.js`の`unsafe-eval`だけで、これを他のパスへ広げないこと。
+- 演習ラボのコード実行は利用者自身が書いたコードを対象とする教育目的の機能である。第三者から受け取ったコードを実行させる導線（URL共有・貼り付け誘導など）は追加しない。
 
 ## 推奨する次の実装
 
-次は、SQLやJavaScriptを安全に試せるブラウザ演習を検討してください。日別成績グラフは`v1.5.0`、間隔反復は`v1.6.0`、コース検索と難易度フィルターは`v1.7.0`で実装済みです。
+`v1.5.0`から`v1.8.0`で、日別成績グラフ・間隔反復・コース検索と難易度フィルター・JavaScript演習ラボを実装しました。
+
+次は、演習ラボのSQL対応（SQLiteのWASM追加、または限定構文の自作エンジン。依存追加とCSPへの`wasm-unsafe-eval`が論点）、演習課題の追加、復習予定のダッシュボード表示、コース検索条件のURL反映を検討してください。
 
 ## 完了条件
 

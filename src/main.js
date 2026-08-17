@@ -9,6 +9,7 @@ import { renderGlossary, bindGlossaryEvents } from './pages/glossary.js'
 import { renderHistory, bindHistoryEvents } from './pages/history.js'
 import { renderEditor, bindEditorEvents } from './pages/editor.js'
 import { renderUpdates } from './pages/updates.js'
+import { renderLab, bindLabEvents } from './pages/lab.js'
 import { initCloudProgress, setLastVisited } from './store.js'
 
 // Register routes
@@ -28,6 +29,8 @@ registerRoute('/glossary', renderGlossary)
 registerRoute('/glossary/:topicFilter', renderGlossary)
 registerRoute('/history', renderHistory)
 registerRoute('/editor', renderEditor)
+registerRoute('/lab', renderLab)
+registerRoute('/lab/:exerciseId', renderLab)
 registerRoute('/updates', renderUpdates)
 
 const app = document.querySelector('#app')
@@ -50,6 +53,7 @@ initRouter((handler, path, params) => {
   bindGlossaryEvents(app)
   bindHistoryEvents(app)
   bindEditorEvents(app)
-  
+  bindLabEvents(app)
+
   setLastVisited(path)
 })

@@ -602,3 +602,52 @@ export function deleteCustomLesson(id) {
   const lessons = getCustomLessons().filter(l => l.id !== id)
   localStorage.setItem(CUSTOM_LESSONS_KEY, JSON.stringify(lessons))
 }
+
+// ─── 演習ラボ（端末内保存・クラウド同期なし） ──────────────────────────────
+// 書きかけのコードと合格記録は端末だけに保存し、XP・進捗・クラウド保存形式へは影響させない。
+
+const LAB_DRAFTS_KEY = 'hackpath-lab-drafts'
+const LAB_CLEARED_KEY = 'hackpath-lab-cleared'
+const LAB_DRAFT_MAX_LENGTH = 20_000
+
+function readLabRecord(key) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || '{}')
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+  } catch {
+    return {}
+  }
+}
+
+export function getLabDraft(exerciseId) {
+  const draft = readLabRecord(LAB_DRAFTS_KEY)[exerciseId]
+  return typeof draft === 'string' ? draft : null
+}
+
+export function saveLabDraft(exerciseId, code) {
+  const drafts = readLabRecord(LAB_DRAFTS_KEY)
+  drafts[exerciseId] = String(code).slice(0, LAB_DRAFT_MAX_LENGTH)
+  localStorage.setItem(LAB_DRAFTS_KEY, JSON.stringify(drafts))
+}
+
+export function clearLabDraft(exerciseId) {
+  const drafts = readLabRecord(LAB_DRAFTS_KEY)
+  delete drafts[exerciseId]
+  localStorage.setItem(LAB_DRAFTS_KEY, JSON.stringify(drafts))
+}
+
+export function getClearedLabExercises() {
+  return readLabRecord(LAB_CLEARED_KEY)
+}
+
+export function isLabExerciseCleared(exerciseId) {
+  return Boolean(getClearedLabExercises()[exerciseId])
+}
+
+export function markLabExerciseCleared(exerciseId) {
+  const cleared = getClearedLabExercises()
+  if (cleared[exerciseId]) return cleared
+  cleared[exerciseId] = new Date().toISOString()
+  localStorage.setItem(LAB_CLEARED_KEY, JSON.stringify(cleared))
+  return cleared
+}

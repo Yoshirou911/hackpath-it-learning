@@ -2,11 +2,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/api/')) {
-      return withSecurityHeaders(await handleApiRequest(request, env, url))
+      return withSecurityHeaders(await handleApiRequest(request, env, url), url.pathname)
     }
 
     const assetResponse = await env.ASSETS.fetch(request)
-    return withSecurityHeaders(assetResponse)
+    return withSecurityHeaders(assetResponse, url.pathname)
   },
 }
 
@@ -238,12 +238,17 @@ function jsonResponse(data, status = 200, extraHeaders = {}) {
   })
 }
 
-function withSecurityHeaders(response) {
+// 演習ラボの実行Workerだけは、利用者のコードを評価するため`unsafe-eval`が必要になる。
+// Workerは自身のレスポンスで配信されたCSPで動くため、この例外は画面本体へ影響しない。
+const LAB_RUNNER_PATH = '/lab-runner.js'
+
+function withSecurityHeaders(response, pathname = '') {
     const headers = new Headers(response.headers)
+    const isLabRunner = pathname === LAB_RUNNER_PATH
 
     headers.set('Content-Security-Policy', [
       "default-src 'self'",
-      "script-src 'self'",
+      isLabRunner ? "script-src 'self' 'unsafe-eval'" : "script-src 'self'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "font-src 'self'",

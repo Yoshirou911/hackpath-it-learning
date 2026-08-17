@@ -7,3 +7,9 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
+
+# 演習ラボの実行Workerだけ、利用者コードの評価に必要な unsafe-eval を許可する。
+# Workerは自身のレスポンスのCSPで動くため、画面本体のCSPは緩めない。
+# 後に定義した規則が同じヘッダーを上書きするため、必ず /* より後に置く。
+/lab-runner.js
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'none'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'

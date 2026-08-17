@@ -1064,6 +1064,375 @@ code {
   word-break: break-word;
 }
 
+/* Practice Lab */
+.lab-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.lab-exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 20px;
+}
+
+.lab-list-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.lab-list-head small {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.lab-exercise-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.lab-exercise-link:hover {
+  background: var(--accent-bg);
+}
+
+.lab-exercise-link.is-active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.lab-exercise-state {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.lab-exercise-state.is-cleared {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.lab-exercise-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lab-exercise-copy strong {
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.lab-exercise-copy small {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.lab-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.lab-brief-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lab-brief-head h2 {
+  margin: 8px 0 0;
+}
+
+.lab-cleared-chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  margin-left: 6px;
+}
+
+.lab-topic-link {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.lab-brief-lead {
+  margin: 12px 0 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.lab-requirement {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.lab-requirement strong {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.lab-signature {
+  margin: 10px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.lab-editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.lab-editor-head label {
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.lab-editor-hint {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+#lab-code {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  color: var(--text-h);
+  font: 14px/1.6 var(--mono);
+  resize: vertical;
+  tab-size: 2;
+}
+
+#lab-code:focus {
+  outline: none;
+  border-color: var(--accent-border);
+}
+
+.lab-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.lab-save-state {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.lab-sandbox-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.lab-result-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.lab-result-head h3 {
+  margin: 0;
+}
+
+.lab-result-score {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.lab-result-score.is-pass {
+  border-color: rgba(0, 255, 136, 0.5);
+  color: var(--text-h);
+}
+
+.lab-result-score.is-fail {
+  border-color: rgba(255, 92, 122, 0.5);
+}
+
+.lab-result-empty,
+.lab-result-pass,
+.lab-result-error {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.lab-result-error {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 92, 122, 0.5);
+  color: var(--text-h);
+}
+
+.lab-case-preview,
+.lab-case-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-case-preview li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.lab-case {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.lab-case.is-pass {
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+.lab-case.is-fail {
+  border-color: rgba(255, 92, 122, 0.5);
+}
+
+.lab-case-top {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.lab-case-top strong {
+  color: var(--text-h);
+}
+
+.lab-case-mark {
+  font-weight: 700;
+}
+
+.lab-case-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.lab-case-detail span {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  opacity: 0.85;
+}
+
+.lab-case code,
+.lab-case-preview code,
+.lab-signature code {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  word-break: break-all;
+}
+
+.lab-log {
+  margin-top: 16px;
+}
+
+.lab-log pre,
+.lab-solution pre {
+  margin: 8px 0 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  font: 13px/1.6 var(--mono);
+  overflow-x: auto;
+}
+
+.lab-hints summary,
+.lab-solution summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.lab-hints ol {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.lab-hints li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 1024px) {
+  .lab-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-exercise-list {
+    position: static;
+  }
+}
+
 /* Course Finder */
 .course-finder-controls {
   display: flex;
