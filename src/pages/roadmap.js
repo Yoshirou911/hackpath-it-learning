@@ -4,6 +4,18 @@ import { accountRanks, getCourseRank, learningRanks } from '../data/ranks.js'
 import { certificationPyramidTiers } from '../data/certificationPyramid.js'
 import { certificationDifficultyRanking, certificationDifficultyRubric, certificationDifficultySources } from '../data/certificationDifficulty.js'
 import { renderRankBadge, renderRankSigil } from '../components/rank.js'
+import {
+  renderCourseFinder,
+  renderCourseResults,
+  isCourseFilterActive,
+  DEFAULT_COURSE_FILTER,
+  COURSE_LEVEL_FILTERS,
+  COURSE_CATEGORY_FILTERS,
+  COURSE_SORT_OPTIONS,
+} from '../components/courseFinder.js'
+
+// 検索条件は画面内の表示設定のため、保存データへは含めない。
+let courseFilter = { ...DEFAULT_COURSE_FILTER }
 
 export function renderRoadmap() {
   const certifications = roadmapTopics.filter((topic) => topic.category === 'certification')
@@ -38,11 +50,85 @@ export function renderRoadmap() {
       `).join('')}
     </div>
 
-    ${renderCertificationPyramid(certifications)}
-    ${renderCertificationDifficultyRanking(certifications)}
-    ${renderGroup('実務スキル', '現場で使う技術をランク別に攻略', skills)}
-    ${renderGroup('IT資格', '試験範囲を基礎から上級へ積み上げる', certifications)}
+    ${renderCourseFinder(courseFilter)}
+
+    <div data-course-groups ${isCourseFilterActive(courseFilter) ? 'hidden' : ''}>
+      ${renderCertificationPyramid(certifications)}
+      ${renderCertificationDifficultyRanking(certifications)}
+      ${renderGroup('実務スキル', '現場で使う技術をランク別に攻略', skills)}
+      ${renderGroup('IT資格', '試験範囲を基礎から上級へ積み上げる', certifications)}
+    </div>
   `
+}
+
+// 検索は結果だけを差し替えて入力フォーカスを保ち、絞り込み中は通常の一覧を隠す。
+export function bindRoadmapEvents(container) {
+  const finder = container.querySelector('[data-course-finder]')
+  if (!finder) return
+  const results = finder.querySelector('[data-course-results]')
+  const groups = container.querySelector('[data-course-groups]')
+
+  const refresh = () => {
+    results.innerHTML = renderCourseResults(courseFilter)
+    if (groups) groups.hidden = isCourseFilterActive(courseFilter)
+  }
+
+  const setChipState = (selector, attribute, value) => {
+    finder.querySelectorAll(selector).forEach((chip) => {
+      const isActive = chip.dataset[attribute] === value
+      chip.classList.toggle('is-active', isActive)
+      chip.setAttribute('aria-pressed', String(isActive))
+    })
+  }
+
+  const searchInput = finder.querySelector('[data-course-search]')
+  searchInput?.addEventListener('input', () => {
+    courseFilter = { ...courseFilter, query: searchInput.value }
+    refresh()
+  })
+
+  finder.addEventListener('click', (event) => {
+    const levelButton = event.target.closest('[data-course-level]')
+    if (levelButton && COURSE_LEVEL_FILTERS.some((option) => option.value === levelButton.dataset.courseLevel)) {
+      courseFilter = { ...courseFilter, level: levelButton.dataset.courseLevel }
+      setChipState('[data-course-level]', 'courseLevel', courseFilter.level)
+      refresh()
+      return
+    }
+
+    const categoryButton = event.target.closest('[data-course-category]')
+    if (categoryButton && COURSE_CATEGORY_FILTERS.some((option) => option.value === categoryButton.dataset.courseCategory)) {
+      courseFilter = { ...courseFilter, category: categoryButton.dataset.courseCategory }
+      setChipState('[data-course-category]', 'courseCategory', courseFilter.category)
+      refresh()
+      return
+    }
+
+    const sortButton = event.target.closest('[data-course-sort]')
+    if (sortButton && COURSE_SORT_OPTIONS.some((option) => option.value === sortButton.dataset.courseSort)) {
+      courseFilter = { ...courseFilter, sort: sortButton.dataset.courseSort }
+      setChipState('[data-course-sort]', 'courseSort', courseFilter.sort)
+      refresh()
+      return
+    }
+
+    if (event.target.closest('[data-course-reset]')) {
+      courseFilter = { ...DEFAULT_COURSE_FILTER }
+      if (searchInput) searchInput.value = ''
+      const upcoming = finder.querySelector('[data-course-upcoming]')
+      if (upcoming) upcoming.checked = false
+      setChipState('[data-course-level]', 'courseLevel', courseFilter.level)
+      setChipState('[data-course-category]', 'courseCategory', courseFilter.category)
+      setChipState('[data-course-sort]', 'courseSort', courseFilter.sort)
+      refresh()
+      searchInput?.focus()
+    }
+  })
+
+  finder.querySelector('[data-course-upcoming]')?.addEventListener('change', (event) => {
+    courseFilter = { ...courseFilter, includeUpcoming: event.target.checked }
+    refresh()
+  })
 }
 
 function renderCertificationDifficultyRanking(certifications) {

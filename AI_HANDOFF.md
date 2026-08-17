@@ -2,9 +2,24 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-17 コース検索・難易度フィルターの引き継ぎ
+
+- 現在バージョンは`v1.7.0`
+- `src/components/courseFinder.js`が検索インデックス、絞り込み、並び替え、結果カードを担当する
+- インデックスは`roadmapTopics`のメタデータに加え、`getStudyModule()`のレッスン名と`getGlossaryByTopic()`の用語を含める。初回呼び出し時に`cachedIndex`へ保持する
+- 検索語は`normalizeSearchText()`でNFKC正規化＋小文字化する。空白・全角空白・読点区切りの複数キーワードはAND条件
+- 難易度の並び替えは`getCourseDifficulty()`が資格は`certificationDifficulty.js`の推定点、実務スキルは`level`から目安点（基礎30・応用60・上級90）を割り当てる。HackPath独自の目安であり公式難易度ではない
+- `topic.level`は基礎18・応用11・上級1と粗いため、難易度の比較には並び替えと推定ランクのチップを併用する
+- 既定では`status: 'locked'`のコースを隠し、「準備中も表示」で含める
+- 検索条件は`src/pages/roadmap.js`のモジュール変数で保持する画面内設定で、保存データ・URLへは含めない
+- 入力中のフォーカスを保つため、検索時は`[data-course-results]`の中身だけを差し替える。チップ操作は`aria-pressed`と`is-active`を手動で更新する
+- 絞り込みが有効なときは`[data-course-groups]`（ピラミッド・難易度ランキング・通常一覧）を`hidden`にする
+- `bindRoadmapEvents()`を`src/main.js`へ登録している。ロードマップに操作要素を追加するときはここへ結線する
+- `tests/course-finder.test.mjs`が収録数、絞り込み、全角検索、複数キーワード、並び替え、操作要素の描画を検証する
+
 ## 2026-08-17 間隔反復（復習）の引き継ぎ
 
-- 現在バージョンは`v1.6.0`
+- 実装時点のバージョンは`v1.6.0`
 - `state.review`が問題IDごとに`{ lastAt, streak }`を保持する。次の復習日は`getReviewDueAt()`が`lastAt + REVIEW_INTERVAL_DAYS[streak - 1]`で都度導出するため、期日は保存しない
 - 復習間隔は`REVIEW_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60]`日。正解で`streak`が1増え、不正解で0へ戻り即日復習対象になる
 - 到達度は`quiz.answered`、定着度は`review`が持つ。正解済みの問題を復習で間違えても`answered`は`true`のまま維持し、コース進捗・ランク・XPを下げない
@@ -151,6 +166,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/components/lessonExplainer.js`: 短い教材へ分野説明と用語の意味・必要性・理解チェックを補う共通描画
 - `src/store.js`: XP、回答、進捗、履歴、日別成績、復習予定のlocalStorage保存・クラウド同期・旧データ移行
 - `src/components/dailyStatsChart.js`: 日別の回答数・正答率・連続学習日数を集計する推移グラフ
+- `src/components/courseFinder.js`: コース検索インデックス、難易度・分野の絞り込み、難易度順の並び替え
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
 - `src/pages/updates.js`: バージョン別の追加・改善・修正内容を表示する更新履歴画面
@@ -249,7 +265,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 
 ## 推奨する次の実装
 
-次は、コース検索と難易度フィルター、SQLやJavaScriptを安全に試せるブラウザ演習の順で検討してください。日別成績グラフは`v1.5.0`、間隔反復は`v1.6.0`で実装済みです。
+次は、SQLやJavaScriptを安全に試せるブラウザ演習を検討してください。日別成績グラフは`v1.5.0`、間隔反復は`v1.6.0`、コース検索と難易度フィルターは`v1.7.0`で実装済みです。
 
 ## 完了条件
 

@@ -2,7 +2,7 @@ import './style.css'
 import { initRouter, registerRoute, navigate } from './router.js'
 import { renderLayout, bindLayoutEvents, bindClickNav } from './components/layout.js'
 import { renderDashboard } from './pages/dashboard.js'
-import { renderRoadmap } from './pages/roadmap.js'
+import { renderRoadmap, bindRoadmapEvents } from './pages/roadmap.js'
 import { renderStudy, bindStudyEvents } from './pages/study.js'
 import { renderQuiz, bindQuizEvents } from './pages/quiz.js'
 import { renderGlossary, bindGlossaryEvents } from './pages/glossary.js'
@@ -44,6 +44,7 @@ initRouter((handler, path, params) => {
   
   bindLayoutEvents(app)
   bindClickNav(app)
+  bindRoadmapEvents(app)
   bindStudyEvents(app)
   bindQuizEvents(app)
   bindGlossaryEvents(app)
