@@ -46,6 +46,20 @@ const DEFAULT_STATE = {
   flashcards: {},
   lastVisited: '/',
   history: [],
+  daily: {},
+}
+
+// 日別成績は直近180日だけ保持し、保存サイズの増加を抑える。
+const DAILY_RETENTION_DAYS = 180
+const DAILY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const EMPTY_DAILY_ENTRY = { answered: 0, correct: 0, lessons: 0, xp: 0 }
+
+export function toDateKey(value = new Date()) {
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
 }
 
 function loadState() {
@@ -71,6 +85,7 @@ function normalizeState(value) {
     topics[id] = { ...(topics[id] || {}), ...topic }
     topics[id].completedLessonIds ??= []
   })
+  const history = Array.isArray(value.history) ? value.history.slice(0, 100) : []
   return {
     ...defaults,
     ...value,
@@ -83,8 +98,70 @@ function normalizeState(value) {
     },
     topics,
     flashcards: value.flashcards && typeof value.flashcards === 'object' ? value.flashcards : {},
-    history: Array.isArray(value.history) ? value.history.slice(0, 100) : [],
+    history,
+    daily: normalizeDaily(value.daily, history),
   }
+}
+
+// `daily`を持たない旧データは、保存済み履歴から日別成績を一度だけ復元する。
+function normalizeDaily(value, history) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return trimDaily(deriveDailyFromHistory(history))
+  const daily = {}
+  Object.entries(value).forEach(([key, entry]) => {
+    if (!DAILY_KEY_PATTERN.test(key) || !entry || typeof entry !== 'object') return
+    daily[key] = {
+      answered: clampCount(entry.answered),
+      correct: clampCount(entry.correct),
+      lessons: clampCount(entry.lessons),
+      xp: clampCount(entry.xp),
+    }
+  })
+  return trimDaily(daily)
+}
+
+function deriveDailyFromHistory(history) {
+  const daily = {}
+  history.forEach((entry) => {
+    const key = toDateKey(entry?.timestamp)
+    if (!key || !DAILY_KEY_PATTERN.test(key)) return
+    const day = daily[key] || { ...EMPTY_DAILY_ENTRY }
+    if (entry.type === 'quiz') {
+      day.answered += 1
+      if (entry.data?.isCorrect) {
+        day.correct += 1
+        day.xp += entry.data?.corrected ? 8 : 10
+      } else {
+        day.xp += 2
+      }
+    } else if (entry.type === 'lesson') {
+      day.lessons += 1
+    }
+    daily[key] = day
+  })
+  return daily
+}
+
+function trimDaily(daily) {
+  const keys = Object.keys(daily).sort()
+  if (keys.length <= DAILY_RETENTION_DAYS) return daily
+  return Object.fromEntries(keys.slice(-DAILY_RETENTION_DAYS).map((key) => [key, daily[key]]))
+}
+
+function clampCount(value) {
+  const number = Number(value)
+  if (!Number.isFinite(number)) return 0
+  return Math.max(0, Math.min(1_000_000, Math.floor(number)))
+}
+
+function addDailyRecord(delta, timestamp = new Date()) {
+  const key = toDateKey(timestamp)
+  if (!key) return
+  const day = { ...EMPTY_DAILY_ENTRY, ...(state.daily[key] || {}) }
+  day.answered += delta.answered || 0
+  day.correct += delta.correct || 0
+  day.lessons += delta.lessons || 0
+  day.xp += delta.xp || 0
+  state.daily = trimDaily({ ...state.daily, [key]: day })
 }
 
 let state = loadState()
@@ -220,14 +297,34 @@ function mergeProgress(remoteValue, localValue) {
     xp: Math.max(remote.xp, local.xp),
     quiz: { answered },
     topics,
+    daily: mergeDaily(remote.daily, local.daily),
     flashcards: { ...remote.flashcards, ...local.flashcards },
     history: local.history.length >= remote.history.length ? local.history : remote.history,
     lastVisited: local.lastVisited || remote.lastVisited,
   })
 }
 
+// 同じ日を両端末で学習した場合は、取りこぼしを避けて多い方の記録を採用する。
+function mergeDaily(remoteDaily, localDaily) {
+  const merged = { ...remoteDaily }
+  Object.entries(localDaily).forEach(([key, localDay]) => {
+    const remoteDay = merged[key] || EMPTY_DAILY_ENTRY
+    merged[key] = {
+      answered: Math.max(remoteDay.answered || 0, localDay.answered || 0),
+      correct: Math.max(remoteDay.correct || 0, localDay.correct || 0),
+      lessons: Math.max(remoteDay.lessons || 0, localDay.lessons || 0),
+      xp: Math.max(remoteDay.xp || 0, localDay.xp || 0),
+    }
+  })
+  return merged
+}
+
 export function getState() {
   return state
+}
+
+export function getDailyStats() {
+  return state.daily
 }
 
 export function resetProgress() {
@@ -245,6 +342,7 @@ export function clearLocalSession() {
 export function addXP(amount) {
   state.xp += amount
   state.level = Math.floor(state.xp / 100) + 1
+  addDailyRecord({ xp: amount })
   saveState(state)
   return state
 }
@@ -256,6 +354,7 @@ export function recordQuizAnswer(questionId, isCorrect, topicId = null) {
   if (previousAnswer === false && isCorrect) {
     state.quiz.answered[questionId] = true
     state.quiz.correct += 1
+    addDailyRecord({ answered: 1, correct: 1 })
     addXP(8)
     if (topicId) syncTopicProgressFromQuiz(topicId)
     addHistoryEntry('quiz', { questionId, isCorrect, corrected: true })
@@ -265,6 +364,7 @@ export function recordQuizAnswer(questionId, isCorrect, topicId = null) {
 
   state.quiz.answered[questionId] = isCorrect
   state.quiz.total += 1
+  addDailyRecord({ answered: 1, correct: isCorrect ? 1 : 0 })
   if (isCorrect) {
     state.quiz.correct += 1
     addXP(10)
@@ -334,6 +434,7 @@ export function completeLesson(topicId, totalLessons, lessonId) {
     topic.completed += 1
     topic.total = totalLessons
     state.topics[topicId] = topic
+    addDailyRecord({ lessons: 1 })
     addHistoryEntry('lesson', { topicId, lessonId })
     saveState(state)
   }

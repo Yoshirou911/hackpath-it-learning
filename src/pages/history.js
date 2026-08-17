@@ -1,5 +1,9 @@
-import { getHistory } from '../store.js'
+import { getHistory, getDailyStats } from '../store.js'
 import { getTopicById } from '../data/topics.js'
+import { renderDailyStatsChart, DAILY_RANGE_OPTIONS } from '../components/dailyStatsChart.js'
+
+// 集計期間は画面内の表示設定のため、保存データへは含めない。
+let selectedRange = 14
 
 export function renderHistory() {
   const history = getHistory(50)
@@ -9,6 +13,8 @@ export function renderHistory() {
       <h1>学習履歴</h1>
       <p class="page-subtitle">あなたの学習活動を振り返る</p>
     </div>
+
+    ${renderDailyStatsChart(getDailyStats(), selectedRange)}
 
     <div class="glass-card">
       ${history.length === 0 ? `
@@ -59,6 +65,17 @@ function renderHistoryEntry(entry) {
   `
 }
 
+// 期間切替はグラフ部分だけを差し替え、履歴一覧のスクロール位置を保つ。
 export function bindHistoryEvents(container) {
-  // 履歴ページには特別なイベントバインディングは不要
+  const chart = container.querySelector('[data-daily-stats]')
+  if (!chart) return
+  chart.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-daily-range]')
+    if (!button) return
+    const days = Number(button.dataset.dailyRange)
+    if (!DAILY_RANGE_OPTIONS.some((option) => option.days === days) || days === selectedRange) return
+    selectedRange = days
+    chart.outerHTML = renderDailyStatsChart(getDailyStats(), selectedRange)
+    bindHistoryEvents(container)
+  })
 }

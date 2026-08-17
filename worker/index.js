@@ -114,7 +114,8 @@ function getAuthenticatedUser(request) {
   return { email: normalizedEmail, displayName: fullName || normalizedEmail }
 }
 
-function sanitizeProgress(value) {
+// テストから検証できるようにエクスポートする（Worker本体の動作には影響しない）。
+export function sanitizeProgress(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
   const xp = clampInteger(value.xp, 0, 10_000_000)
   const level = Math.floor(xp / 100) + 1
@@ -127,7 +128,24 @@ function sanitizeProgress(value) {
   const lastVisited = typeof value.lastVisited === 'string' && value.lastVisited.startsWith('/')
     ? value.lastVisited.slice(0, 300)
     : '/'
-  return { xp, level, quiz, topics, flashcards, lastVisited, history }
+  const daily = sanitizeDaily(value.daily)
+  return { xp, level, quiz, topics, flashcards, lastVisited, history, daily }
+}
+
+// 日別成績は`YYYY-MM-DD`キーのみを受け付け、直近180日へ制限する。
+function sanitizeDaily(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const entries = Object.entries(value)
+    .filter(([key, day]) => /^\d{4}-\d{2}-\d{2}$/.test(key) && day && typeof day === 'object' && !Array.isArray(day))
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-180)
+    .map(([key, day]) => [key, {
+      answered: clampInteger(day.answered, 0, 1_000_000),
+      correct: clampInteger(day.correct, 0, 1_000_000),
+      lessons: clampInteger(day.lessons, 0, 1_000_000),
+      xp: clampInteger(day.xp, 0, 1_000_000),
+    }])
+  return Object.fromEntries(entries)
 }
 
 function sanitizeQuiz(value) {
