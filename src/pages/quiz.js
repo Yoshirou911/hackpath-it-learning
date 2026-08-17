@@ -1,5 +1,5 @@
 import { questions, getQuestionsByTopic } from '../data/questions.js'
-import { recordQuizAnswer, getQuizStats, getState } from '../store.js'
+import { recordQuizAnswer, getQuizStats, getState, getDueReviewQuestions, getReviewSummary, getReviewStatus } from '../store.js'
 import { roadmapTopics } from '../data/topics.js'
 import { navigate } from '../router.js'
 import { getAccountRank } from '../data/ranks.js'
@@ -20,15 +20,16 @@ let activeMockKey = ''
 let mockDeadline = 0
 let mockTimerId = null
 
-const QUIZ_MODES = ['all', 'weak', 'unanswered', 'incorrect', 'section-a', 'section-b', 'mock-a', 'mock-b-1', 'mock-b-2']
+const QUIZ_MODES = ['all', 'weak', 'review', 'unanswered', 'incorrect', 'section-a', 'section-b', 'mock-a', 'mock-b-1', 'mock-b-2']
 const RANK_FILTERS = ['all', 'bronze', 'silver', 'gold', 'sovereign']
 
-// mode: 'all' | 'weak' | 'unanswered' | 'incorrect' | 'section-a' | 'section-b'
+// mode: 'all' | 'weak' | 'review' | 'unanswered' | 'incorrect' | 'section-a' | 'section-b'
 function filterQuestions(base, mode) {
   const state = getState()
   const answeredMap = state.quiz.answered || {}
   const mockQuestions = getFeMockQuestions(base, mode)
   if (mockQuestions) return mockQuestions
+  if (mode === 'review') return getDueReviewQuestions(base)
   if (mode === 'section-a') return base.filter(q => (q.examSection || 'A') === 'A')
   if (mode === 'section-b') return base.filter(q => q.examSection === 'B')
   if (mode === 'unanswered') return base.filter(q => !(q.id in answeredMap))
@@ -90,9 +91,11 @@ export function renderQuiz(path, params = []) {
       .map((topic) => ({ value: topic.id, label: topic.title })),
   ]
 
+  const reviewSummary = getReviewSummary(baseQuestions)
   const modeOptions = [
     { value: 'all',        label: `全問題 (${totalAll})`,        icon: '📋' },
     { value: 'weak',       label: '苦手優先',                    icon: '🎯' },
+    { value: 'review',     label: `復習 (${reviewSummary.due})`, icon: '🔁' },
     { value: 'unanswered', label: `未回答 (${totalUnanswered})`, icon: '❓' },
     { value: 'incorrect',  label: `不正解 (${totalIncorrect})`,  icon: '❌' },
     ...(currentTopic === 'fe' ? [
@@ -170,11 +173,30 @@ export function renderQuiz(path, params = []) {
     ${renderMockBanner(mockSpec)}
 
     <div class="quiz-container">
+      ${renderReviewPanel(reviewSummary)}
       ${renderCategoryInsights(baseQuestions, answeredMap)}
       <div id="quiz-content">
         ${renderQuestionCard()}
       </div>
     </div>
+  `
+}
+
+// 復習モードのときだけ、間隔反復の考え方と現在の予定状況を説明する。
+function renderReviewPanel(summary) {
+  if (currentMode !== 'review') return ''
+  return `
+    <section class="glass-card review-panel">
+      <div><span class="eyebrow">SPACED REPETITION</span><h2>間隔反復の復習</h2>
+        <p>連続正解が増えるほど、次の出題は1日→3日→7日→14日→30日→60日と先へ延びます。間違えると翌日以降すぐに再出題されます。</p></div>
+      <div class="review-stat-grid">
+        <div class="review-stat"><span>今日の復習</span><strong>${summary.due}<small>問</small></strong></div>
+        <div class="review-stat"><span>予定あり</span><strong>${summary.scheduled}<small>問</small></strong></div>
+        <div class="review-stat"><span>定着（60日間隔）</span><strong>${summary.mastered}<small>問</small></strong></div>
+        <div class="review-stat"><span>未着手</span><strong>${summary.untracked}<small>問</small></strong></div>
+      </div>
+      <p class="review-note">復習での再回答はXPと正解数を二重計上しません。到達度はそのままで、忘れやすい問題だけを繰り返せます。</p>
+    </section>
   `
 }
 
@@ -210,9 +232,16 @@ function renderCategoryInsights(baseQuestions, answeredMap) {
   `
 }
 
+// 復習チップは、期日前なら次回までの日数、期日を過ぎていれば復習対象であることを示す。
+function renderReviewLabel(review) {
+  if (review.isDue) return `復習 · 連続${review.streak}回`
+  return review.daysUntilDue <= 1 ? '明日に復習' : `${review.daysUntilDue}日後に復習`
+}
+
 function renderQuestionCard() {
   if (currentQuestions.length === 0) {
     const emptyMessages = {
+      review: { emoji: '🔁', title: '今日の復習予定はありません', sub: '問題に回答すると、忘れやすい時期に合わせて復習予定が組まれます。' },
       unanswered: { emoji: '🎉', title: '未回答の問題はありません！', sub: 'すべての問題に回答しました。不正解の問題を復習しましょう。' },
       incorrect:  { emoji: '✨', title: '不正解の問題はありません！', sub: 'すべての問題を正解しています。素晴らしい！' },
       'section-a': { emoji: '🧠', title: '科目Aの問題がありません', sub: '分野または難易度フィルターを確認してください。' },
@@ -261,6 +290,7 @@ function renderQuestionCard() {
   const state = getState()
   const previousAnswer = state.quiz.answered[question.id]
   const hasPreviousAnswer = question.id in (state.quiz.answered || {})
+  const review = getReviewStatus(question.id)
 
   return `
     <div class="glass-card question-card">
@@ -279,6 +309,7 @@ function renderQuestionCard() {
           </span>
           ${question.topic === 'fe' ? `<span class="fe-section-chip fe-section-${(question.examSection || 'A').toLowerCase()}">科目${question.examSection || 'A'}</span>` : ''}
           <span class="question-rank-chip rank-surface-${getQuestionRank(question)}">${getQuestionRank(question).toUpperCase()}</span>
+          ${review.tracked ? `<span class="review-chip ${review.isDue ? 'is-due' : ''}" title="間隔反復による復習予定">🔁 ${renderReviewLabel(review)}</span>` : ''}
         </div>
       </div>
 

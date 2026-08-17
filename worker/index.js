@@ -129,7 +129,22 @@ export function sanitizeProgress(value) {
     ? value.lastVisited.slice(0, 300)
     : '/'
   const daily = sanitizeDaily(value.daily)
-  return { xp, level, quiz, topics, flashcards, lastVisited, history, daily }
+  const review = sanitizeReview(value.review)
+  return { xp, level, quiz, topics, flashcards, lastVisited, history, daily, review }
+}
+
+// 間隔反復の復習予定は、最終回答時刻と連続正解だけを保持する。
+function sanitizeReview(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const entries = Object.entries(value)
+    .slice(0, 10_000)
+    .flatMap(([key, entry]) => {
+      if (key.length > 120 || !entry || typeof entry !== 'object' || Array.isArray(entry)) return []
+      const lastAt = clampInteger(entry.lastAt, 0, 4_102_444_800_000)
+      if (lastAt <= 0) return []
+      return [[key, { lastAt, streak: clampInteger(entry.streak, 0, 6) }]]
+    })
+  return Object.fromEntries(entries)
 }
 
 // 日別成績は`YYYY-MM-DD`キーのみを受け付け、直近180日へ制限する。

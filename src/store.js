@@ -47,7 +47,13 @@ const DEFAULT_STATE = {
   lastVisited: '/',
   history: [],
   daily: {},
+  review: {},
 }
+
+// 間隔反復の復習間隔（日）。連続正解が伸びるほど次の復習を先送りする。
+const REVIEW_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60]
+const REVIEW_MAX_ENTRIES = 10_000
+const DAY_MS = 86_400_000
 
 // 日別成績は直近180日だけ保持し、保存サイズの増加を抑える。
 const DAILY_RETENTION_DAYS = 180
@@ -100,7 +106,24 @@ function normalizeState(value) {
     flashcards: value.flashcards && typeof value.flashcards === 'object' ? value.flashcards : {},
     history,
     daily: normalizeDaily(value.daily, history),
+    review: normalizeReview(value.review),
   }
+}
+
+// 復習予定を持たない旧データは空で開始し、次の回答から段階的に蓄積する。
+function normalizeReview(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const review = {}
+  Object.entries(value).slice(0, REVIEW_MAX_ENTRIES).forEach(([key, entry]) => {
+    if (!entry || typeof entry !== 'object' || key.length > 120) return
+    const lastAt = Number(entry.lastAt)
+    if (!Number.isFinite(lastAt) || lastAt <= 0) return
+    review[key] = {
+      lastAt: Math.floor(lastAt),
+      streak: Math.max(0, Math.min(REVIEW_INTERVAL_DAYS.length, Math.floor(Number(entry.streak) || 0))),
+    }
+  })
+  return review
 }
 
 // `daily`を持たない旧データは、保存済み履歴から日別成績を一度だけ復元する。
@@ -298,6 +321,7 @@ function mergeProgress(remoteValue, localValue) {
     quiz: { answered },
     topics,
     daily: mergeDaily(remote.daily, local.daily),
+    review: mergeReview(remote.review, local.review),
     flashcards: { ...remote.flashcards, ...local.flashcards },
     history: local.history.length >= remote.history.length ? local.history : remote.history,
     lastVisited: local.lastVisited || remote.lastVisited,
@@ -319,12 +343,86 @@ function mergeDaily(remoteDaily, localDaily) {
   return merged
 }
 
+// 復習予定は最後に回答した端末の記録を採用する。
+function mergeReview(remoteReview, localReview) {
+  const merged = { ...remoteReview }
+  Object.entries(localReview).forEach(([key, localEntry]) => {
+    const remoteEntry = merged[key]
+    merged[key] = !remoteEntry || localEntry.lastAt >= remoteEntry.lastAt ? localEntry : remoteEntry
+  })
+  return merged
+}
+
 export function getState() {
   return state
 }
 
 export function getDailyStats() {
   return state.daily
+}
+
+// ─── 間隔反復（復習スケジュール） ───────────────────────────────────────────
+// 到達度は`quiz.answered`、定着度は`review`が持つ。正解済みの問題を復習で間違えても
+// 到達度とXPは下げず、復習の連続正解だけを0へ戻して早めに再出題する。
+
+function updateReviewSchedule(questionId, isCorrect, now = Date.now()) {
+  const key = String(questionId)
+  const previousStreak = state.review[key]?.streak || 0
+  const streak = isCorrect ? Math.min(previousStreak + 1, REVIEW_INTERVAL_DAYS.length) : 0
+  if (Object.keys(state.review).length >= REVIEW_MAX_ENTRIES && !(key in state.review)) return
+  state.review[key] = { lastAt: now, streak }
+}
+
+export function getReviewSchedule() {
+  return state.review
+}
+
+export function getReviewDueAt(entry) {
+  if (!entry) return 0
+  const days = entry.streak > 0 ? REVIEW_INTERVAL_DAYS[entry.streak - 1] : 0
+  return entry.lastAt + days * DAY_MS
+}
+
+export function getReviewStatus(questionId, now = Date.now()) {
+  const entry = state.review[String(questionId)]
+  if (!entry) return { tracked: false, streak: 0, lastAt: 0, dueAt: 0, isDue: false, daysUntilDue: 0 }
+  const dueAt = getReviewDueAt(entry)
+  return {
+    tracked: true,
+    streak: entry.streak,
+    lastAt: entry.lastAt,
+    dueAt,
+    isDue: dueAt <= now,
+    daysUntilDue: Math.max(0, Math.ceil((dueAt - now) / DAY_MS)),
+  }
+}
+
+// 期日を過ぎた問題を、期日が古い順（同じなら連続正解が少ない順）に並べる。
+export function getDueReviewQuestions(questionList, now = Date.now()) {
+  return questionList
+    .filter((question) => {
+      const entry = state.review[String(question.id)]
+      return Boolean(entry) && getReviewDueAt(entry) <= now
+    })
+    .sort((a, b) => {
+      const entryA = state.review[String(a.id)]
+      const entryB = state.review[String(b.id)]
+      return getReviewDueAt(entryA) - getReviewDueAt(entryB) || entryA.streak - entryB.streak
+    })
+}
+
+export function getReviewSummary(questionList, now = Date.now()) {
+  let due = 0
+  let scheduled = 0
+  let mastered = 0
+  questionList.forEach((question) => {
+    const entry = state.review[String(question.id)]
+    if (!entry) return
+    scheduled += 1
+    if (getReviewDueAt(entry) <= now) due += 1
+    if (entry.streak >= REVIEW_INTERVAL_DAYS.length) mastered += 1
+  })
+  return { due, scheduled, mastered, untracked: questionList.length - scheduled }
 }
 
 export function resetProgress() {
@@ -349,12 +447,18 @@ export function addXP(amount) {
 
 export function recordQuizAnswer(questionId, isCorrect, topicId = null) {
   const previousAnswer = state.quiz.answered[questionId]
-  if (previousAnswer === true || (previousAnswer === false && !isCorrect)) return state
+  updateReviewSchedule(questionId, isCorrect)
+  addDailyRecord({ answered: 1, correct: isCorrect ? 1 : 0 })
+
+  // 復習での再回答。到達度(answered)・XP・履歴は増やさず、復習予定と日別記録だけ更新する。
+  if (previousAnswer === true || (previousAnswer === false && !isCorrect)) {
+    saveState(state)
+    return state
+  }
 
   if (previousAnswer === false && isCorrect) {
     state.quiz.answered[questionId] = true
     state.quiz.correct += 1
-    addDailyRecord({ answered: 1, correct: 1 })
     addXP(8)
     if (topicId) syncTopicProgressFromQuiz(topicId)
     addHistoryEntry('quiz', { questionId, isCorrect, corrected: true })
@@ -364,7 +468,6 @@ export function recordQuizAnswer(questionId, isCorrect, topicId = null) {
 
   state.quiz.answered[questionId] = isCorrect
   state.quiz.total += 1
-  addDailyRecord({ answered: 1, correct: isCorrect ? 1 : 0 })
   if (isCorrect) {
     state.quiz.correct += 1
     addXP(10)

@@ -1064,6 +1064,83 @@ code {
   word-break: break-word;
 }
 
+/* Spaced Repetition */
+.review-panel {
+  margin-bottom: 24px;
+}
+
+.review-panel h2 {
+  margin: 4px 0 8px;
+}
+
+.review-panel p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.review-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.review-stat {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--accent-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.review-stat span {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.review-stat strong {
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--text-h);
+}
+
+.review-stat strong small {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+.review-note {
+  font-size: 12px !important;
+  opacity: 0.7 !important;
+}
+
+.review-chip {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.review-chip.is-due {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+@media (max-width: 760px) {
+  .review-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Daily Stats Chart */
 .daily-stats-card {
   margin-bottom: 24px;

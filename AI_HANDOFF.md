@@ -2,9 +2,22 @@
 
 この文書は、別のAIや開発者が現在の状態から安全に作業を継続するための資料です。
 
+## 2026-08-17 間隔反復（復習）の引き継ぎ
+
+- 現在バージョンは`v1.6.0`
+- `state.review`が問題IDごとに`{ lastAt, streak }`を保持する。次の復習日は`getReviewDueAt()`が`lastAt + REVIEW_INTERVAL_DAYS[streak - 1]`で都度導出するため、期日は保存しない
+- 復習間隔は`REVIEW_INTERVAL_DAYS = [1, 3, 7, 14, 30, 60]`日。正解で`streak`が1増え、不正解で0へ戻り即日復習対象になる
+- 到達度は`quiz.answered`、定着度は`review`が持つ。正解済みの問題を復習で間違えても`answered`は`true`のまま維持し、コース進捗・ランク・XPを下げない
+- `recordQuizAnswer()`は再回答でも`updateReviewSchedule()`と`addDailyRecord()`を必ず実行し、XPと`history`だけを重複させない。XPの加算箇所は`addXP()`のみ
+- クイズの復習モードは`#/quiz/<topic>/review/<rank>`。`getDueReviewQuestions()`が期日の古い順（同期日なら連続正解が少ない順）に並べる
+- `getReviewSummary()`が今日の復習・予定あり・定着（60日間隔到達）・未着手を返し、`renderReviewPanel()`が復習モードでのみ表示する
+- Workerの`sanitizeReview()`が`lastAt`と`streak`（0〜6）だけを通す。保存項目を増やすときはWorker側の許可も必ず追加する
+- 間隔は忘却曲線に着想を得たHackPath独自の学習設定で、特定の学術モデルの再現ではない
+- `tests/spaced-repetition.test.mjs`が間隔、連続正解、XP二重計上防止、期日順、Worker検証を確認する
+
 ## 2026-08-17 日別成績グラフの引き継ぎ
 
-- 現在バージョンは`v1.5.0`
+- 実装時点のバージョンは`v1.5.0`
 - `state.daily`が`YYYY-MM-DD`キーで`{ answered, correct, lessons, xp }`を保持する。保持期間は直近180日
 - 日付キーは端末のローカル時刻から`toDateKey()`で生成する。学習者の1日と表示を一致させるためUTCは使わない
 - `daily`を持たない旧データは`normalizeState()`が保存済み`history`から一度だけ復元する。復元XPは初回正解10・初回不正解2・訂正正解8のXPルールと同じ
@@ -136,7 +149,7 @@ HackPathは、資格暗記だけでなく「解説 → 確認問題 → 用語�
 - `src/data/achievements.js`: 回答履歴・XPから導出する実績バッジ定義
 - `src/data/releases.js`: 現在バージョンと公開アップデート履歴
 - `src/components/lessonExplainer.js`: 短い教材へ分野説明と用語の意味・必要性・理解チェックを補う共通描画
-- `src/store.js`: XP、回答、進捗、履歴、日別成績のlocalStorage保存・クラウド同期・旧データ移行
+- `src/store.js`: XP、回答、進捗、履歴、日別成績、復習予定のlocalStorage保存・クラウド同期・旧データ移行
 - `src/components/dailyStatsChart.js`: 日別の回答数・正答率・連続学習日数を集計する推移グラフ
 - `src/router.js`: ルーティング
 - `src/pages/`: 各画面
@@ -236,7 +249,7 @@ D1の保存形式は既存の状態オブジェクトを`state_json`へ格納す
 
 ## 推奨する次の実装
 
-次は、間隔反復（最終回答日時・連続正解を考慮）、コース検索と難易度フィルター、SQLやJavaScriptを安全に試せるブラウザ演習の順で検討してください。日別成績グラフは`v1.5.0`で実装済みです。
+次は、コース検索と難易度フィルター、SQLやJavaScriptを安全に試せるブラウザ演習の順で検討してください。日別成績グラフは`v1.5.0`、間隔反復は`v1.6.0`で実装済みです。
 
 ## 完了条件
 
